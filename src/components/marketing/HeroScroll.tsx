@@ -65,7 +65,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             ) : (
               <Image
                 src={media.src}
-                alt="GÖLGE — Anatolia Aero Design savaşan İHA"
+                alt="SHADOW MK5 — Anatolia Aero Design savaşan İHA"
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 1150px"
@@ -104,7 +104,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/50" />
           )}
           <div className="eyebrow absolute bottom-4 right-5 !text-[10px]">
-            AAD-01 · GÖLGE
+            SHADOW MK5 · 2026
           </div>
         </motion.div>
 
@@ -154,9 +154,9 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
           </div>
 
           <div className="grid w-full max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
-            <Stat num={TAKIM_ISTATISTIK.birincilik} label="Türkiye 1.'liği" />
-            <Stat num={TAKIM_ISTATISTIK.departman} label="Departman" />
-            <Stat num={TAKIM_ISTATISTIK.takipci} label="Takipçi" />
+            <Stat num={TAKIM_ISTATISTIK.sampiyonluk} label="Şampiyonluk" />
+            <Stat num={TAKIM_ISTATISTIK.uye} label="Takım Üyesi" />
+            <Stat num={TAKIM_ISTATISTIK.mezun} label="Mezun" />
             <Stat num={TAKIM_ISTATISTIK.kurulus} label="Kuruluş" />
           </div>
 

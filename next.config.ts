@@ -32,7 +32,8 @@ const csp = [
   `img-src 'self' data: blob: ${SUPABASE_ORIGIN} https://server.arcgisonline.com https://*.tile.openstreetmap.org`,
   `media-src 'self' blob: ${SUPABASE_ORIGIN}`,
   // ws:/wss: yalnızca geliştirmede — Next.js HMR websocket'i için
-  `connect-src 'self' ${SUPABASE_ORIGIN} ${SUPABASE_WS}${
+  // api.open-meteo.com — uçuş planlaması için hava durumu (anahtarsız API)
+  `connect-src 'self' ${SUPABASE_ORIGIN} ${SUPABASE_WS} https://api.open-meteo.com${
     process.env.NODE_ENV === "development" ? " ws: wss:" : ""
   }`,
   "worker-src 'self' blob:",

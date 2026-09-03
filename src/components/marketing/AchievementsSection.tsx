@@ -13,7 +13,7 @@ export function AchievementsSection() {
         <SectionHeading
           num="02"
           title="Başarılar"
-          kicker="Ulusal ve uluslararası derecelerimiz"
+          kicker="2013'ten bugüne ulusal ve uluslararası derecelerimiz"
         />
 
         <div className="mt-14 grid gap-4 md:grid-cols-2">
@@ -45,11 +45,9 @@ export function AchievementsSection() {
                     <span className="display tabular text-lg text-accent">
                       {a.year}
                     </span>
-                    {a.highlight && (
-                      <span className="rounded-full bg-accent/12 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-accent">
-                        Türkiye 1.
-                      </span>
-                    )}
+                    <span className="rounded-full bg-bg-2 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-ink-3">
+                      {a.scope === "uluslararasi" ? "Uluslararası" : "Ulusal"}
+                    </span>
                   </div>
                   <h3 className="mt-1.5 text-lg font-bold leading-snug text-ink">
                     {a.title}

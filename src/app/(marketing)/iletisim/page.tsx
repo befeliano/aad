@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/marketing/ContactForm";
 import { Reveal } from "@/components/ui/Reveal";
 import { SocialIcon } from "@/components/ui/SocialIcon";
-import { TEAM, SOCIALS } from "@/lib/constants";
+import { TEAM, SOCIALS, TEAM_LEADS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -56,6 +56,28 @@ export default function IletisimPage() {
                 >
                   {TEAM.email}
                 </a>
+              </div>
+            </Reveal>
+
+            <Reveal>
+              <div className="border-l-2 border-accent pl-5">
+                <div className="eyebrow mb-3">Takım Yönetimi</div>
+                <ul className="space-y-3.5">
+                  {TEAM_LEADS.map((l) => (
+                    <li key={l.name}>
+                      <div className="text-[15px] font-semibold text-ink">
+                        {l.name}
+                      </div>
+                      <div className="text-[12.5px] text-ink-3">{l.role}</div>
+                      <a
+                        href={`tel:${l.phone.replace(/\s/g, "")}`}
+                        className="tabular mt-0.5 block text-[13.5px] text-ink-2 transition-colors hover:text-accent"
+                      >
+                        {l.phone}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
 

@@ -30,6 +30,7 @@ import {
 } from "@/lib/flight-db";
 import { fmtDuration } from "@/lib/format";
 import { Badge, Button, Card } from "@/components/ui/Kit";
+import { TelemetryChart, SERIES } from "./TelemetryChart";
 import { PageHeader } from "@/components/panel/PageHeader";
 
 const FlightMap = dynamic(() => import("./FlightMap"), {
@@ -55,6 +56,7 @@ export function FlightAnalysis() {
   const [trailSec, setTrailSec] = useState(15);
   const [showGhost, setShowGhost] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
+  const [chartKeys, setChartKeys] = useState<string[]>(["alt", "speed"]);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const rafRef = useRef<number>(0);
@@ -427,6 +429,60 @@ export function FlightAnalysis() {
               Kısayollar: <b>Boşluk</b> oynat/duraklat · <b>← →</b> 1 sn ·{" "}
               <b>Shift + ← →</b> 10 sn · <b>Home/End</b>
             </p>
+          </Card>
+
+          {/* Telemetri zaman grafikleri */}
+          <Card
+            title="Telemetri Trendleri"
+            desc={`Takım ${activeTeam ?? "—"} · grafiğe tıklayarak o ana atlayın`}
+            actions={
+              <div className="flex flex-wrap gap-1">
+                {SERIES.map((s) => {
+                  const on = chartKeys.includes(s.key);
+                  return (
+                    <button
+                      key={s.key}
+                      type="button"
+                      onClick={() =>
+                        setChartKeys((v) =>
+                          on ? v.filter((k) => k !== s.key) : [...v, s.key]
+                        )
+                      }
+                      aria-pressed={on}
+                      className={`rounded-full border px-2.5 py-1 text-[11.5px] font-semibold transition-colors ${
+                        on
+                          ? "border-transparent text-white"
+                          : "border-line text-ink-3 hover:text-ink"
+                      }`}
+                      style={on ? { background: s.color } : undefined}
+                    >
+                      {s.label}
+                    </button>
+                  );
+                })}
+              </div>
+            }
+          >
+            <div className="space-y-3 p-4">
+              {chartKeys.length === 0 ? (
+                <p className="py-8 text-center text-sm text-ink-3">
+                  Görmek istediğiniz kanalı yukarıdan seçin.
+                </p>
+              ) : (
+                SERIES.filter((s) => chartKeys.includes(s.key)).map((s) => (
+                  <TelemetryChart
+                    key={s.key}
+                    points={
+                      activeTeam !== null ? session.tracks[activeTeam] || [] : []
+                    }
+                    series={s}
+                    duration={session.duration}
+                    time={time}
+                    onSeek={setTime}
+                  />
+                ))
+              )}
+            </div>
           </Card>
         </div>
 

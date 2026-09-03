@@ -1,48 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, ArrowRight, FileText, ShieldCheck, Users } from "lucide-react";
+import Image from "next/image";
+import { Check, ArrowRight, Minus } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import {
-  SPONSOR_STEPS,
-  VISIBILITY_SURFACES,
-  SPONSOR_COMMITMENTS,
+  SPONSOR_TIERS,
+  SPONSOR_MATRIX_ROWS,
+  SPONSOR_NOTE,
+  SPONSOR_REASONS,
+  SPONSORS_2025,
   ACHIEVEMENTS,
   TEAM,
+  TEAM_LEADS,
+  TAKIM_ISTATISTIK,
 } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Sponsorluk",
   description:
-    "Anatolia Aero Design sponsorluğu: faturalı ve şeffaf harcama, kalem kalem raporlama, uçak gövdesinden takım tişörtüne kadar marka görünürlüğü.",
+    "Anatolia Aero Design sponsorluk seviyeleri — First Class, Business Class ve Economy Class. Uçak gövdesinden takım kıyafetlerine marka görünürlüğü, ürün test ve raporlama imkânı.",
 };
 
 const REACH = [
-  { num: "2x", label: "Teknofest Türkiye 1.'liği" },
-  { num: "4.5K+", label: "Sosyal Medya Takipçisi" },
-  { num: "6", label: "Mühendislik Departmanı" },
-  { num: "10+", label: "Yıllık Takım Tecrübesi" },
-];
-
-const WHY = [
-  {
-    icon: ShieldCheck,
-    t: "Şeffaflık",
-    d: "Verdiğiniz desteğin tamamı faturalı olarak harcanır ve kalem kalem raporlanır. Kurumsal muhasebeniz için belgelenebilir bir süreç.",
-  },
-  {
-    icon: Users,
-    t: "Yetenek Havuzu",
-    d: "Yazılımdan kompozite altı disiplinde çalışan mühendislik öğrencileri. Sponsorlarımız için doğrudan bir staj ve işe alım kanalı.",
-  },
-  {
-    icon: FileText,
-    t: "Kanıtlanmış Başarı",
-    d: "Teknofest Savaşan İHA ve UAV Turkey Türkiye birincisi bir takım. Desteğiniz, sonuç üreten bir ekibe gidiyor.",
-  },
+  { num: TAKIM_ISTATISTIK.sampiyonluk, label: "Şampiyonluk" },
+  { num: TAKIM_ISTATISTIK.uye, label: "Takım Üyesi" },
+  { num: TAKIM_ISTATISTIK.mezun, label: "Sektörde Mezun" },
+  { num: TAKIM_ISTATISTIK.kurulus, label: "Kuruluş" },
 ];
 
 export default function SponsorlukPage() {
+  const topAchievements = ACHIEVEMENTS.filter((a) => a.highlight);
+
   return (
     <>
       {/* Hero */}
@@ -56,16 +45,16 @@ export default function SponsorlukPage() {
         />
         <div className="relative mx-auto max-w-4xl px-5 py-20 text-center sm:px-8">
           <Reveal>
-            <div className="eyebrow mb-5">Sponsorluk</div>
+            <div className="eyebrow mb-5">Sponsorluk · 2026–2027</div>
             <h1 className="display-tight text-5xl text-ink sm:text-7xl">
               Markanız bizimle
               <br />
               <span className="text-accent">havalansın.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-ink-2">
-              Anatolia Aero Design&apos;a verdiğiniz destek, geleceğin havacılık
-              mühendislerine yapılan bir yatırımdır. Desteğinizin tamamını
-              faturalı harcar, nereye gittiğini kalem kalem raporlarız.
+              Logonuz uçaklarımızda, takım kıyafetlerimizde ve dijital
+              kanallarımızda yer alır. Ürünlerinizi gerçek uçuş koşullarında
+              test eder, teknik raporunu size sunarız.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-2.5">
               <Link
@@ -84,7 +73,7 @@ export default function SponsorlukPage() {
                 )}`}
                 className="rounded-full border border-line-2 px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-ink-3"
               >
-                Sunum İste
+                Sponsorluk Dosyası İste
               </a>
             </div>
           </Reveal>
@@ -105,115 +94,178 @@ export default function SponsorlukPage() {
         </div>
       </section>
 
-      {/* Nasıl işliyor */}
+      {/* Seviyeler */}
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
         <SectionHeading
           num="01"
-          title="Nasıl İşliyor?"
-          kicker="Görüşmeden rapora, adım adım"
+          title="Seviyeler"
+          kicker="Size uygun katkı düzeyi"
         />
-        <ol className="mt-14 space-y-3">
-          {SPONSOR_STEPS.map((s, i) => (
-            <Reveal key={s.n} delay={i * 60}>
-              <li className="flex flex-col gap-4 rounded-2xl border border-line bg-bg-1 p-6 sm:flex-row sm:items-center sm:gap-7 sm:p-7">
-                <span className="display tabular shrink-0 text-4xl text-accent sm:w-20 sm:text-5xl">
-                  {s.n}
-                </span>
-                <div className="min-w-0">
-                  <h3 className="text-lg font-bold text-ink">{s.t}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-2">
-                    {s.d}
-                  </p>
+
+        <div className="mt-14 grid gap-5 lg:grid-cols-3">
+          {SPONSOR_TIERS.map((tier, i) => (
+            <Reveal key={tier.key} delay={i * 80}>
+              <article
+                className={`relative flex h-full flex-col rounded-2xl border p-7 ${
+                  tier.featured
+                    ? "border-accent bg-[linear-gradient(180deg,var(--accent-soft),transparent_70%)]"
+                    : "border-line bg-bg-1"
+                }`}
+              >
+                {tier.featured && (
+                  <span className="absolute -top-3 left-7 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                    En Üst Seviye
+                  </span>
+                )}
+                <div className="eyebrow !text-[10px]">{tier.label}</div>
+                <h3 className="display-tight mt-2 text-3xl text-ink">
+                  {tier.name}
+                </h3>
+                <div className="tabular mt-2 text-lg font-bold text-accent">
+                  {tier.threshold}
                 </div>
-              </li>
+                <p className="mt-1 text-[12.5px] text-ink-3">
+                  nakit veya malzeme desteği
+                </p>
+
+                <ul className="mt-6 flex-1 space-y-2.5 border-t border-line pt-5">
+                  {tier.perks.map((perk) => (
+                    <li
+                      key={perk}
+                      className="flex gap-2.5 text-[13.5px] text-ink-2"
+                    >
+                      <Check size={15} className="mt-0.5 shrink-0 text-accent" />
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href="/iletisim"
+                  className={`mt-7 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform hover:scale-[1.02] ${
+                    tier.featured
+                      ? "bg-accent text-white"
+                      : "border border-line-2 text-ink hover:border-ink-3"
+                  }`}
+                >
+                  Teklif Al
+                  <ArrowRight size={15} />
+                </Link>
+              </article>
             </Reveal>
           ))}
-        </ol>
+        </div>
+
+        <Reveal>
+          <p className="mt-8 rounded-2xl border border-line bg-bg-1 p-6 text-[13.5px] leading-relaxed text-ink-2">
+            {SPONSOR_NOTE}
+          </p>
+        </Reveal>
       </section>
 
-      {/* Görünürlük yüzeyleri */}
+      {/* Karşılaştırma tablosu */}
       <section className="border-t border-line bg-bg-1">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
           <SectionHeading
             num="02"
-            title="Logonuz Nerede?"
-            kicker="Markanızın fiilen göründüğü yerler"
+            title="Haklar ve Avantajlar"
+            kicker="Seviyelerin karşılaştırması"
           />
-          <div className="mt-14 grid gap-4 sm:grid-cols-2">
-            {VISIBILITY_SURFACES.map((v, i) => (
-              <Reveal key={v.title} delay={i * 70}>
-                <article className="h-full rounded-2xl border border-line bg-bg p-7">
-                  <h3 className="text-lg font-bold text-ink">{v.title}</h3>
-                  <p className="mt-2.5 text-sm leading-relaxed text-ink-2">
-                    {v.desc}
-                  </p>
-                </article>
-              </Reveal>
-            ))}
+          <div className="mt-14 overflow-x-auto rounded-2xl border border-line">
+            <table className="w-full min-w-[820px] border-collapse text-left">
+              <thead>
+                <tr>
+                  <th className="bg-bg-2 px-5 py-4 text-[12.5px] font-bold text-ink">
+                    Haklar ve Avantajlar
+                  </th>
+                  {SPONSOR_TIERS.map((t) => (
+                    <th
+                      key={t.key}
+                      className={`px-5 py-4 text-center text-[13px] font-bold ${
+                        t.featured ? "bg-accent text-white" : "bg-bg-2 text-ink"
+                      }`}
+                    >
+                      {t.name}
+                      <span className="mt-0.5 block text-[11px] font-medium opacity-80">
+                        {t.threshold}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {SPONSOR_MATRIX_ROWS.map((row, ri) => (
+                  <tr key={row.key} className={ri % 2 ? "bg-bg-1" : "bg-bg"}>
+                    <th className="border-t border-line px-5 py-4 align-top text-[12.5px] font-semibold text-ink">
+                      {row.label}
+                    </th>
+                    {SPONSOR_TIERS.map((t) => {
+                      const v = t.matrix[row.key];
+                      return (
+                        <td
+                          key={t.key}
+                          className={`border-t border-line px-5 py-4 align-top text-[12.5px] leading-relaxed ${
+                            t.featured ? "text-ink" : "text-ink-2"
+                          }`}
+                        >
+                          {v === "—" ? (
+                            <Minus size={15} className="text-ink-3" />
+                          ) : (
+                            v
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <p className="mt-8 text-center text-sm text-ink-3">
-            Görünürlüğün kapsamı, desteğin büyüklüğüne göre birlikte belirlenir
-            — hazır paket dayatmıyoruz.
-          </p>
         </div>
       </section>
 
-      {/* Neden biz */}
+      {/* Neden katkı */}
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
         <SectionHeading
           num="03"
-          title="Neden Biz?"
+          title="Neden Katkı Yapmalısınız?"
           kicker="Desteğinizin karşılığı"
         />
-        <div className="mt-14 grid gap-4 md:grid-cols-3">
-          {WHY.map((w, i) => {
-            const Icon = w.icon;
-            return (
-              <Reveal key={w.t} delay={i * 80}>
-                <div className="h-full rounded-2xl border border-line bg-bg-1 p-7">
-                  <Icon size={22} className="text-accent" />
-                  <h3 className="mt-5 text-lg font-bold text-ink">{w.t}</h3>
-                  <p className="mt-2.5 text-sm leading-relaxed text-ink-2">
-                    {w.d}
-                  </p>
-                </div>
-              </Reveal>
-            );
-          })}
+        <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {SPONSOR_REASONS.map((r, i) => (
+            <Reveal key={r.t} delay={i * 70}>
+              <article className="h-full rounded-2xl border border-line bg-bg-1 p-7">
+                <span className="display tabular text-2xl text-accent">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-4 text-lg font-bold text-ink">{r.t}</h3>
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">
+                  {r.d}
+                </p>
+              </article>
+            </Reveal>
+          ))}
         </div>
-
-        {/* Taahhütler */}
-        <Reveal>
-          <div className="mt-6 rounded-2xl border border-accent/30 bg-[linear-gradient(135deg,var(--accent-soft),transparent_65%)] p-7 sm:p-9">
-            <div className="eyebrow mb-4">Size taahhüdümüz</div>
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {SPONSOR_COMMITMENTS.map((c) => (
-                <li key={c} className="flex gap-2.5 text-sm text-ink">
-                  <Check size={17} className="mt-0.5 shrink-0 text-accent" />
-                  {c}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
       </section>
 
-      {/* Başarılar şeridi */}
+      {/* Başarı şeridi */}
       <section className="border-t border-line bg-bg-1">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
-          <div className="eyebrow mb-6 text-center">
+          <div className="eyebrow mb-8 text-center">
             Desteğiniz sonuç üreten bir takıma gidiyor
           </div>
-          <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {ACHIEVEMENTS.map((a) => (
-              <div key={a.year + a.title} className="bg-bg-1 px-5 py-7">
-                <div className="display tabular text-2xl text-accent">
-                  {a.year}
-                </div>
-                <div className="mt-1.5 text-sm font-bold text-ink">
+          <div className="grid gap-4 md:grid-cols-3">
+            {topAchievements.map((a) => (
+              <div
+                key={a.year + a.title}
+                className="rounded-2xl border border-accent/30 bg-[linear-gradient(135deg,var(--accent-soft),transparent_65%)] p-7 text-center"
+              >
+                <div className="display text-5xl text-accent">{a.rank}</div>
+                <div className="mt-3 text-[15px] font-bold text-ink">
                   {a.title}
                 </div>
-                <div className="mt-1 text-[12.5px] text-ink-3">{a.detail}</div>
+                <div className="mt-1 text-[12.5px] text-ink-2">{a.detail}</div>
+                <div className="eyebrow mt-3 !text-[10px]">{a.year}</div>
               </div>
             ))}
           </div>
@@ -222,24 +274,32 @@ export default function SponsorlukPage() {
 
       {/* Destekçiler */}
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <SectionHeading num="04" title="Destekçiler" kicker="Bize güvenenler" />
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <SectionHeading
+          num="04"
+          title="Destekçilerimiz"
+          kicker="2025 sponsorları"
+        />
+        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+          {SPONSORS_2025.map((s) => (
             <div
-              key={i}
-              className="flex aspect-[3/2] items-center justify-center bg-bg-1"
+              key={s.name}
+              className="flex flex-col items-center justify-center gap-3 bg-bg-1 px-5 py-9"
             >
-              <span className="eyebrow !text-[10px]">Logo</span>
+              {s.logo ? (
+                <Image
+                  src={s.logo}
+                  alt={`${s.name} logosu`}
+                  width={150}
+                  height={60}
+                  className="h-11 w-auto object-contain"
+                />
+              ) : (
+                <span className="display text-xl text-ink-2">{s.name}</span>
+              )}
+              <span className="eyebrow !text-[9.5px]">{s.role}</span>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-center text-sm text-ink-3">
-          Sponsor logoları{" "}
-          <code className="rounded bg-bg-2 px-1.5 py-0.5 text-[12.5px]">
-            public/images/sponsors/
-          </code>{" "}
-          klasörüne eklendiğinde burada gösterilecek.
-        </p>
 
         <Reveal>
           <div className="mt-14 rounded-2xl border border-line bg-bg-1 p-9 text-center">
@@ -247,23 +307,30 @@ export default function SponsorlukPage() {
               Bir görüşmeyle başlayalım.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-ink-2">
-              Size takımı anlatan sunumumuzu gönderelim, ihtiyaçlarınıza göre
-              birlikte bir iş birliği kurgulayalım.
+              Sponsorluk dosyamızı gönderelim, ihtiyaçlarınıza göre birlikte bir
+              iş birliği kurgulayalım.
             </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-2.5">
-              <Link
-                href="/iletisim"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
-              >
-                İletişime Geç
-                <ArrowRight size={16} />
-              </Link>
+            <div className="mt-7">
               <a
                 href={`mailto:${TEAM.email}`}
-                className="rounded-full border border-line-2 px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-ink-3"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
               >
                 {TEAM.email}
               </a>
+            </div>
+            <div className="mt-8 grid gap-3 border-t border-line pt-7 sm:grid-cols-2">
+              {TEAM_LEADS.map((l) => (
+                <div key={l.name} className="text-center">
+                  <div className="text-sm font-bold text-ink">{l.name}</div>
+                  <div className="text-[12.5px] text-ink-3">{l.role}</div>
+                  <a
+                    href={`tel:${l.phone.replace(/\s/g, "")}`}
+                    className="tabular mt-1 block text-[13px] text-accent hover:underline"
+                  >
+                    {l.phone}
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>

@@ -15,6 +15,9 @@ import {
   CalendarClock,
   Timer,
   Activity,
+  Rocket,
+  CircleCheck,
+  Square,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtTime, toCSV, downloadFile } from "@/lib/format";
@@ -30,6 +33,9 @@ import {
   Modal,
 } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
+import { PreflightModal } from "./PreflightModal";
+import { CompleteFlightModal, type ActiveSession } from "./CompleteFlightModal";
+import { useElapsed, formatElapsed, useWakeLock } from "./useElapsed";
 
 /** Uçuşun tarih+saatini tek bir Date'e çevirir */
 function flightDate(f: Flight): Date {
@@ -49,6 +55,10 @@ export function UcuslarClient({ userId }: { userId: string }) {
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [delTarget, setDelTarget] = useState<Flight | null>(null);
+  const [preflight, setPreflight] = useState<Flight | null>(null);
+  /** flight_id -> uçuşun başlangıç zaman damgası (tamamlanmamışlar) */
+  const [started, setStarted] = useState<Record<string, string>>({});
+  const [completing, setCompleting] = useState<ActiveSession | null>(null);
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -58,6 +68,26 @@ export function UcuslarClient({ userId }: { userId: string }) {
       .order("flight_time", { ascending: false });
     if (error) toast("Uçuşlar yüklenemedi: " + error.message, "error");
     else setFlights((data as Flight[]) || []);
+
+    /* Başlatılmış uçuşlar — checklist tablosu yoksa sessizce atlanır */
+    const { data: cl } = await supabase
+      .from("flight_checklists")
+      .select("flight_id, started_at, completed_at");
+    if (cl) {
+      const m: Record<string, string> = {};
+      (
+        cl as {
+          flight_id: string;
+          started_at: string | null;
+          completed_at: string | null;
+        }[]
+      ).forEach((r) => {
+        // Yalnızca başlamış ve henüz tamamlanmamış uçuşlar "uçuşta" sayılır
+        if (r.started_at && !r.completed_at) m[r.flight_id] = r.started_at;
+      });
+      setStarted(m);
+    }
+
     setLoading(false);
   }, [supabase, toast]);
 
@@ -177,6 +207,17 @@ export function UcuslarClient({ userId }: { userId: string }) {
     );
     toast(`${rows.length} uçuş dışa aktarıldı.`);
   }
+
+  /** Şu an havada olan uçuş (varsa) — üstteki canlı şerit için */
+  const activeFlight = useMemo(() => {
+    const id = Object.keys(started)[0];
+    if (!id) return null;
+    const f = flights.find((x) => x.id === id);
+    return f ? { flight: f, startedAt: started[id] } : null;
+  }, [started, flights]);
+
+  // Uçuş sürerken ekran kapanmasın (destekleyen tarayıcılarda)
+  useWakeLock(!!activeFlight);
 
   const list = tab === "upcoming" ? upcoming : past;
 
@@ -352,7 +393,31 @@ export function UcuslarClient({ userId }: { userId: string }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
+                    {!isPast &&
+                      (started[f.id] ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setCompleting({ flight: f, startedAt: started[f.id] })
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-full bg-ok/15 px-3 py-1.5 text-[12.5px] font-bold text-ok transition-colors hover:bg-ok/25"
+                          title="Uçuşu tamamla"
+                        >
+                          <CircleCheck size={14} />
+                          Uçuşta
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setPreflight(f)}
+                          title="Uçuş öncesi kontrol listesini aç"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-[12.5px] font-bold text-white transition-transform hover:scale-105"
+                        >
+                          <Rocket size={14} />
+                          Uç!
+                        </button>
+                      ))}
                     <button
                       type="button"
                       onClick={() => {
@@ -480,6 +545,31 @@ export function UcuslarClient({ userId }: { userId: string }) {
         </form>
       </Modal>
 
+      {/* Sabit şerit son satırı kapatmasın */}
+      {activeFlight && <div className="h-20" aria-hidden="true" />}
+
+      {activeFlight && (
+        <ActiveFlightBar
+          flight={activeFlight.flight}
+          startedAt={activeFlight.startedAt}
+          onComplete={() => setCompleting(activeFlight)}
+        />
+      )}
+
+      <CompleteFlightModal
+        session={completing}
+        open={!!completing}
+        onClose={() => setCompleting(null)}
+        onCompleted={load}
+      />
+
+      <PreflightModal
+        flight={preflight}
+        open={!!preflight}
+        onClose={() => setPreflight(null)}
+        onStarted={load}
+      />
+
       <ConfirmDialog
         open={!!delTarget}
         message={`${delTarget?.aircraft} · ${fmtDate(
@@ -508,6 +598,52 @@ function SummaryTile({
         <span className="text-[12.5px] font-semibold">{label}</span>
       </div>
       <div className="display tabular mt-3 text-3xl text-ink">{value}</div>
+    </div>
+  );
+}
+
+/** Uçuş sürerken ekranın üstünde duran canlı kronometre şeridi */
+function ActiveFlightBar({
+  flight,
+  startedAt,
+  onComplete,
+}: {
+  flight: Flight;
+  startedAt: string;
+  onComplete: () => void;
+}) {
+  const elapsed = useElapsed(startedAt);
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ok/30 bg-bg-1/95 backdrop-blur-xl lg:left-64">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-5 py-3">
+        <span className="relative flex size-2.5 shrink-0">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-ok opacity-70" />
+          <span className="relative inline-flex size-2.5 rounded-full bg-ok" />
+        </span>
+
+        <div className="min-w-0">
+          <div className="text-[12.5px] font-bold text-ink">
+            {flight.aircraft} havada
+          </div>
+          <div className="text-[11.5px] text-ink-3">
+            {new Date(startedAt).toLocaleTimeString("tr-TR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}{" "}
+            itibarıyla
+          </div>
+        </div>
+
+        <div className="tabular display ml-auto text-3xl text-ink sm:text-4xl">
+          {formatElapsed(elapsed)}
+        </div>
+
+        <Button onClick={onComplete}>
+          <Square size={15} />
+          Uçuşu Tamamla
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FLEET } from "@/lib/constants";
+import { FLEET, FLEET_ARCHIVE } from "@/lib/constants";
 import { fleetImage } from "@/lib/public-assets";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
@@ -10,7 +10,7 @@ export function FleetSection() {
       <SectionHeading
         num="01"
         title="Filo"
-        kicker="Tasarlayıp ürettiğimiz platformlar"
+        kicker="2011'den bugüne tasarlayıp ürettiğimiz platformlar"
       />
 
       <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -86,6 +86,21 @@ export function FleetSection() {
                   {ac.desc}
                 </p>
 
+                {ac.features && (
+                  <ul className="mt-5 space-y-2.5 border-t border-line pt-5">
+                    {ac.features.map((f) => (
+                      <li key={f.t}>
+                        <span className="text-[13.5px] font-bold text-ink">
+                          {f.t}
+                        </span>
+                        <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-3">
+                          {f.d}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
                 <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
                   {ac.specs.map((s) => (
                     <div key={s.label} className="bg-bg-1 px-3 py-3">
@@ -102,6 +117,24 @@ export function FleetSection() {
           );
         })}
       </div>
+
+      {/* Arşiv */}
+      <Reveal>
+        <div className="mt-10 rounded-2xl border border-line bg-bg-1 p-7">
+          <div className="eyebrow mb-4">Arşiv · geçmiş platformlarımız</div>
+          <ul className="flex flex-wrap gap-2">
+            {FLEET_ARCHIVE.map((a) => (
+              <li
+                key={a.name}
+                className="rounded-full border border-line px-3.5 py-1.5 text-[12.5px] text-ink-2"
+              >
+                <span className="font-semibold text-ink">{a.name}</span>
+                <span className="tabular ml-1.5 text-ink-3">{a.year}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Reveal>
     </section>
   );
 }

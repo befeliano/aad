@@ -32,6 +32,7 @@ export const PANEL_NAV: NavGroup[] = [
         allowedDepts: ["yazilim", "yapisal", "kompozit", "aviyonik", "sponsorluk"],
       },
       { href: "/panel/ucuslar", label: "Uçuş Kayıtları", icon: "Plane" },
+      { href: "/panel/hava-durumu", label: "Hava Durumu", icon: "CloudSun" },
       {
         href: "/panel/ucuslar/analiz",
         label: "Uçuş Analizi",
