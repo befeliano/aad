@@ -13,6 +13,9 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /* proxy, Supabase env'i eksikse buraya ?hata=yapilandirma ile yönlendirir */
+  const configError = params.get("hata") === "yapilandirma";
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
@@ -66,6 +69,15 @@ export function LoginForm() {
           className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
         />
       </label>
+
+      {configError && !error && (
+        <p className="rounded-lg border border-warn/30 bg-warn/10 px-3 py-2.5 text-sm text-warn">
+          Sunucu yapılandırması eksik: Supabase ortam değişkenleri tanımlı
+          değil. Vercel → Project Settings → Environment Variables bölümünden
+          NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_ANON_KEY ekleyip
+          yeniden deploy alın.
+        </p>
+      )}
 
       {error && (
         <p className="rounded-lg border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-bad">

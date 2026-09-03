@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ImageIcon, X, ExternalLink } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { createClientSafe } from "@/lib/supabase/client";
 import type { MediaAsset } from "@/lib/types";
 import { TEAM } from "@/lib/constants";
 import { safeUrl } from "@/lib/security";
@@ -21,15 +21,24 @@ const VIDEO_EXT = ["mp4", "webm", "mov"];
  * Galeri — panele yüklenen foto/videoları gösterir.
  * media_assets üzerindeki RLS herkese açık okumaya izin vermiyorsa
  * boş durum gösterilir (hata fırlatılmaz).
+ *
+ * NOT: Bu sayfa statik olarak prerender edilir. Supabase istemcisi bilerek
+ * render sırasında DEĞİL, yalnızca effect içinde (tarayıcıda) kuruluyor —
+ * aksi halde ortam değişkenleri olmayan bir build ortamında (ör. Vercel'de
+ * env tanımlanmadan) prerender hata verip build'i düşürür.
  */
 export function GaleriClient() {
-  const supabase = useMemo(() => createClient(), []);
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
 
   useEffect(() => {
     (async () => {
+      const supabase = createClientSafe();
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
       const { data, error } = await supabase
         .from("media_assets")
         .select("*")
@@ -78,7 +87,7 @@ export function GaleriClient() {
       setItems(out);
       setLoading(false);
     })();
-  }, [supabase]);
+  }, []);
 
   /* Esc ile lightbox kapansın */
   useEffect(() => {
