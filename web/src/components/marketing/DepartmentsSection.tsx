@@ -66,10 +66,7 @@ export function DepartmentsSection() {
         {DEPARTMENTS.map((d, i) => (
           <Reveal key={d.key} delay={(i % 3) * 70}>
             <article className="group flex h-full flex-col bg-bg p-7 transition-colors hover:bg-bg-1">
-              <div className="flex items-start justify-between">
-                <span className="display tabular text-2xl text-ink-3 transition-colors group-hover:text-accent">
-                  {d.num}
-                </span>
+              <div className="flex items-start justify-end">
                 <span className="eyebrow !text-[9.5px]">{d.short}</span>
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">{d.name}</h3>

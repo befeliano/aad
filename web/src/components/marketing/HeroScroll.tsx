@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -18,34 +18,14 @@ export interface HeroMedia {
   src: string;
 }
 
-export function HeroScroll({
-  media,
-  slides = [],
-}: {
-  media?: HeroMedia | null;
-  /** Hero slider kareleri (public/images/hero + galeri) */
-  slides?: string[];
-}) {
-  /* Slider — 6 saniyede bir çapraz geçiş */
-  const [slide, setSlide] = useState(0);
-  const hasSlider = slides.length > 1;
-
-  useEffect(() => {
-    if (!hasSlider) return;
-    const id = window.setInterval(
-      () => setSlide((s) => (s + 1) % slides.length),
-      6000
-    );
-    return () => window.clearInterval(id);
-  }, [hasSlider, slides.length]);
-
+export function HeroScroll({ media }: { media?: HeroMedia | null }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const stageScale = useTransform(scrollYProgress, [0, 0.9], [0.82, 1.18]);
+  const stageScale = useTransform(scrollYProgress, [0, 0.9], [0.96, 1.12]);
   const stageRadius = useTransform(scrollYProgress, [0, 0.9], [24, 0]);
   const titleY = useTransform(scrollYProgress, [0, 0.6], [0, -140]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.42], [1, 0]);
@@ -54,7 +34,9 @@ export function HeroScroll({
 
   return (
     <section ref={ref} className="relative h-[210vh]">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden pt-16">
+      {/* Mobilde dikey akış: kadraj → butonlar → boşluk → istatistikler.
+          sm ve üstünde butonlar/istatistikler tekrar kadrajın üzerine biner. */}
+      <div className="sticky top-0 flex h-screen flex-col items-center justify-center gap-5 overflow-hidden pt-16 sm:gap-0">
         {/* Zemin */}
         <div className="absolute inset-0 bg-bg">
           <div
@@ -70,7 +52,10 @@ export function HeroScroll({
         {/* Medya sahnesi */}
         <motion.div
           style={{ scale: stageScale, borderRadius: stageRadius }}
-          className="relative aspect-[16/9] h-[min(68vh,50vw)] max-h-[68vh] w-auto max-w-[94vw] overflow-hidden border border-line-2 bg-bg-2 shadow-[var(--shadow-lg)]"
+          /* Mobilde sabit 50vh — altına buton ve istatistikler sığsın.
+             sm üstünde 52.9vw (= 94vw'nin 16:9 karşılığı) ile 80vh'nin küçüğü:
+             geniş ekranda navbar payından sonra kalan alanı doldurur. */
+          className="relative h-[50vh] w-[94vw] shrink-0 overflow-hidden border border-line-2 bg-bg-2 shadow-[var(--shadow-lg)] sm:h-[min(80vh,52.9vw)]"
         >
           {media ? (
             media.type === "video" ? (
@@ -83,31 +68,13 @@ export function HeroScroll({
                 preload="metadata"
                 className="absolute inset-0 size-full object-cover"
               />
-            ) : hasSlider ? (
-              slides.map((src, i) => (
-                <Image
-                  key={src}
-                  src={src}
-                  alt={
-                    i === 0
-                      ? "Anatolia Aero Design — gün batımında test uçuşu"
-                      : ""
-                  }
-                  fill
-                  priority={i === 0}
-                  sizes="(max-width: 768px) 100vw, 1300px"
-                  className={`kenburns object-cover transition-opacity duration-[1400ms] ease-in-out ${
-                    i === slide ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              ))
             ) : (
               <Image
                 src={media.src}
                 alt="Anatolia Aero Design — gün batımında test uçuşu"
                 fill
                 priority
-                sizes="(max-width: 768px) 100vw, 1300px"
+                sizes="100vw"
                 className="kenburns object-cover"
               />
             )
@@ -157,29 +124,6 @@ export function HeroScroll({
               <HudCorners />
             </>
           )}
-          {/* Slider göstergeleri */}
-          {hasSlider && (
-            <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
-              {slides.map((s, i) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setSlide(i)}
-                  aria-label={`${i + 1}. kare`}
-                  aria-current={i === slide}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === slide
-                      ? "w-7 bg-white"
-                      : "w-1.5 bg-white/45 hover:bg-white/70"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-
-          <div className="eyebrow absolute bottom-4 right-5 !text-[10px] !text-white/70">
-            DABAN · 2027
-          </div>
         </motion.div>
 
         {/* Başlık katmanı */}
@@ -238,7 +182,7 @@ export function HeroScroll({
         {/* Alt katman */}
         <motion.div
           style={{ y: footY, opacity: footOpacity }}
-          className="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-5 px-5"
+          className="relative z-10 flex w-full flex-col items-center gap-6 px-5 sm:absolute sm:inset-x-0 sm:bottom-8 sm:gap-5"
         >
           <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2.5">
             <Link

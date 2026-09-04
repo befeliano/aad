@@ -1,5 +1,5 @@
 import { HeroScroll } from "@/components/marketing/HeroScroll";
-import { heroMedia, heroSlides } from "@/lib/public-assets";
+import { heroMedia } from "@/lib/public-assets";
 import { FleetSection } from "@/components/marketing/FleetSection";
 import { AchievementsSection } from "@/components/marketing/AchievementsSection";
 import { DepartmentsSection } from "@/components/marketing/DepartmentsSection";
@@ -11,7 +11,7 @@ import { AtaturkBand } from "@/components/marketing/AtaturkBand";
 export default function HomePage() {
   return (
     <>
-      <HeroScroll media={heroMedia()} slides={heroSlides()} />
+      <HeroScroll media={heroMedia()} />
       <ScrollParallax />
       <FleetSection />
       <AchievementsSection />
