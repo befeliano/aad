@@ -1,0 +1,29 @@
+# ---- Sırlar (asla commit edilmez) ----
+pass.txt
+.env
+.env.*
+!.env.example
+**/backend/.env
+
+# ---- Bağımlılıklar / build çıktıları ----
+node_modules/
+.next/
+out/
+dist/
+build/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---- Uçuş analiz oturum çıktıları ----
+aadFlight/backend/sessions/
+
+# ---- Editör / işletim sistemi ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

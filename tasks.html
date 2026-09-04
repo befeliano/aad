@@ -1,0 +1,122 @@
+<!--
+  Tasks tab template — tasks.js bunu fetch edip #tasksTabHost içine yerleştirir.
+  Bu sayede index.html şişmez, görevlerle ilgili tüm UI burada toplanır.
+-->
+<div class="section-title">
+  <span class="section-title__num">T</span>
+  <h2>Görevler — Yapılacaklar Panosu</h2>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h3>Yeni Görev Oluştur</h3></div>
+  <form id="taskForm" class="form">
+    <label>Görev Başlığı
+      <input type="text" name="title" required placeholder="örn. Sol kanat servo motorları lehimle" />
+    </label>
+    <div class="form__row">
+      <label>Departman
+        <select name="dept" required>
+          <option value="yazilim">Yazılım</option>
+          <option value="yapisal">Yapısal</option>
+          <option value="aviyonik">Aviyonik</option>
+          <option value="kompozit">Kompozit</option>
+          <option value="medya">Medya</option>
+          <option value="sponsorluk">Sponsorluk</option>
+          <option value="ortak">Ortak</option>
+        </select>
+      </label>
+      <label>Atanan Kişi
+        <input type="text" name="assignee" placeholder="örn. Ahmet Yılmaz" />
+      </label>
+      <label>Deadline
+        <input type="date" name="deadline" />
+      </label>
+    </div>
+    <div class="form__row">
+      <label>Öncelik
+        <select name="priority">
+          <option value="low">Düşük</option>
+          <option value="medium" selected>Orta</option>
+          <option value="high">Yüksek</option>
+          <option value="critical">Kritik</option>
+        </select>
+      </label>
+      <label>Başlangıç Sütunu
+        <select name="status">
+          <option value="todo" selected>Yapılacak</option>
+          <option value="doing">Yapılıyor</option>
+          <option value="review">Test/Kontrol</option>
+          <option value="done">Tamamlandı</option>
+        </select>
+      </label>
+    </div>
+    <label>Açıklama
+      <textarea name="description" rows="2" placeholder="detaylar, materyaller, kabul kriterleri..."></textarea>
+    </label>
+    <button type="submit" class="btn btn--primary">Görevi Oluştur</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h3>Filtreler</h3>
+    <div class="panel__head-right">
+      <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+      <span class="panel__count" id="tasksCount">0 görev</span>
+    </div>
+  </div>
+  <div class="form form--inline" style="padding-bottom: 22px;">
+    <label>Arama
+      <input type="text" id="taskSearch" placeholder="başlık ya da kişi ara..." />
+    </label>
+    <label>Departman
+      <select id="taskFilterDept">
+        <option value="">Tümü</option>
+        <option value="yazilim">Yazılım</option>
+        <option value="yapisal">Yapısal</option>
+        <option value="aviyonik">Aviyonik</option>
+        <option value="kompozit">Kompozit</option>
+        <option value="medya">Medya</option>
+        <option value="sponsorluk">Sponsorluk</option>
+        <option value="ortak">Ortak</option>
+      </select>
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" id="taskOnlyMine" /> Sadece bana atananlar
+    </label>
+  </div>
+</div>
+
+<div class="kanban" id="kanbanBoard">
+  <div class="kanban__col" data-status="todo">
+    <div class="kanban__col-head">
+      <span class="kanban__col-title">YAPILACAK</span>
+      <span class="kanban__col-count" data-count="todo">0</span>
+    </div>
+    <div class="kanban__list" data-drop="todo"></div>
+  </div>
+
+  <div class="kanban__col" data-status="doing">
+    <div class="kanban__col-head">
+      <span class="kanban__col-title">YAPILIYOR</span>
+      <span class="kanban__col-count" data-count="doing">0</span>
+    </div>
+    <div class="kanban__list" data-drop="doing"></div>
+  </div>
+
+  <div class="kanban__col" data-status="review">
+    <div class="kanban__col-head">
+      <span class="kanban__col-title">TEST / KONTROL</span>
+      <span class="kanban__col-count" data-count="review">0</span>
+    </div>
+    <div class="kanban__list" data-drop="review"></div>
+  </div>
+
+  <div class="kanban__col" data-status="done">
+    <div class="kanban__col-head">
+      <span class="kanban__col-title">TAMAMLANDI</span>
+      <span class="kanban__col-count" data-count="done">0</span>
+    </div>
+    <div class="kanban__list" data-drop="done"></div>
+  </div>
+</div>

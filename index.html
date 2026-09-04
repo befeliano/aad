@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Anatolia Aero Design — ESTÜ İHA Takımı</title>
+  <meta name="description" content="Eskişehir Teknik Üniversitesi Anatolia Aero Design İHA Takımı — Resmi yönetim paneli" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tasks.css" />
+  <script>
+    // Tema'yı sayfa renderlanmadan önce uygula → flash önler
+    (function(){
+      try {
+        var t = localStorage.getItem('aad_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e){}
+    })();
+  </script>
+</head>
+<body>
+  <!-- ============== HAVA DURUMU — STICKY BAR ============== -->
+  <div id="weather-bar" class="weather-bar" aria-live="polite">
+    <div class="weather-bar__inner">
+      <div class="weather-bar__main">
+        <div class="weather-bar__icon" id="wx-icon">☀</div>
+        <div class="weather-bar__temp">
+          <span id="wx-temp">--</span><span class="deg">°C</span>
+        </div>
+        <div class="weather-bar__cond">
+          <span id="wx-cond">Veriler yükleniyor</span>
+          <span class="weather-bar__loc" id="wx-loc">Eskişehir</span>
+        </div>
+      </div>
+
+      <div class="weather-bar__metrics">
+        <div class="metric">
+          <span class="metric__label">NEM</span>
+          <span class="metric__value"><span id="wx-humidity">--</span>%</span>
+        </div>
+        <div class="metric">
+          <span class="metric__label">YER RÜZGAR</span>
+          <span class="metric__value">
+            <span id="wx-wind-ground">--</span>
+            <span class="metric__unit" id="wx-wind-ground-unit">km/h</span>
+            <span class="metric__dir" id="wx-wind-ground-dir">—</span>
+          </span>
+        </div>
+        <div class="metric">
+          <span class="metric__label">50 M RÜZGAR</span>
+          <span class="metric__value">
+            <span id="wx-wind-50">--</span>
+            <span class="metric__unit" id="wx-wind-50-unit">km/h</span>
+            <span class="metric__dir" id="wx-wind-50-dir">—</span>
+          </span>
+        </div>
+
+        <div class="unit-toggle" role="group" aria-label="Rüzgar birimi">
+          <button class="unit-toggle__btn is-active" data-unit="kmh">km/h</button>
+          <button class="unit-toggle__btn" data-unit="kn">knot</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== HEADER ============== -->
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="42" height="42">
+          <path d="M8 40 L32 12 L56 40 L48 40 L32 22 L16 40 Z" fill="var(--accent)"/>
+          <path d="M14 46 L32 30 L50 46 L42 46 L32 38 L22 46 Z" fill="var(--ink)"/>
+        </svg>
+      </div>
+      <div class="brand__text">
+        <span class="brand__name">ANATOLIA AERO DESIGN</span>
+        <span class="brand__sub">ESTÜ · İHA Proje Takımı · Est. Eskişehir</span>
+      </div>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Menü" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!--
+      RBAC ATTRIBUTE'LARI:
+      data-public           → herkese açık
+      data-private          → giriş gerekli
+      data-allowed-depts    → sadece şu departmanlar (virgüllü)
+                              boş/yok → tüm üyeler
+      data-role="admin"     → sadece admin
+    -->
+    <nav class="nav" id="primaryNav">
+      <button class="nav__link is-active" data-tab="home" data-public>Ana Sayfa</button>
+      <button class="nav__link" data-tab="contact" data-public>İletişim</button>
+
+      <!-- Yönetim dropdown'u — tüm private tab'ları gruplar -->
+      <div class="nav__dropdown" data-private>
+        <button class="nav__dropdown-trigger" type="button" data-private>Yönetim</button>
+        <div class="nav__dropdown-menu">
+          <button class="nav__link" data-tab="tasks" data-private>Görevler</button>
+          <button class="nav__link" data-tab="needs" data-private>İhtiyaç Tablosu</button>
+          <button class="nav__link" data-tab="flight" data-private>Uçuş Planlaması</button>
+          <button class="nav__link" data-tab="weather" data-private>Hava Durumu</button>
+
+          <button class="nav__link" data-tab="stock" data-private
+                  data-allowed-depts="yazilim,yapisal,kompozit,aviyonik,sponsorluk">Stok Takibi</button>
+
+          <button class="nav__link" data-tab="parts" data-private
+                  data-allowed-depts="yazilim,yapisal,kompozit,aviyonik,medya">Parçalar (3D)</button>
+
+          <button class="nav__link" data-tab="notes" data-private
+                  data-allowed-depts="yazilim,yapisal,kompozit,aviyonik">Uçuş Notları</button>
+
+          <button class="nav__link" data-tab="sponsorship" data-private
+                  data-allowed-depts="sponsorluk">Sponsorluk & Bütçe</button>
+
+          <button class="nav__link" data-tab="telemetry" data-private
+                  data-allowed-depts="yazilim,aviyonik">API & Telemetri</button>
+
+          <button class="nav__link" data-tab="media" data-private
+                  data-allowed-depts="sponsorluk,medya">Tanıtım Materyalleri</button>
+
+          <button class="nav__link" data-tab="user-management" data-private
+                  data-role="admin">⚙ Üye Yönetimi</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="auth-area" id="authArea">
+      <button class="theme-toggle" id="themeToggle" aria-label="Tema değiştir" title="Tema değiştir" type="button">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" width="18" height="18">
+          <circle cx="12" cy="12" r="4" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="5"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="5" y2="12"/>
+            <line x1="19" y1="12" x2="22" y2="12"/>
+            <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+            <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+            <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+            <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+          </g>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" width="18" height="18">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/>
+        </svg>
+      </button>
+      <div id="authButtons">
+        <button class="btn btn--primary btn--small" id="loginBtn" type="button">Takım Girişi</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="conn-status" id="connStatus" hidden>
+    <span class="conn-status__dot"></span>
+    <span class="conn-status__text">Bağlanıyor...</span>
+  </div>
+
+  <main class="main">
+
+    <!-- ============== HOME (HERKESE AÇIK) ============== -->
+    <section class="tab is-active" data-tab="home">
+      <div class="hero">
+        <div class="hero__bg" aria-hidden="true">
+          <svg class="hero__svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--hero-grad-1)"/>
+                <stop offset="100%" stop-color="var(--hero-grad-2)"/>
+              </linearGradient>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(192,32,44,0.08)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="800" height="400" fill="url(#skyGrad)"/>
+            <rect width="800" height="400" fill="url(#grid)"/>
+          </svg>
+        </div>
+
+        <div class="hero__content">
+          <div class="hero__tag">EST. 2018 · TEKNOFEST CHAMPIONS</div>
+          <h1 class="hero__title">
+            Gökyüzünü <span class="ink-accent">tasarlıyoruz.</span>
+          </h1>
+          <p class="hero__lede">
+            Eskişehir Teknik Üniversitesi Anatolia Aero Design — insansız hava aracı tasarım, üretim ve test ekibi. Yazılımdan kompozit yapıya, aviyonikten medyaya bir bütün.
+          </p>
+
+          <div class="hero__stats">
+            <div class="stat"><span class="stat__num">3</span><span class="stat__lbl">İHA Platformu</span></div>
+            <div class="stat"><span class="stat__num">6</span><span class="stat__lbl">Departman</span></div>
+            <div class="stat"><span class="stat__num">2x</span><span class="stat__lbl">Teknofest 1.</span></div>
+            <div class="stat"><span class="stat__num">270+</span><span class="stat__lbl">Test Uçuşu</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span class="section-title__num">01</span>
+        <h2>Filomuz</h2>
+      </div>
+
+      <div class="fleet">
+        <article class="aircraft aircraft--featured">
+          <div class="aircraft__badge">FLAGSHIP</div>
+          <div class="aircraft__img">
+            <svg viewBox="0 0 200 120" width="100%">
+              <path d="M100 30 L140 60 L160 70 L160 75 L140 70 L120 75 L120 90 L130 95 L130 98 L100 95 L70 98 L70 95 L80 90 L80 75 L60 70 L40 75 L40 70 L60 60 Z" fill="var(--ink)" stroke="var(--accent)" stroke-width="1.5"/>
+              <circle cx="100" cy="60" r="3" fill="var(--accent)"/>
+            </svg>
+          </div>
+          <h3 class="aircraft__name">GÖLGE</h3>
+          <p class="aircraft__desc">Takımın amiral gemisi. Sabit kanatlı, görev odaklı insansız hava aracı.</p>
+          <div class="aircraft__specs">
+            <span>Sabit Kanat</span><span>·</span><span>Görev İHA</span><span>·</span><span>2024</span>
+          </div>
+        </article>
+
+        <article class="aircraft">
+          <div class="aircraft__img">
+            <svg viewBox="0 0 200 120" width="100%">
+              <path d="M100 35 L130 60 L150 65 L150 70 L130 67 L115 72 L115 85 L125 90 L125 92 L100 90 L75 92 L75 90 L85 85 L85 72 L70 67 L50 70 L50 65 L70 60 Z" fill="var(--ink)" stroke="var(--ink-2)" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3 class="aircraft__name">KARTAL</h3>
+          <p class="aircraft__desc">Eğitim ve yapısal test platformu.</p>
+          <div class="aircraft__specs"><span>Sabit Kanat</span><span>·</span><span>Test</span></div>
+        </article>
+
+        <article class="aircraft">
+          <div class="aircraft__img">
+            <svg viewBox="0 0 200 120" width="100%">
+              <path d="M100 35 L130 60 L150 65 L150 70 L130 67 L115 72 L115 85 L125 90 L125 92 L100 90 L75 92 L75 90 L85 85 L85 72 L70 67 L50 70 L50 65 L70 60 Z" fill="var(--ink)" stroke="var(--ink-2)" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3 class="aircraft__name">HYDRA</h3>
+          <p class="aircraft__desc">Aviyonik geliştirme ve veri toplama.</p>
+          <div class="aircraft__specs"><span>Sabit Kanat</span><span>·</span><span>R&D</span></div>
+        </article>
+      </div>
+
+      <div class="section-title">
+        <span class="section-title__num">02</span>
+        <h2>Departmanlar</h2>
+      </div>
+
+      <div class="dept-grid" id="deptGrid">
+        <div class="dept-card" data-dept="yazilim"><span class="dept-card__num">01</span><h3>Yazılım</h3><p>Otopilot, görev yönetimi, yer kontrol istasyonu</p><span class="dept-card__more">Detaylar →</span></div>
+        <div class="dept-card" data-dept="yapisal"><span class="dept-card__num">02</span><h3>Yapısal</h3><p>Mekanik tasarım, montaj, dayanım analizi</p><span class="dept-card__more">Detaylar →</span></div>
+        <div class="dept-card" data-dept="aviyonik"><span class="dept-card__num">03</span><h3>Aviyonik</h3><p>Sensör entegrasyonu, elektronik, telemetri</p><span class="dept-card__more">Detaylar →</span></div>
+        <div class="dept-card" data-dept="kompozit"><span class="dept-card__num">04</span><h3>Kompozit</h3><p>Karbon fiber, kalıplama, yüzey işleme</p><span class="dept-card__more">Detaylar →</span></div>
+        <div class="dept-card" data-dept="sponsorluk"><span class="dept-card__num">05</span><h3>Sponsorluk</h3><p>Kurumsal ilişkiler, finansman</p><span class="dept-card__more">Detaylar →</span></div>
+        <div class="dept-card" data-dept="medya"><span class="dept-card__num">06</span><h3>Medya & Tanıtım</h3><p>İçerik, fotoğraf, video, sosyal medya</p><span class="dept-card__more">Detaylar →</span></div>
+      </div>
+    </section>
+
+    <!-- ============== İLETİŞİM ============== -->
+    <section class="tab" data-tab="contact">
+      <div class="section-title">
+        <span class="section-title__num">İ</span>
+        <h2>İletişim</h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="panel">
+          <div class="panel__head"><h3>Bize Ulaşın</h3></div>
+          <div class="contact-list">
+            <div class="contact-item">
+              <span class="contact-item__label">ADRES</span>
+              <span class="contact-item__value">Eskişehir Teknik Üniversitesi<br>İki Eylül Kampüsü, Tepebaşı / Eskişehir</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-item__label">E-POSTA</span>
+              <span class="contact-item__value">anatoliaaerodesign@estu.edu.tr</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-item__label">INSTAGRAM</span>
+              <span class="contact-item__value">@anatoliaaerodesign</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-item__label">SPONSOR OLMAK İSTİYORUM</span>
+              <span class="contact-item__value">Sponsorluk teklifleri için yukarıdaki e-posta adresinden bize ulaşabilirsiniz. Kurumsal sponsorluk paketleri ve geri dönüş kalemleri hakkında detaylı sunum gönderebiliriz.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h3>Mesaj Bırakın</h3></div>
+          <form id="contactForm" class="form">
+            <label for="contact-name">Ad Soyad
+              <input id="contact-name" type="text" name="name" required autocomplete="name" />
+            </label>
+            <label for="contact-email">E-posta
+              <input id="contact-email" type="email" name="email" required autocomplete="email" />
+            </label>
+            <label for="contact-subject">Konu
+              <input id="contact-subject" type="text" name="subject" />
+            </label>
+            <label for="contact-message">Mesajınız
+              <textarea id="contact-message" name="message" rows="5" required></textarea>
+            </label>
+            <button type="submit" class="btn btn--primary">Gönder</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== TASKS / KANBAN ============== -->
+    <section class="tab" data-tab="tasks">
+      <div class="section-title">
+        <span class="section-title__num">T</span>
+        <h2>Görevler — Yapılacaklar Panosu</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni Görev Oluştur</h3></div>
+        <form id="taskForm" class="form">
+          <label>Görev Başlığı
+            <input type="text" name="title" required placeholder="örn. Sol kanat servo motorları lehimle" />
+          </label>
+          <div class="form__row">
+            <label>Departman
+              <select name="dept" required>
+                <option value="yazilim">Yazılım</option>
+                <option value="yapisal">Yapısal</option>
+                <option value="aviyonik">Aviyonik</option>
+                <option value="kompozit">Kompozit</option>
+                <option value="medya">Medya</option>
+                <option value="sponsorluk">Sponsorluk</option>
+                <option value="ortak">Ortak</option>
+              </select>
+            </label>
+            <label>Atanan Kişi
+              <input type="text" name="assignee" placeholder="örn. Ahmet Yılmaz" />
+            </label>
+            <label>Deadline
+              <input type="date" name="deadline" />
+            </label>
+          </div>
+          <div class="form__row">
+            <label>Öncelik
+              <select name="priority">
+                <option value="low">Düşük</option>
+                <option value="medium" selected>Orta</option>
+                <option value="high">Yüksek</option>
+                <option value="critical">Kritik</option>
+              </select>
+            </label>
+            <label>Başlangıç Sütunu
+              <select name="status">
+                <option value="todo" selected>Yapılacak</option>
+                <option value="doing">Yapılıyor</option>
+                <option value="review">Test/Kontrol</option>
+                <option value="done">Tamamlandı</option>
+              </select>
+            </label>
+          </div>
+          <label>Açıklama
+            <textarea name="description" rows="2" placeholder="detaylar, materyaller, kabul kriterleri..."></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Görevi Oluştur</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Filtreler</h3>
+          <div class="panel__head-right">
+            <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+            <span class="panel__count" id="tasksCount">0 görev</span>
+          </div>
+        </div>
+        <div class="form form--inline" style="padding-bottom: 22px;">
+          <label>Arama
+            <input type="text" id="taskSearch" placeholder="başlık ya da kişi ara..." />
+          </label>
+          <label>Departman
+            <select id="taskFilterDept">
+              <option value="">Tümü</option>
+              <option value="yazilim">Yazılım</option>
+              <option value="yapisal">Yapısal</option>
+              <option value="aviyonik">Aviyonik</option>
+              <option value="kompozit">Kompozit</option>
+              <option value="medya">Medya</option>
+              <option value="sponsorluk">Sponsorluk</option>
+              <option value="ortak">Ortak</option>
+            </select>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" id="taskOnlyMine" /> Sadece bana atananlar
+          </label>
+        </div>
+      </div>
+
+      <div class="kanban" id="kanbanBoard">
+        <div class="kanban__col" data-status="todo">
+          <div class="kanban__col-head">
+            <span class="kanban__col-title">YAPILACAK</span>
+            <span class="kanban__col-count" data-count="todo">0</span>
+          </div>
+          <div class="kanban__list" data-drop="todo"></div>
+        </div>
+
+        <div class="kanban__col" data-status="doing">
+          <div class="kanban__col-head">
+            <span class="kanban__col-title">YAPILIYOR</span>
+            <span class="kanban__col-count" data-count="doing">0</span>
+          </div>
+          <div class="kanban__list" data-drop="doing"></div>
+        </div>
+
+        <div class="kanban__col" data-status="review">
+          <div class="kanban__col-head">
+            <span class="kanban__col-title">TEST / KONTROL</span>
+            <span class="kanban__col-count" data-count="review">0</span>
+          </div>
+          <div class="kanban__list" data-drop="review"></div>
+        </div>
+
+        <div class="kanban__col" data-status="done">
+          <div class="kanban__col-head">
+            <span class="kanban__col-title">TAMAMLANDI</span>
+            <span class="kanban__col-count" data-count="done">0</span>
+          </div>
+          <div class="kanban__list" data-drop="done"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== SPONSORLUK ============== -->
+    <section class="tab" data-tab="sponsorship">
+      <div class="section-title">
+        <span class="section-title__num">S</span>
+        <h2>Sponsorluk Yönetimi</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card--big">
+          <div class="card__label">TOPLAM BÜTÇE</div>
+          <div class="card__big-num"><span id="totalBudget">0</span> ₺</div>
+          <div class="card__sub">Tüm sponsorluk gelirleri</div>
+        </div>
+        <div class="card">
+          <div class="card__label">TAHSİS EDİLEN</div>
+          <div class="card__num"><span id="allocated">0</span> ₺</div>
+        </div>
+        <div class="card">
+          <div class="card__label">KALAN</div>
+          <div class="card__num"><span id="remaining">0</span> ₺</div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel__head"><h3>Yeni Sponsorluk Kaydı</h3></div>
+          <form id="sponsorForm" class="form">
+            <label>Sponsor Adı
+              <input type="text" name="name" required placeholder="örn. ASELSAN" />
+            </label>
+            <label>Tutar (₺)
+              <input type="number" name="amount" min="0" step="100" required placeholder="50000" />
+            </label>
+            <label>Tarih
+              <input type="date" name="date" required />
+            </label>
+            <label>Not
+              <textarea name="note" rows="2" placeholder="kısa açıklama..."></textarea>
+            </label>
+            <button type="submit" class="btn btn--primary">Kaydet</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h3>Bütçe Tahsisi</h3></div>
+          <form id="allocForm" class="form">
+            <label>Departman
+              <select name="dept" required>
+                <option value="">Seçiniz</option>
+                <option value="yazilim">Yazılım</option>
+                <option value="yapisal">Yapısal</option>
+                <option value="aviyonik">Aviyonik</option>
+                <option value="kompozit">Kompozit</option>
+                <option value="sponsorluk">Sponsorluk</option>
+                <option value="medya">Medya & Tanıtım</option>
+              </select>
+            </label>
+            <label>Tutar (₺)
+              <input type="number" name="amount" min="0" step="100" required />
+            </label>
+            <label>Açıklama
+              <input type="text" name="purpose" placeholder="örn. servo motorlar" />
+            </label>
+            <button type="submit" class="btn btn--primary">Tahsis Et</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Departman Bazlı Bütçe Dağılımı</h3></div>
+        <div class="dept-budgets" id="deptBudgets"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Sponsorluk Geçmişi</h3></div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Sponsor</th><th>Tutar</th><th>Tarih</th><th>Not</th><th></th></tr>
+            </thead>
+            <tbody id="sponsorTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== STOK ============== -->
+    <section class="tab" data-tab="stock">
+      <div class="section-title">
+        <span class="section-title__num">ST</span>
+        <h2>Stok Takibi</h2>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel__head"><h3>Yeni Malzeme Ekle</h3></div>
+          <form id="stockForm" class="form">
+            <label>Malzeme Adı
+              <input type="text" name="name" required placeholder="örn. Karbon fiber kumaş 200gsm" />
+            </label>
+            <div class="form__row">
+              <label>Departman
+                <select name="dept" required>
+                  <option value="yazilim">Yazılım</option>
+                  <option value="yapisal">Yapısal</option>
+                  <option value="aviyonik">Aviyonik</option>
+                  <option value="kompozit">Kompozit</option>
+                  <option value="sponsorluk">Sponsorluk</option>
+                  <option value="medya">Medya & Tanıtım</option>
+                  <option value="ortak">Ortak</option>
+                </select>
+              </label>
+              <label>Miktar
+                <input type="number" name="qty" min="0" step="1" required />
+              </label>
+              <label>Birim
+                <input type="text" name="unit" required placeholder="adet, m, kg..." />
+              </label>
+            </div>
+            <div class="form__row">
+              <label>Birim Fiyat (₺)
+                <input type="number" name="price" min="0" step="0.01" />
+              </label>
+              <label>Min. Stok
+                <input type="number" name="min" min="0" step="1" placeholder="alarm seviyesi" />
+              </label>
+              <label>Konum
+                <input type="text" name="location" placeholder="raf / dolap" />
+              </label>
+            </div>
+            <button type="submit" class="btn btn--primary">Ekle</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h3>Filtreler</h3></div>
+          <div class="form">
+            <label>Arama
+              <input type="text" id="stockSearch" placeholder="malzeme ara..." />
+            </label>
+            <label>Departman
+              <select id="stockFilterDept">
+                <option value="">Tümü</option>
+                <option value="yazilim">Yazılım</option>
+                <option value="yapisal">Yapısal</option>
+                <option value="aviyonik">Aviyonik</option>
+                <option value="kompozit">Kompozit</option>
+                <option value="sponsorluk">Sponsorluk</option>
+                <option value="medya">Medya & Tanıtım</option>
+                <option value="ortak">Ortak</option>
+              </select>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="stockOnlyLow" /> Sadece kritik stok
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Stok Listesi</h3>
+          <div class="panel__head-right">
+            <span class="live-indicator" title="Canlı bağlantı"><span class="live-dot"></span> CANLI</span>
+            <span class="panel__count" id="stockCount">0 kayıt</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Malzeme</th><th>Departman</th><th>Miktar</th><th>Birim Fiyat</th><th>Toplam</th><th>Konum</th><th>Durum</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="stockTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== HAVA DURUMU ============== -->
+    <section class="tab" data-tab="weather">
+      <div class="section-title">
+        <span class="section-title__num">WX</span>
+        <h2>Hava Durumu — 5 Günlük Veri</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Konum</h3>
+        </div>
+        <div class="form form--inline">
+          <label>Şehir / Saha
+            <input type="text" id="locInput" placeholder="örn. Eskişehir" value="Eskişehir" />
+          </label>
+          <button class="btn btn--primary" id="locSearch" type="button">Ara</button>
+          <button class="btn" id="locMe" type="button">Konumumu Kullan</button>
+        </div>
+      </div>
+
+      <div class="forecast" id="forecast"></div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Detaylı Saatlik Görünüm — Bugün</h3></div>
+        <div class="hourly" id="hourly"></div>
+      </div>
+    </section>
+
+    <!-- ============== İHTİYAÇ TABLOSU ============== -->
+    <section class="tab" data-tab="needs">
+      <div class="section-title">
+        <span class="section-title__num">N</span>
+        <h2>İhtiyaç Tablosu</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni İhtiyaç Talebi</h3></div>
+        <form id="needForm" class="form">
+          <label>Malzeme / Hizmet
+            <input type="text" name="item" required placeholder="örn. Pixhawk 6X" />
+          </label>
+          <div class="form__row">
+            <label>Departman
+              <select name="dept" required>
+                <option value="yazilim">Yazılım</option>
+                <option value="yapisal">Yapısal</option>
+                <option value="aviyonik">Aviyonik</option>
+                <option value="kompozit">Kompozit</option>
+                <option value="sponsorluk">Sponsorluk</option>
+                <option value="medya">Medya & Tanıtım</option>
+              </select>
+            </label>
+            <label>Miktar
+              <input type="number" name="qty" min="1" step="1" required value="1" />
+            </label>
+            <label>Tahmini Tutar (₺)
+              <input type="number" name="cost" min="0" step="100" />
+            </label>
+            <label>Öncelik
+              <select name="priority">
+                <option value="low">Düşük</option>
+                <option value="medium" selected>Orta</option>
+                <option value="high">Yüksek</option>
+                <option value="critical">Kritik</option>
+              </select>
+            </label>
+          </div>
+          <label>Gerekçe
+            <textarea name="reason" rows="2"></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Talep Oluştur</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Açık İhtiyaçlar</h3>
+          <div class="panel__head-right">
+            <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+            <span class="panel__count" id="needsCount">0</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Malzeme</th><th>Departman</th><th>Adet</th><th>Tutar</th><th>Öncelik</th><th>Durum</th><th></th></tr>
+            </thead>
+            <tbody id="needsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== PARÇALAR (3D CAD) ============== -->
+    <section class="tab" data-tab="parts">
+      <div class="section-title">
+        <span class="section-title__num">3D</span>
+        <h2>Parçalar — 3D Görüntüleyici</h2>
+      </div>
+
+      <div class="db-banner" style="background: linear-gradient(90deg, var(--accent-soft), transparent); border-left: 3px solid var(--accent); padding: 14px 18px; border-radius: 4px; font-size: 13px; margin-bottom: 20px;">
+        <strong>Desteklenen formatlar:</strong>
+        <code>STL</code>, <code>OBJ</code>, <code>GLB</code>/<code>GLTF</code> — site içinde 3D olarak döndürülebilir.
+        <code>SLDPRT</code>, <code>STEP</code>, <code>DWG</code>, <code>IPT</code> dosyaları yüklenebilir ve indirilebilir, ancak görüntülenemez.
+        SolidWorks'ten <strong>File → Save As → STL</strong> ile dışa aktarın (kalite: Coarse / Fine seçilebilir).
+      </div>
+
+      <div class="split">
+        <!-- Yükleme paneli sadece teknik departmanlar için (medya hariç) -->
+        <div class="panel" data-write-only="yazilim,yapisal,kompozit,aviyonik">
+          <div class="panel__head"><h3>Yeni Parça Yükle</h3></div>
+          <form id="partForm" class="form">
+            <label>Parça Adı
+              <input type="text" name="name" required placeholder="örn. Gölge Sol Kanat" />
+            </label>
+            <div class="form__row">
+              <label>Departman
+                <select name="dept" required>
+                  <option value="yapisal">Yapısal</option>
+                  <option value="kompozit">Kompozit</option>
+                  <option value="aviyonik">Aviyonik</option>
+                  <option value="yazilim">Yazılım</option>
+                  <option value="ortak">Ortak</option>
+                </select>
+              </label>
+              <label>İHA
+                <select name="aircraft" required>
+                  <option value="Gölge">Gölge</option>
+                  <option value="Platform 02">Platform 02</option>
+                  <option value="Platform 03">Platform 03</option>
+                  <option value="Genel">Genel / Bağımsız</option>
+                </select>
+              </label>
+              <label>Versiyon
+                <input type="text" name="version" placeholder="v1, v2.3..." value="v1" />
+              </label>
+            </div>
+            <label>Açıklama
+              <textarea name="description" rows="2" placeholder="kısa açıklama..."></textarea>
+            </label>
+            <label>Dosya
+              <input type="file" name="file" id="partFile" required
+                     accept=".stl,.obj,.glb,.gltf,.step,.stp,.sldprt,.dwg,.dxf,.ipt,.f3d,.iges,.igs" />
+              <span class="file-hint" id="fileHint">STL, OBJ, GLB tercih edilir (max 100 MB)</span>
+            </label>
+            <div class="upload-progress" id="uploadProgress" hidden>
+              <div class="upload-progress__bar"><span id="uploadProgressBar"></span></div>
+              <span class="upload-progress__text" id="uploadProgressText">0%</span>
+            </div>
+            <button type="submit" class="btn btn--primary" id="partSubmit">
+              <span class="btn__label">Yükle</span>
+              <span class="btn__spinner" hidden></span>
+            </button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h3>Filtreler</h3></div>
+          <div class="form">
+            <label>Arama
+              <input type="text" id="partSearch" placeholder="parça ara..." />
+            </label>
+            <label>İHA
+              <select id="partFilterAircraft">
+                <option value="">Tümü</option>
+                <option value="Gölge">Gölge</option>
+                <option value="Platform 02">Platform 02</option>
+                <option value="Platform 03">Platform 03</option>
+                <option value="Genel">Genel</option>
+              </select>
+            </label>
+            <label>Departman
+              <select id="partFilterDept">
+                <option value="">Tümü</option>
+                <option value="yazilim">Yazılım</option>
+                <option value="yapisal">Yapısal</option>
+                <option value="aviyonik">Aviyonik</option>
+                <option value="kompozit">Kompozit</option>
+                <option value="medya">Medya</option>
+                <option value="ortak">Ortak</option>
+              </select>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="partOnlyViewable" /> Sadece 3D görüntülenebilir olanlar
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="parts-layout">
+        <div class="panel parts-list-panel">
+          <div class="panel__head">
+            <h3>Parça Kütüphanesi</h3>
+            <div class="panel__head-right">
+              <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+              <span class="panel__count" id="partsCount">0 parça</span>
+            </div>
+          </div>
+          <div class="parts-list" id="partsList"></div>
+        </div>
+
+        <div class="panel parts-viewer-panel">
+          <div class="panel__head">
+            <h3 id="viewerTitle">3D Görüntüleyici</h3>
+            <div class="panel__head-right">
+              <button class="btn btn--small" id="viewerReset" title="Görüntüyü sıfırla" disabled type="button">↻</button>
+              <button class="btn btn--small" id="viewerFullscreen" title="Tam ekran" disabled type="button">⛶</button>
+              <button class="btn btn--small" id="viewerWireframe" title="Tel kafes modu" disabled type="button">◫</button>
+            </div>
+          </div>
+          <div class="viewer" id="viewer">
+            <div class="viewer__placeholder" id="viewerPlaceholder">
+              <svg viewBox="0 0 64 64" width="48" height="48" style="opacity:0.3;margin-bottom:12px;">
+                <path d="M32 8 L56 22 L56 42 L32 56 L8 42 L8 22 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M32 8 L32 56 M8 22 L56 42 M56 22 L8 42" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+              </svg>
+              <p>Soldaki listeden bir parça seçin</p>
+            </div>
+            <canvas id="viewerCanvas" hidden></canvas>
+            <div class="viewer__loading" id="viewerLoading" hidden>
+              <div class="spinner"></div>
+              <p>3D model yükleniyor...</p>
+            </div>
+            <div class="viewer__info" id="viewerInfo" hidden></div>
+          </div>
+          <div class="viewer__controls" id="viewerControls" hidden>
+            <span><kbd>SOL TIK</kbd> Döndür</span>
+            <span><kbd>SAĞ TIK</kbd> Kaydır</span>
+            <span><kbd>SCROLL</kbd> Yakınlaştır</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== UÇUŞ PLANLAMASI ============== -->
+    <section class="tab" data-tab="flight">
+      <div class="section-title">
+        <span class="section-title__num">F</span>
+        <h2>Uçuş Planlaması</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni Uçuş Planı</h3></div>
+        <form id="flightForm" class="form">
+          <div class="form__row">
+            <label>Tarih
+              <input type="date" name="date" required />
+            </label>
+            <label>Saat
+              <input type="time" name="time" required />
+            </label>
+            <label>İHA
+              <select name="aircraft" required>
+                <option value="Gölge">Gölge</option>
+                <option value="Kartal">Kartal</option>
+                <option value="Hydra">Hydra</option>
+              </select>
+            </label>
+          </div>
+          <div class="form__row">
+            <label>Pilot
+              <input type="text" name="pilot" required />
+            </label>
+            <label>Saha / Lokasyon
+              <input type="text" name="location" placeholder="örn. ESTÜ uçuş sahası" required />
+            </label>
+            <label>Tahmini Süre (dk)
+              <input type="number" name="duration" min="1" step="1" />
+            </label>
+          </div>
+          <label>Görev / Hedef
+            <textarea name="mission" rows="2" placeholder="örn. otopilot PID ayarı, kamera testi..."></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Planla</button>
+        </form>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel__head">
+            <h3>Planlanan Uçuşlar</h3>
+            <span class="panel__count" id="upcomingCount">0</span>
+          </div>
+          <div class="flight-list" id="upcomingFlights"></div>
+        </div>
+        <div class="panel">
+          <div class="panel__head">
+            <h3>Geçmiş Uçuşlar</h3>
+            <span class="panel__count" id="pastCount">0</span>
+          </div>
+          <div class="flight-list" id="pastFlights"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== UÇUŞ NOTLARI ============== -->
+    <section class="tab" data-tab="notes">
+      <div class="section-title">
+        <span class="section-title__num">L</span>
+        <h2>Uçuş Notları & Logbook</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni Not</h3></div>
+        <form id="noteForm" class="form">
+          <div class="form__row">
+            <label>İlgili Uçuş
+              <select name="flightId" id="noteFlightSelect">
+                <option value="">— Bağımsız not —</option>
+              </select>
+            </label>
+            <label>Tip
+              <select name="type">
+                <option value="observation">Gözlem</option>
+                <option value="issue">Sorun / Düzeltilmeli</option>
+                <option value="improvement">İyileştirme</option>
+                <option value="success">Başarı</option>
+              </select>
+            </label>
+            <label>Şiddet
+              <select name="severity">
+                <option value="info">Bilgi</option>
+                <option value="warning">Uyarı</option>
+                <option value="critical">Kritik</option>
+              </select>
+            </label>
+          </div>
+          <label>Not
+            <textarea name="text" rows="4" required placeholder="ör. iniş takımları sert temasta titreşim yaptı, amortisör kontrol edilmeli"></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Kaydet</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Tüm Notlar</h3>
+          <span class="panel__count" id="notesCount">0</span>
+        </div>
+        <div class="notes-grid" id="notesList"></div>
+      </div>
+    </section>
+
+    <!-- ============== API & TELEMETRİ (YENİ — Yazılım+Aviyonik) ============== -->
+    <section class="tab" data-tab="telemetry">
+      <div class="section-title">
+        <span class="section-title__num">API</span>
+        <h2>API & Telemetri</h2>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni Kayıt</h3></div>
+        <form id="telemetryForm" class="form">
+          <div class="form__row">
+            <label>Başlık <input type="text" name="title" required placeholder="örn. PID Kazanç Profili — Gölge V2" /></label>
+            <label>Kategori
+              <select name="category" required>
+                <option value="endpoint">API Endpoint</option>
+                <option value="log">Telemetri Log</option>
+                <option value="dashboard">Dashboard / Görselleştirme</option>
+                <option value="docs">Dokümantasyon</option>
+              </select>
+            </label>
+            <label>İlgili Uçuş (opsiyonel)
+              <select name="flightId" id="telemetryFlightSelect">
+                <option value="">—</option>
+              </select>
+            </label>
+          </div>
+          <label>İçerik (JSON, kod, doküman)
+            <textarea name="payload" rows="6" placeholder="örn. parametreler, log çıktısı, endpoint URL'leri..." style="font-family: var(--font-mono); font-size: 12px;"></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Kaydet</button>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Kayıtlar</h3>
+          <div class="panel__head-right">
+            <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+            <span class="panel__count" id="telemetryCount">0</span>
+          </div>
+        </div>
+        <div class="form" style="padding-bottom: 14px;">
+          <label>Kategori filtresi
+            <select id="telemetryFilterCategory">
+              <option value="">Tümü</option>
+              <option value="endpoint">API Endpoint</option>
+              <option value="log">Telemetri Log</option>
+              <option value="dashboard">Dashboard</option>
+              <option value="docs">Dokümantasyon</option>
+            </select>
+          </label>
+        </div>
+        <div id="telemetryList"></div>
+      </div>
+    </section>
+
+    <!-- ============== TANITIM MATERYALLERİ (YENİ — Sponsorluk+Medya) ============== -->
+    <section class="tab" data-tab="media">
+      <div class="section-title">
+        <span class="section-title__num">M</span>
+        <h2>Tanıtım Materyalleri</h2>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h3>Yeni Materyal</h3></div>
+        <form id="mediaForm" class="form">
+          <div class="form__row">
+            <label>Başlık <input type="text" name="title" required placeholder="örn. Sponsor Sunumu 2025" /></label>
+            <label>Kategori
+              <select name="category" required>
+                <option value="logo">Logo</option>
+                <option value="sunum">Sunum</option>
+                <option value="foto">Fotoğraf</option>
+                <option value="video">Video</option>
+                <option value="sablon">Şablon</option>
+                <option value="sozlesme">Sözleşme</option>
+                <option value="diger">Diğer</option>
+              </select>
+            </label>
+          </div>
+          <label>Açıklama <textarea name="description" rows="2"></textarea></label>
+          <div class="form__row">
+            <label>Dosya (opsiyonel, max 50 MB)
+              <input type="file" name="file" id="mediaFile" />
+            </label>
+            <label>veya Harici Link (Drive, Figma vb.)
+              <input type="url" name="external_url" placeholder="https://..." />
+            </label>
+          </div>
+          <button type="submit" class="btn btn--primary" id="mediaSubmit">
+            <span class="btn__label">Yükle</span>
+            <span class="btn__spinner" hidden></span>
+          </button>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Materyal Kütüphanesi</h3>
+          <div class="panel__head-right">
+            <span class="live-indicator"><span class="live-dot"></span> CANLI</span>
+            <span class="panel__count" id="mediaCount">0</span>
+          </div>
+        </div>
+        <div class="form" style="padding-bottom: 14px;">
+          <label>Kategori filtresi
+            <select id="mediaFilterCategory">
+              <option value="">Tümü</option>
+              <option value="logo">Logo</option>
+              <option value="sunum">Sunum</option>
+              <option value="foto">Fotoğraf</option>
+              <option value="video">Video</option>
+              <option value="sablon">Şablon</option>
+              <option value="sozlesme">Sözleşme</option>
+              <option value="diger">Diğer</option>
+            </select>
+          </label>
+        </div>
+        <div id="mediaList" class="parts-list"></div>
+      </div>
+    </section>
+
+    <!-- ============== ÜYE YÖNETİMİ (YENİ — Sadece Admin) ============== -->
+    <section class="tab" data-tab="user-management">
+      <div class="section-title">
+        <span class="section-title__num">⚙</span>
+        <h2>Üye Yönetimi</h2>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Nasıl Yeni Üye Eklenir?</h3></div>
+        <div style="padding: 16px 20px; font-size: 13px; line-height: 1.6;">
+          <ol style="margin: 0; padding-left: 18px;">
+            <li><strong>Supabase Dashboard</strong> → Authentication → Users → <strong>Add user</strong> ile e-posta+parola oluştur.</li>
+            <li><strong>User Metadata (Raw)</strong> alanına JSON olarak gir:
+              <pre style="background: var(--bg-3); padding: 10px; border-radius: 4px; margin: 8px 0; font-size: 11px;">{
+  "full_name": "Ahmet Yılmaz",
+  "department": "yazilim",
+  "username": "ahmet"
+}</pre></li>
+            <li>Üye giriş yaptığında otomatik olarak aşağıdaki listede görünür. Buradan departman ve rolünü değiştirebilirsin.</li>
+            <li>Departmanı boş bırakılan üyeler hiçbir korumalı veriye erişemez (kasıtlı: admin onayı bekler).</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Üyeler</h3>
+          <div class="panel__head-right">
+            <span class="panel__count" id="usersCount">0 üye</span>
+          </div>
+        </div>
+        <div class="form" style="padding-bottom: 14px;">
+          <label>Ara <input type="text" id="userSearch" placeholder="ad, e-posta, departman..." /></label>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Üye</th>
+                <th>E-posta</th>
+                <th>Departman</th>
+                <th>Rol</th>
+                <th>Son Giriş</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="userManagementTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3>Aktivite Günlüğü (Audit Log)</h3>
+          <span class="panel__count" id="auditCount">0 kayıt</span>
+        </div>
+        <div class="form" style="padding-bottom: 14px;">
+          <div class="form__row">
+            <label>Tablo
+              <select id="auditFilterTable">
+                <option value="">Tümü</option>
+                <option value="tasks">Görevler</option>
+                <option value="stock">Stok</option>
+                <option value="parts">Parçalar</option>
+                <option value="needs">İhtiyaç</option>
+                <option value="flights">Uçuş</option>
+                <option value="notes">Notlar</option>
+                <option value="sponsors">Sponsorlar</option>
+                <option value="allocations">Tahsisler</option>
+                <option value="telemetry">Telemetri</option>
+                <option value="media_assets">Medya</option>
+                <option value="profiles">Üye</option>
+              </select>
+            </label>
+            <label>İşlem
+              <select id="auditFilterAction">
+                <option value="">Tümü</option>
+                <option value="create">Oluşturma</option>
+                <option value="update">Güncelleme</option>
+                <option value="delete">Silme</option>
+                <option value="login">Giriş</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Zaman</th><th>Üye</th><th>İşlem</th><th>Tablo</th><th>Detay</th></tr>
+            </thead>
+            <tbody id="auditTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== ERİŞİM REDDEDİLDİ ============== -->
+    <section class="tab" data-tab="access-denied">
+      <div style="text-align: center; padding: 80px 20px;">
+        <div style="font-size: 64px; opacity: 0.3; margin-bottom: 20px;">🔒</div>
+        <h2 style="font-family: var(--font-display); font-size: 32px; margin: 0 0 12px;">Erişim Yok</h2>
+        <p style="color: var(--ink-2); max-width: 480px; margin: 0 auto 24px;">
+          Bu sayfayı görüntüleme yetkin yok. Departmanın bu bölüme erişim sağlamıyor olabilir.
+          Erişim talebi için takım kaptanına başvur.
+        </p>
+        <button class="btn btn--primary" type="button" id="goHomeFromDenied">Ana Sayfaya Dön</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============== SPONSOR SLIDER ============== -->
+  <footer class="sponsor-strip" aria-label="Sponsorlarımız">
+    <div class="sponsor-strip__label">SPONSORLARIMIZ ·</div>
+    <div class="sponsor-strip__track" id="sponsorTrack"></div>
+  </footer>
+
+  <div class="footer-meta">
+    <span>© Anatolia Aero Design — Eskişehir Teknik Üniversitesi</span>
+    <span>Powered by befe</span>
+  </div>
+
+  <!-- ============== LOGIN MODAL ============== -->
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__panel modal__panel--narrow" role="dialog" aria-labelledby="loginTitle">
+      <button class="modal__close" data-modal-close aria-label="Kapat" type="button">×</button>
+      <div class="modal__header">
+        <div class="modal__icon">
+          <svg viewBox="0 0 64 64" width="42" height="42">
+            <path d="M8 40 L32 12 L56 40 L48 40 L32 22 L16 40 Z" fill="var(--accent)"/>
+            <path d="M14 46 L32 30 L50 46 L42 46 L32 38 L22 46 Z" fill="var(--ink)"/>
+          </svg>
+        </div>
+        <h2 id="loginTitle">Takım Girişi</h2>
+        <p class="modal__sub">Yalnızca Anatolia Aero Design üyeleri.</p>
+      </div>
+      <form id="loginForm" class="form">
+        <label for="login-email">E-posta
+          <input id="login-email" type="email" name="email" required autocomplete="username" />
+        </label>
+        <label for="login-password">Parola
+          <input id="login-password" type="password" name="password" required autocomplete="current-password" />
+        </label>
+        <div class="form-error" id="loginError" hidden></div>
+        <button type="submit" class="btn btn--primary btn--block" id="loginSubmit">
+          <span class="btn__label">Giriş Yap</span>
+          <span class="btn__spinner" hidden></span>
+        </button>
+        <p class="form-hint">
+          Hesabınız yok mu? Takım liderinizden hesap açmasını isteyin.<br><br>
+          <a href="#" onclick="localStorage.clear(); location.reload(); return false;" style="color: var(--bad); text-decoration: underline; font-weight: 600;">Giriş yapamıyorsan sistemi sıfırla</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============== DEPARTMAN MODAL ============== -->
+  <div class="modal" id="deptModal" aria-hidden="true">
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__panel" role="dialog" aria-labelledby="deptTitle">
+      <button class="modal__close" data-modal-close aria-label="Kapat" type="button">×</button>
+      <div class="modal__header">
+        <span class="modal__num" id="deptModalNum">01</span>
+        <h2 id="deptTitle">Departman</h2>
+      </div>
+      <div class="modal__body" id="deptModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ============== CONFIRM MODAL ============== -->
+  <div class="modal" id="confirmModal" aria-hidden="true">
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__panel modal__panel--narrow" role="dialog" aria-labelledby="confirmTitle">
+      <div class="modal__header">
+        <h2 id="confirmTitle">Onay</h2>
+      </div>
+      <div class="modal__body">
+        <p id="confirmMessage" style="margin: 0 0 18px 0;">Emin misin?</p>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button class="btn" id="confirmCancel" type="button">İptal</button>
+          <button class="btn btn--primary" id="confirmOk" type="button">Onayla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Three.js + Loaders (ES Modules import map) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script src="script.js"></script>
+  <script type="module" src="viewer.js"></script>
+
+</body>
+</html>

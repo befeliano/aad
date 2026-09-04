@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAD // Uçuş Analiz Sistemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span>AAD <span class="sub">// Uçuş Analiz Sistemi</span></div>
+    <div class="sep"></div>
+    <select class="session-select" id="sessionSelect">
+      <option value="">Oturum yükleniyor…</option>
+    </select>
+    <div class="sep"></div>
+    <div class="source-group" id="sourceGroup">
+      <button class="source-btn active" data-source="playback">PLAYBACK</button>
+      <button class="source-btn" data-source="live"><span class="live-dot"></span>LIVE</button>
+    </div>
+    <div class="sep"></div>
+    <div class="status-pill" id="connStatus"><span class="led"></span><span id="connLabel">Bağlanıyor…</span></div>
+    <div class="sep"></div>
+    <div class="session-time">Süre: <b id="sessionDur">00:00</b></div>
+    <div class="spacer"></div>
+    <button class="btn" id="btnAnalysis">📊 Analiz</button>
+    <div class="hint">Kısayollar: <b>Boşluk</b> · <b>← →</b> · <b>J K L</b></div>
+  </div>
+
+  <div class="main">
+    <div id="map"></div>
+    <canvas id="offlineCanvas"></canvas>
+    <div class="map-badge" id="mapModeBadge">HARİTA: <b>Uydu görüntüsü</b></div>
+
+    <div class="mode-overlay" id="modeOverlay">
+      <span class="mode-led" id="modeLed"></span>
+      <span class="mode-txt" id="modeTxt">—</span>
+      <span class="mode-sub" id="modeSub">— guidance durumu</span>
+    </div>
+
+    <div class="legend" id="legendBox">
+      <div class="row"><span class="sw hss"></span>HSS bölgesi (aktifken)</div>
+      <div class="row"><span class="sw ghost"></span>RK4 tahmini (hayalet iz)</div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="msg" id="loadingMsg">Backend'e bağlanılıyor (http://127.0.0.1:8010)…</div>
+    </div>
+
+    <div class="side">
+      <div class="side-section">
+        <h4>Uçaklar <span class="tag" id="teamTag">.db'den</span></h4>
+        <div id="teamList"></div>
+      </div>
+
+      <div class="side-section">
+        <h4>Seçili İHA — Telemetri</h4>
+        <div class="telemetry-grid" id="teleGrid"></div>
+        <div class="flag-row" id="flagRow"></div>
+      </div>
+
+      <div class="side-section">
+        <h4>Guidance Durumu <span class="tag">guidance_info</span></h4>
+        <div class="algo-box" id="algoBox"></div>
+        <div class="rk4-diff" id="rk4Diff"></div>
+      </div>
+
+      <div class="side-section">
+        <h4>Olaylar</h4>
+        <div id="eventList"></div>
+      </div>
+
+      <div class="side-section">
+        <h4>HSS Bölgeleri <span class="tag" id="hssTag">nfz_areas</span></h4>
+        <div id="hssList" style="font-family:var(--mono);font-size:11px;color:var(--text-mid);display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="transport">
+    <div class="mode-strip-wrap">
+      <div class="mode-strip-label">Mod geçmişi</div>
+      <div class="mode-strip" id="modeStrip">
+        <div class="playhead" id="modePlayhead"></div>
+      </div>
+    </div>
+
+    <div class="scrub-row">
+      <div class="tc"><span id="curTime">00:00.0</span><span class="dim"> / </span><span id="totTime">01:30.0</span></div>
+      <div class="scrub-track-wrap">
+        <div class="scrub-track" id="scrubTrack">
+          <div class="scrub-fill" id="scrubFill"></div>
+          <div id="eventMarkers"></div>
+          <div class="scrub-handle" id="scrubHandle"></div>
+        </div>
+        <input type="range" id="scrubInput" min="0" max="1000" value="0">
+      </div>
+    </div>
+    <div class="controls-row">
+      <button class="btn icon" id="btnSkipBack" title="Baştan başa (Home)">⏮</button>
+      <button class="btn icon primary" id="btnPlay" title="Oynat/Duraklat (Boşluk)">▶</button>
+      <button class="btn icon" id="btnSkipFwd" title="Sona git (End)">⏭</button>
+      <div class="speed-group" id="speedGroup">
+        <button class="speed-btn" data-speed="0.25">0.25×</button>
+        <button class="speed-btn" data-speed="0.5">0.5×</button>
+        <button class="speed-btn active" data-speed="1">1×</button>
+        <button class="speed-btn" data-speed="2">2×</button>
+        <button class="speed-btn" data-speed="4">4×</button>
+      </div>
+      <button class="toggle-btn active" id="btnToggleGhost"><span class="dot"></span>RK4 hayalet iz</button>
+      <div class="trail-group">
+        İZ SÜRESİ
+        <select class="trail-select" id="trailSelect">
+          <option value="5">5 sn</option>
+          <option value="15" selected>15 sn</option>
+          <option value="30">30 sn</option>
+          <option value="9999">Tüm oturum</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ANALİZ MODAL -->
+<div class="analysis-overlay" id="analysisOverlay">
+  <div class="analysis-modal">
+    <div class="analysis-header">
+      <h3>Oturum Analizi <span class="tag" id="analysisSessionTag">—</span></h3>
+      <button class="btn icon" id="btnCloseAnalysis">✕</button>
+    </div>
+    <div class="analysis-body" id="analysisBody">
+      <div class="loading-inline">Analiz hesaplanıyor…</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
