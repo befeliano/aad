@@ -25,15 +25,17 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
     offset: ["start start", "end start"],
   });
 
-  const stageScale = useTransform(scrollYProgress, [0, 0.9], [0.96, 1.12]);
-  const stageRadius = useTransform(scrollYProgress, [0, 0.9], [24, 0]);
-  const titleY = useTransform(scrollYProgress, [0, 0.6], [0, -140]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.42], [1, 0]);
-  const footOpacity = useTransform(scrollYProgress, [0.02, 0.32], [1, 0]);
-  const footY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  // Animasyonların tamamlanma aralığını 0.9'dan 0.5 - 0.6 bandına çekin:
+  const stageScale = useTransform(scrollYProgress, [0, 0.6], [0.96, 1.12]);
+  const stageRadius = useTransform(scrollYProgress, [0, 0.6], [24, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 0.2], [0, -180]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+  const footOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const footY = useTransform(scrollYProgress, [0, 0.25], [0, -50]);
 
   return (
-    <section ref={ref} className="relative h-[210vh]">
+    // 210vh yerine 130vh veya 140vh: Kaydırma yolunu neredeyse yarı yarıya kısaltır
+    <section ref={ref} className="relative h-[130vh]">
       {/* Mobilde dikey akış: kadraj → butonlar → boşluk → istatistikler.
           sm ve üstünde butonlar/istatistikler tekrar kadrajın üzerine biner. */}
       <div className="sticky top-0 flex h-screen flex-col items-center justify-center gap-5 overflow-hidden pt-16 sm:gap-0">
