@@ -14,5 +14,13 @@ export default async function Page() {
     session.email?.split("@")[0] ||
     "";
 
-  return <GorevlerClient userId={session.userId} myName={myName} />;
+  return (
+    <GorevlerClient
+      userId={session.userId}
+      myName={myName}
+      role={session.role}
+      myDept={session.dept}
+      isAdmin={session.isAdmin}
+    />
+  );
 }

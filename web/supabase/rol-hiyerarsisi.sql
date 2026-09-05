@@ -102,15 +102,19 @@ begin
 
   if hatali > 0 then
     raise notice 'ATLANDI: % satırda tanımsız rol var. Şunu çalıştırıp düzeltin: select distinct role from public.profiles;', hatali;
-  elsif not exists (
-    select 1 from pg_constraint where conname = 'profiles_role_check'
-  ) then
+  else
+    /* DİKKAT: "aynı isimde kısıt varsa dokunma" YETMİYOR — eski siteden
+       kalma profiles_role_check yalnızca ('admin','member') kabul ediyordu
+       ve bu yüzden 'captain'/'vice' ataması reddediliyordu. Kısıtı adına
+       değil içeriğine göre yenilemek için düşürüp yeniden ekliyoruz. */
+    alter table public.profiles
+      drop constraint if exists profiles_role_check;
+
     alter table public.profiles
       add constraint profiles_role_check
       check (role in ('admin', 'vice', 'captain', 'member'));
-    raise notice 'profiles_role_check eklendi';
-  else
-    raise notice 'profiles_role_check zaten var';
+
+    raise notice 'profiles_role_check dört rolü kapsayacak şekilde yenilendi';
   end if;
 end $$;
 

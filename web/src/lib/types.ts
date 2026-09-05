@@ -122,6 +122,8 @@ export interface Task {
   description: string | null;
   dept: string;
   assignee: string | null;
+  /** supabase/gorev-yetkileri.sql ile eklendi — RLS bunu kullanıyor */
+  assignee_id?: string | null;
   deadline: string | null;
   priority: Priority;
   status: TaskStatus;

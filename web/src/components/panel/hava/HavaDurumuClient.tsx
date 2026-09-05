@@ -21,7 +21,7 @@ import {
   toKmh,
   hourVerdict,
   VERDICT_META,
-  FLIGHT_SITE,
+  FLIGHT_SITES,
   LIMITS,
   type DayForecast,
   type HourPoint,
@@ -49,20 +49,25 @@ export function HavaDurumuClient() {
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  /* Hangi sahada uçulacak — ESTÜ pisti ya da İnönü */
+  const [sahaKey, setSahaKey] = useState(FLIGHT_SITES[0].key);
+  const saha =
+    FLIGHT_SITES.find((s) => s.key === sahaKey) ?? FLIGHT_SITES[0];
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const d = await fetchForecast();
+      const d = await fetchForecast(saha.lat, saha.lon);
       setDays(d);
+      setSelected(0);
       setUpdatedAt(new Date());
     } catch (ex) {
       setError((ex as Error).message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [saha.lat, saha.lon]);
 
   useEffect(() => {
     // load() asenkrondur: setState ağ yanıtından sonra çalışır.
@@ -94,12 +99,23 @@ export function HavaDurumuClient() {
       <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-bg-1 px-5 py-4">
         <MapPin size={17} className="text-accent" />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-bold text-ink">{FLIGHT_SITE.name}</div>
+          <div className="text-sm font-bold text-ink">{saha.name}</div>
           <div className="tabular text-[12px] text-ink-3">
-            {FLIGHT_SITE.subtitle} · {FLIGHT_SITE.lat.toFixed(4)},{" "}
-            {FLIGHT_SITE.lon.toFixed(4)}
+            {saha.subtitle} · {saha.lat.toFixed(4)}, {saha.lon.toFixed(4)}
           </div>
         </div>
+        <select
+          value={sahaKey}
+          onChange={(e) => setSahaKey(e.target.value)}
+          className="field !w-auto !py-1.5 !text-[13px]"
+          aria-label="Uçuş sahası seç"
+        >
+          {FLIGHT_SITES.map((s) => (
+            <option key={s.key} value={s.key}>
+              {s.name}
+            </option>
+          ))}
+        </select>
         {updatedAt && (
           <span className="text-[12px] text-ink-3">
             Güncellendi {updatedAt.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}

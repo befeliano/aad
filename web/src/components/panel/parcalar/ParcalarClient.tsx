@@ -4,6 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Plus,
+  Folder,
+  FolderPlus,
+  ChevronLeft,
+  ChevronRight,
   Search,
   Trash2,
   Download,
@@ -62,11 +66,15 @@ export function ParcalarClient({
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("");
-  const [aircraft, setAircraft] = useState("");
   const [onlyViewable, setOnlyViewable] = useState(false);
+  /* null = klasör listesi görünümü, "" = Klasörsüz, "DABAN" = o klasör */
+  const [openFolder, setOpenFolder] = useState<string | null>(null);
+  /* "Klasör oluştur" ile girilen ad — yükleme formuna ön dolgu olarak geçer */
+  const [draftFolder, setDraftFolder] = useState("");
 
   const [selected, setSelected] = useState<Part | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [newFolderOpen, setNewFolderOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [delTarget, setDelTarget] = useState<Part | null>(null);
   const [fileHint, setFileHint] = useState<{ text: string; tone: string } | null>(
@@ -101,11 +109,34 @@ export function ParcalarClient({
     };
   }, [supabase, load]);
 
+  /* Klasörler = parts.aircraft alanının benzersiz değerleri.
+     Ayrı bir tablo tutmuyoruz; klasör, içine ilk dosya yüklendiğinde var olur. */
+  const folders = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of parts) {
+      const key = (p.aircraft || "").trim();
+      m.set(key, (m.get(key) || 0) + 1);
+    }
+    return [...m.entries()]
+      .sort((a, b) => (a[0] === "" ? 1 : b[0] === "" ? -1 : a[0].localeCompare(b[0], "tr")));
+  }, [parts]);
+
+  /* Bilinen tüm klasör adları — yükleme formundaki öneri listesi */
+  const folderNames = useMemo(() => {
+    const set = new Set<string>(FLEET.map((f) => f.name));
+    for (const [k] of folders) if (k) set.add(k);
+    return [...set].sort((a, b) => a.localeCompare(b, "tr"));
+  }, [folders]);
+
+  /* Arama yazılmışsa klasörden bağımsız düz listeye düşülür */
+  const searching = q.trim().length > 0;
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLocaleLowerCase("tr");
     return parts.filter((p) => {
       if (dept && p.dept !== dept) return false;
-      if (aircraft && p.aircraft !== aircraft) return false;
+      if (!searching && openFolder !== null && (p.aircraft || "") !== openFolder)
+        return false;
       if (onlyViewable && !p.is_viewable) return false;
       if (
         needle &&
@@ -116,7 +147,7 @@ export function ParcalarClient({
         return false;
       return true;
     });
-  }, [parts, q, dept, aircraft, onlyViewable]);
+  }, [parts, q, dept, onlyViewable, openFolder, searching]);
 
   async function upload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -188,6 +219,9 @@ export function ParcalarClient({
     form.reset();
     setFileHint(null);
     setFormOpen(false);
+    // Yüklenen dosyanın klasörüne gir ki kullanıcı sonucu hemen görsün
+    setOpenFolder(payload.aircraft || "");
+    setDraftFolder("");
     load();
   }
 
@@ -249,10 +283,22 @@ export function ParcalarClient({
         desc="Takımın CAD parça arşivi. Tüm üyeler görüntüleyip indirebilir; yükleme teknik departmanlara açıktır."
       >
         {canWrite && (
-          <Button onClick={() => setFormOpen(true)}>
-            <Plus size={16} />
-            Parça Yükle
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDraftFolder("");
+                setNewFolderOpen(true);
+              }}
+            >
+              <FolderPlus size={16} />
+              Klasör Oluştur
+            </Button>
+            <Button onClick={() => setFormOpen(true)}>
+              <Plus size={16} />
+              Parça Yükle
+            </Button>
+          </>
         )}
       </PageHeader>
 
@@ -299,16 +345,16 @@ export function ParcalarClient({
               <option key={k} value={k}>{DEPT_LABELS[k] || k}</option>
             ))}
           </select>
-          <select
-            value={aircraft}
-            onChange={(e) => setAircraft(e.target.value)}
-            className="field !w-auto"
-          >
-            <option value="">Tüm platformlar</option>
-            {FLEET.map((f) => (
-              <option key={f.name} value={f.name}>{f.name}</option>
-            ))}
-          </select>
+          {openFolder !== null && !searching && (
+            <button
+              type="button"
+              onClick={() => setOpenFolder(null)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-ink-2 transition-colors hover:border-ink-3 hover:text-ink"
+            >
+              <ChevronLeft size={15} />
+              Klasörler
+            </button>
+          )}
           <label className="flex cursor-pointer select-none items-center gap-2 text-sm text-ink-2">
             <input
               type="checkbox"
@@ -343,6 +389,34 @@ export function ParcalarClient({
               ) : undefined
             }
           />
+        ) : openFolder === null && !searching ? (
+          /* --- Klasör görünümü --- */
+          <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-4">
+            {folders.map(([ad, adet]) => (
+              <button
+                key={ad || "__yok__"}
+                type="button"
+                onClick={() => setOpenFolder(ad)}
+                className="group flex items-center gap-3 rounded-xl border border-line bg-bg p-4 text-left transition-all hover:border-accent hover:shadow-[var(--shadow-sm)]"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                  <Folder size={19} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[15px] font-semibold text-ink">
+                    {ad || "Klasörsüz"}
+                  </span>
+                  <span className="block text-[12.5px] text-ink-3">
+                    {adet} parça
+                  </span>
+                </span>
+                <ChevronRight
+                  size={16}
+                  className="shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5"
+                />
+              </button>
+            ))}
+          </div>
         ) : (
           <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((p) => (
@@ -457,13 +531,23 @@ export function ParcalarClient({
                   ))}
                 </select>
               </Field>
-              <Field label="Platform">
-                <select name="aircraft" defaultValue="" className="field">
-                  <option value="">—</option>
-                  {FLEET.map((f) => (
-                    <option key={f.name} value={f.name}>{f.name}</option>
+              <Field
+                label="Klasör"
+                hint="Var olanı seçin ya da yeni bir ad yazın — klasör ilk dosyayla oluşur."
+              >
+                <input
+                  name="aircraft"
+                  list="parca-klasorleri"
+                  defaultValue={draftFolder || (openFolder ?? "")}
+                  maxLength={80}
+                  placeholder="örn. DABAN"
+                  className="field"
+                />
+                <datalist id="parca-klasorleri">
+                  {folderNames.map((n) => (
+                    <option key={n} value={n} />
                   ))}
-                </select>
+                </datalist>
               </Field>
               <Field label="Versiyon">
                 <input name="version" defaultValue="v1" maxLength={40} className="field" />
@@ -535,6 +619,52 @@ export function ParcalarClient({
         onConfirm={doDelete}
         onCancel={() => setDelTarget(null)}
       />
+
+      {/* --- Klasör oluştur --- */}
+      <Modal
+        open={newFolderOpen}
+        onClose={() => setNewFolderOpen(false)}
+        title="Klasör Oluştur"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const ad = draftFolder.trim().slice(0, 80);
+            if (!ad) return;
+            setNewFolderOpen(false);
+            setOpenFolder(ad);
+            setFormOpen(true);
+          }}
+          className="space-y-5"
+        >
+          <Field
+            label="Klasör adı"
+            hint="Klasör, içine ilk dosya yüklendiğinde kalıcı olur. Kaydetmeden çıkarsanız oluşmaz."
+          >
+            <input
+              autoFocus
+              value={draftFolder}
+              onChange={(e) => setDraftFolder(e.target.value)}
+              maxLength={80}
+              placeholder="örn. DORJE"
+              className="field"
+            />
+          </Field>
+          <div className="flex justify-end gap-2 border-t border-line pt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setNewFolderOpen(false)}
+            >
+              Vazgeç
+            </Button>
+            <Button type="submit" disabled={!draftFolder.trim()}>
+              <FolderPlus size={15} />
+              Devam et
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 }

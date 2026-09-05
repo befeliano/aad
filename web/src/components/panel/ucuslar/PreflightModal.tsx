@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Circle, Rocket, TriangleAlert, Loader2 } from "lucide-react";
+import { Rocket, TriangleAlert, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtTime } from "@/lib/format";
 import { trimTo, LIMITS } from "@/lib/security";
@@ -10,7 +10,17 @@ import type { Flight } from "@/lib/types";
 import { useToast } from "@/components/ui/Toast";
 import { Badge, Button, Field, Modal } from "@/components/ui/Kit";
 
+/** Formdaki üç sütun: ✓ GEÇTİ · ✗ KALDI · — N/A */
+export type Durum = "gecti" | "kaldi" | "na";
+
+export const DURUM_ETIKET: Record<Durum, string> = {
+  gecti: "Geçti",
+  kaldi: "Kaldı",
+  na: "N/A",
+};
+
 export interface ChecklistItem {
+  section?: string | null;
   id: string;
   label: string;
   hint: string | null;
@@ -50,7 +60,7 @@ export function PreflightModal({
   const { toast } = useToast();
 
   const [items, setItems] = useState<ChecklistItem[]>([]);
-  const [ticked, setTicked] = useState<Record<string, boolean>>({});
+  const [durum, setDurum] = useState<Record<string, Durum>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tableMissing, setTableMissing] = useState(false);
@@ -71,7 +81,7 @@ export function PreflightModal({
       setItems(((data as ChecklistItem[]) || []).length ? (data as ChecklistItem[]) : FALLBACK_ITEMS);
       setTableMissing(false);
     }
-    setTicked({});
+    setDurum({});
     setNote("");
     setLoading(false);
   }, [supabase]);
@@ -84,13 +94,39 @@ export function PreflightModal({
   }, [open, load]);
 
   const requiredItems = items.filter((i) => i.required);
-  const doneRequired = requiredItems.filter((i) => ticked[i.id]).length;
-  const allRequiredDone = doneRequired === requiredItems.length;
-  const doneAll = items.filter((i) => ticked[i.id]).length;
+  /* Zorunlu bir madde "Geçti" ya da "N/A" olabilir; "Kaldı" uçuşu engeller.
+     N/A'yı geçerli sayıyoruz çünkü formda o uçuşta takılı olmayan sistemler
+     için ayrı bir sütun var (örn. Lidar yoksa Lidar maddesi N/A'dır). */
+  const doneRequired = requiredItems.filter(
+    (i) => durum[i.id] === "gecti" || durum[i.id] === "na"
+  ).length;
+  const kalanlar = items.filter((i) => durum[i.id] === "kaldi");
+  const zorunluKaldi = kalanlar.filter((i) => i.required).length;
+  const allRequiredDone =
+    doneRequired === requiredItems.length && zorunluKaldi === 0;
+  const doneAll = items.filter((i) => durum[i.id]).length;
   const pct = items.length ? Math.round((doneAll / items.length) * 100) : 0;
+
+  /* Bölümlere ayır — 53 maddelik form düz liste hâlinde sahada kullanılamıyor */
+  const bolumler = useMemo(() => {
+    const m = new Map<string, ChecklistItem[]>();
+    for (const it of items) {
+      const k = (it.section || "").trim() || "Kontrol Listesi";
+      if (!m.has(k)) m.set(k, []);
+      m.get(k)!.push(it);
+    }
+    return [...m.entries()];
+  }, [items]);
 
   async function startFlight() {
     if (!flight) return;
+    if (zorunluKaldi > 0) {
+      toast(
+        `${zorunluKaldi} zorunlu madde "Kaldı" işaretli — uçuş başlatılamaz.`,
+        "error"
+      );
+      return;
+    }
     if (!allRequiredDone) {
       toast("Zorunlu maddelerin tamamı işaretlenmeli.", "error");
       return;
@@ -106,9 +142,13 @@ export function PreflightModal({
     setSaving(true);
     const payload = {
       flight_id: flight.id,
+      /* Geriye dönük okunabilsin diye bölüm ve kriter de saklanıyor:
+         şablon sonradan değişse bile o uçuşun formu olduğu gibi kalır. */
       checked: items.map((i) => ({
         label: i.label,
-        ok: !!ticked[i.id],
+        hint: i.hint,
+        section: i.section || null,
+        durum: durum[i.id] || "na",
         required: i.required,
       })),
       note: trimTo(note, LIMITS.shortText),
@@ -196,50 +236,95 @@ export function PreflightModal({
       {loading ? (
         <p className="py-10 text-center text-sm text-ink-3">Yükleniyor…</p>
       ) : (
-        <ul className="space-y-2">
-          {items.map((it) => {
-            const on = !!ticked[it.id];
+        <div className="space-y-6">
+          {bolumler.map(([bolum, liste]) => {
+            const tamam = liste.filter((i) => durum[i.id]).length;
             return (
-              <li key={it.id}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTicked((v) => ({ ...v, [it.id]: !v[it.id] }))
-                  }
-                  aria-pressed={on}
-                  className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${
-                    on
-                      ? "border-ok/40 bg-ok/8"
-                      : "border-line bg-bg hover:border-line-2"
-                  }`}
-                >
-                  {on ? (
-                    <CheckCircle2 size={19} className="mt-0.5 shrink-0 text-ok" />
-                  ) : (
-                    <Circle size={19} className="mt-0.5 shrink-0 text-ink-3" />
-                  )}
-                  <span className="min-w-0 flex-1">
-                    <span
-                      className={`block text-[14px] font-medium ${
-                        on ? "text-ink" : "text-ink-2"
-                      }`}
-                    >
-                      {it.label}
-                    </span>
-                    {it.hint && (
-                      <span className="mt-0.5 block text-[12px] text-ink-3">
-                        {it.hint}
-                      </span>
-                    )}
+              <section key={bolum}>
+                <div className="mb-2 flex items-baseline justify-between border-b border-line pb-1.5">
+                  <h4 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-ink-3">
+                    {bolum}
+                  </h4>
+                  <span className="tabular text-[12px] text-ink-3">
+                    {tamam}/{liste.length}
                   </span>
-                  {it.required && (
-                    <Badge tone={on ? "ok" : "warn"}>Zorunlu</Badge>
-                  )}
-                </button>
-              </li>
+                </div>
+                <ul className="space-y-2">
+                  {liste.map((it) => {
+                    const cur = durum[it.id];
+                    return (
+                      <li
+                        key={it.id}
+                        className={`flex flex-wrap items-start gap-3 rounded-xl border p-3.5 transition-colors ${
+                          cur === "gecti"
+                            ? "border-ok/40 bg-ok/8"
+                            : cur === "kaldi"
+                              ? "border-bad/45 bg-bad/8"
+                              : cur === "na"
+                                ? "border-line-2 bg-bg-2"
+                                : "border-line bg-bg"
+                        }`}
+                      >
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[14px] font-medium text-ink">
+                            {it.label}
+                          </span>
+                          {it.hint && (
+                            <span className="mt-0.5 block text-[12px] text-ink-3">
+                              {it.hint}
+                            </span>
+                          )}
+                          {it.required && !cur && (
+                            <span className="mt-1.5 inline-block">
+                              <Badge tone="warn">Zorunlu</Badge>
+                            </span>
+                          )}
+                        </span>
+
+                        <div className="flex shrink-0 gap-1" role="group" aria-label={it.label}>
+                          {(["gecti", "kaldi", "na"] as const).map((d) => {
+                            const secili = cur === d;
+                            const renk =
+                              d === "gecti"
+                                ? "border-ok bg-ok text-white"
+                                : d === "kaldi"
+                                  ? "border-bad bg-bad text-white"
+                                  : "border-ink-3 bg-ink-3 text-white";
+                            return (
+                              <button
+                                key={d}
+                                type="button"
+                                aria-pressed={secili}
+                                onClick={() =>
+                                  setDurum((v) =>
+                                    v[it.id] === d
+                                      ? (() => {
+                                          const n = { ...v };
+                                          delete n[it.id];
+                                          return n;
+                                        })()
+                                      : { ...v, [it.id]: d }
+                                  )
+                                }
+                                className={`rounded-lg border px-2.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                                  secili
+                                    ? renk
+                                    : "border-line bg-bg text-ink-3 hover:border-ink-3 hover:text-ink-2"
+                                }`}
+                              >
+                                {DURUM_ETIKET[d]}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
             );
           })}
-        </ul>
+        </div>
       )}
 
       <div className="mt-5">

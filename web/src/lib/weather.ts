@@ -3,13 +3,46 @@
    Kaynak: Open-Meteo (ücretsiz, API anahtarı gerektirmez)
    ============================================================ */
 
-/** Uçuş sahası — takımın kendi uçuş kaydındaki koordinatlar */
-export const FLIGHT_SITE = {
-  name: "ESTÜ İki Eylül Kampüsü",
-  subtitle: "Uçuş sahası · Eskişehir",
-  lat: 39.8198,
-  lon: 30.5342,
-};
+export interface FlightSite {
+  key: string;
+  name: string;
+  subtitle: string;
+  lat: number;
+  lon: number;
+}
+
+/**
+ * Uçuş sahaları.
+ *
+ * ESTÜ koordinatları takımın kendi uçuş kayıtlarından doğrulandı
+ * (Open-Meteo bu noktada 785 m rakım veriyor, params_one.yaml'daki
+ * 783.8 m ile örtüşüyor).
+ *
+ * DİKKAT — İNÖNÜ KOORDİNATI DOĞRULANMADI: THK İnönü Havacılık Eğitim
+ * Merkezi'nin kesin koordinatını güvenilir bir kaynakta bulamadım;
+ * aşağıdaki değer İnönü ilçe merkezinin yaklaşık konumudur. Rüzgâr
+ * verisi uçuş kararına girdiği için sahaya gittiğinizde telefondan
+ * gerçek koordinatı alıp buradaki iki sayıyı düzeltin.
+ */
+export const FLIGHT_SITES: FlightSite[] = [
+  {
+    key: "estu",
+    name: "ESTÜ İki Eylül Kampüsü",
+    subtitle: "Uçuş sahası · Eskişehir",
+    lat: 39.8198,
+    lon: 30.5342,
+  },
+  {
+    key: "inonu",
+    name: "İnönü Havaalanı",
+    subtitle: "THK Havacılık Eğitim Merkezi · İnönü, Eskişehir",
+    lat: 39.8206,
+    lon: 30.1436,
+  },
+];
+
+/** Varsayılan saha — geriye dönük uyumluluk için */
+export const FLIGHT_SITE = FLIGHT_SITES[0];
 
 /* ---------- Uçuşa uygunluk eşikleri (sabit kanat ~8 kg) ---------- */
 export const LIMITS = {

@@ -19,12 +19,36 @@ import {
   CircleCheck,
   Square,
   Database,
+  ClipboardCheck,
   Activity as ActivityIcon,
   Loader2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtTime, toCSV, downloadFile } from "@/lib/format";
 import type { Flight } from "@/lib/types";
+import { ChecklistGecmisi } from "./ChecklistGecmisi";
+import { FLIGHT_SITES } from "@/lib/weather";
+
+/** flight_checklists.logs dizisindeki tek kayıt */
+export interface LogDosyasi {
+  path: string;
+  name: string;
+  ext: string;
+  size?: number | null;
+  at?: string | null;
+}
+
+/** Uçuş kaydı olarak kabul edilen uzantılar */
+const LOG_UZANTI = ["db", "sqlite", "sqlite3", "tlog", "bin", "log"] as const;
+
+/** Filtre seçenekleri — hangi tür kaydı olan uçuşlar gösterilsin */
+const LOG_FILTRE = [
+  { k: "", l: "Tüm uçuşlar" },
+  { k: "db", l: "Sadece .db olanlar" },
+  { k: "tlog", l: "Sadece .tlog olanlar" },
+  { k: "bin", l: "Sadece .bin olanlar" },
+  { k: "yok", l: "Kaydı olmayanlar" },
+] as const;
 import { useToast } from "@/components/ui/Toast";
 import {
   Badge,
@@ -70,6 +94,9 @@ export function UcuslarClient({ userId }: { userId: string }) {
   const [durationSec, setDurationSec] = useState<Record<string, number>>({});
   /** flight_id -> yüklenmiş uçuş kaydı (.db) yolu */
   const [logPath, setLogPath] = useState<Record<string, string>>({});
+  const [logFiles, setLogFiles] = useState<Record<string, LogDosyasi[]>>({});
+  const [logFiltre, setLogFiltre] = useState("");
+  const [formGecmisi, setFormGecmisi] = useState<Flight | null>(null);
   /** Şu an log yüklenen uçuş */
   const [uploadingLog, setUploadingLog] = useState<string | null>(null);
   const logInputRef = useRef<HTMLInputElement>(null);
@@ -88,12 +115,13 @@ export function UcuslarClient({ userId }: { userId: string }) {
     /* Başlatılmış uçuşlar — checklist tablosu yoksa sessizce atlanır */
     const { data: cl } = await supabase
       .from("flight_checklists")
-      .select("flight_id, started_at, completed_at, stats, log_path");
+      .select("flight_id, started_at, completed_at, stats, log_path, logs");
     if (cl) {
       const m: Record<string, string> = {};
       const done: Record<string, string> = {};
       const dur: Record<string, number> = {};
       const logs: Record<string, string> = {};
+      const dosyalar: Record<string, LogDosyasi[]> = {};
       (
         cl as {
           flight_id: string;
@@ -101,6 +129,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
           completed_at: string | null;
           stats: { duration_s?: number } | null;
           log_path: string | null;
+          logs: LogDosyasi[] | null;
         }[]
       ).forEach((r) => {
         // Yalnızca başlamış ve henüz tamamlanmamış uçuşlar "uçuşta" sayılır
@@ -109,11 +138,27 @@ export function UcuslarClient({ userId }: { userId: string }) {
         const secs = r.stats?.duration_s;
         if (typeof secs === "number") dur[r.flight_id] = secs;
         if (r.log_path) logs[r.flight_id] = r.log_path;
+        /* logs kolonu yoksa (ucus-loglari-coklu.sql çalıştırılmamışsa)
+           eski tek dosyayı diziymiş gibi göster */
+        const liste =
+          r.logs && r.logs.length
+            ? r.logs
+            : r.log_path
+              ? [
+                  {
+                    path: r.log_path,
+                    name: r.log_path.split("/").pop() || "kayit",
+                    ext: (r.log_path.split(".").pop() || "").toLowerCase(),
+                  },
+                ]
+              : [];
+        if (liste.length) dosyalar[r.flight_id] = liste;
       });
       setStarted(m);
       setCompleted(done);
       setDurationSec(dur);
       setLogPath(logs);
+      setLogFiles(dosyalar);
     }
 
     setLoading(false);
@@ -140,11 +185,23 @@ export function UcuslarClient({ userId }: { userId: string }) {
   const { upcoming, past } = useMemo(() => {
     const now = new Date();
     const needle = q.trim().toLocaleLowerCase("tr");
-    const match = (f: Flight) =>
+    const metinTut = (f: Flight) =>
       !needle ||
       `${f.aircraft} ${f.pilot || ""} ${f.location || ""} ${f.mission || ""}`
         .toLocaleLowerCase("tr")
         .includes(needle);
+
+    /* Kayıt türü filtresi: .db / .tlog / .bin olanlar ya da hiç kaydı olmayanlar */
+    const kayitTut = (f: Flight) => {
+      if (!logFiltre) return true;
+      const liste = logFiles[f.id] || [];
+      if (logFiltre === "yok") return liste.length === 0;
+      if (logFiltre === "db")
+        return liste.some((d) => /^(db|sqlite|sqlite3)$/.test(d.ext));
+      return liste.some((d) => d.ext === logFiltre);
+    };
+
+    const match = (f: Flight) => metinTut(f) && kayitTut(f);
 
     /* Sınıflandırma önceliği:
        1) Tamamlandıysa → Geçmiş (planlanan saat gelecekte olsa bile)
@@ -175,7 +232,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
     });
 
     return { upcoming: up, past: pa };
-  }, [flights, q, started, completed]);
+  }, [logFiltre, logFiles, flights, q, started, completed]);
 
   const stats = useMemo(() => {
     const now = new Date();
@@ -254,60 +311,105 @@ export function UcuslarClient({ userId }: { userId: string }) {
     load();
   }
 
-  /** Geçmiş bir uçuşa sonradan .db uçuş kaydı iliştirir */
-  async function attachLog(flight: Flight, file: File) {
+  /**
+   * Geçmiş bir uçuşa bir veya birden fazla kayıt dosyası iliştirir.
+   *
+   * Kabul edilen türler: .db/.sqlite (kendi kaydımız), .tlog (MAVLink),
+   * .bin (ArduPilot), .log. Yalnızca .db dosyaları tarayıcıda çözümlenip
+   * istatistik çıkarılır; diğerleri arşiv olarak saklanır.
+   *
+   * log_path alanı ilk .db dosyasına işaret etmeye devam eder — uçuş
+   * analizi ekranı hâlâ onu okuyor.
+   */
+  async function attachLogs(flight: Flight, files: File[]) {
+    if (!files.length) return;
     setUploadingLog(flight.id);
+
     try {
-      // Önce tarayıcıda çözümleyip istatistikleri çıkar (mesafe, irtifa…)
-      let stats: Record<string, unknown> = {
-        log_name: safeFileName(file.name),
-      };
-      if (/\.(db|sqlite|sqlite3)$/i.test(file.name)) {
-        try {
-          const s = await parseFlightDb(file);
-          stats = {
-            ...stats,
-            duration_s: Math.round(s.duration),
-            distance_km: +s.stats.distanceKm.toFixed(3),
-            max_alt: +s.stats.maxAlt.toFixed(1),
-            max_speed: +s.stats.maxSpeed.toFixed(1),
-            avg_speed: +s.stats.avgSpeed.toFixed(1),
-            telemetry_rows: s.stats.telemetryRows,
-          };
-        } catch (ex) {
-          toast(
-            "Dosya çözümlenemedi, yine de kaydediliyor: " + (ex as Error).message,
-            "error"
-          );
+      const mevcut = logFiles[flight.id] || [];
+      const yeniler: LogDosyasi[] = [];
+      let stats: Record<string, unknown> | null = null;
+      let birincilDb: string | null = logPath[flight.id] || null;
+
+      for (const file of files) {
+        const ext = safeExt(file.name);
+        if (!(LOG_UZANTI as readonly string[]).includes(ext)) {
+          toast(`"${file.name}" desteklenmeyen tür (.${ext}) — atlandı.`, "error");
+          continue;
+        }
+
+        const path = `flights/${flight.id}/${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("flight-logs")
+          .upload(path, file, { upsert: false });
+
+        if (upErr) {
+          toast(`"${file.name}" yüklenemedi: ${upErr.message}`, "error");
+          continue;
+        }
+
+        yeniler.push({
+          path,
+          name: safeFileName(file.name),
+          ext,
+          size: file.size,
+          at: new Date().toISOString(),
+        });
+
+        // İlk .db dosyasından istatistik çıkar ve birincil kayıt yap
+        if (!birincilDb && /^(db|sqlite|sqlite3)$/.test(ext)) {
+          birincilDb = path;
+          try {
+            const sess = await parseFlightDb(file);
+            stats = {
+              log_name: safeFileName(file.name),
+              duration_s: Math.round(sess.duration),
+              distance_km: +sess.stats.distanceKm.toFixed(3),
+              max_alt: +sess.stats.maxAlt.toFixed(1),
+              max_speed: +sess.stats.maxSpeed.toFixed(1),
+              avg_speed: +sess.stats.avgSpeed.toFixed(1),
+              telemetry_rows: sess.stats.telemetryRows,
+            };
+          } catch (ex) {
+            toast(
+              `"${file.name}" çözümlenemedi, yine de kaydedildi: ${(ex as Error).message}`,
+              "error"
+            );
+            stats = { log_name: safeFileName(file.name) };
+          }
         }
       }
 
-      const path = `flights/${flight.id}/${crypto.randomUUID()}.${safeExt(file.name)}`;
-      const { error: upErr } = await supabase.storage
-        .from("flight-logs")
-        .upload(path, file, { upsert: false });
-      if (upErr) {
+      if (!yeniler.length) return;
+
+      const payload: Record<string, unknown> = {
+        flight_id: flight.id,
+        logs: [...mevcut, ...yeniler],
+      };
+      if (birincilDb) payload.log_path = birincilDb;
+      if (stats) payload.stats = stats;
+
+      const { error } = await supabase
+        .from("flight_checklists")
+        .upsert([payload], { onConflict: "flight_id" });
+
+      if (error) {
         toast(
-          "Yüklenemedi: " + upErr.message + " (flight-session.sql çalıştırıldı mı?)",
+          "Kaydedilemedi: " + error.message +
+            " (supabase/ucus-loglari-coklu.sql çalıştırıldı mı?)",
           "error"
         );
         return;
       }
 
-      const { error } = await supabase
-        .from("flight_checklists")
-        .upsert(
-          [{ flight_id: flight.id, log_path: path, stats }],
-          { onConflict: "flight_id" }
-        );
-      if (error) {
-        toast("Kaydedilemedi: " + error.message, "error");
-        return;
-      }
-      logAction(supabase, "update", "flight_checklists", flight.id, {
-        log: safeFileName(file.name),
+      void logAction(supabase, "update", "flight_checklists", flight.id, {
+        eklenen: yeniler.map((d) => d.name),
       });
-      toast("Uçuş kaydı eklendi — analiz için hazır.");
+      toast(
+        yeniler.length === 1
+          ? "Uçuş kaydı eklendi."
+          : `${yeniler.length} dosya eklendi.`
+      );
       load();
     } finally {
       setUploadingLog(null);
@@ -433,6 +535,18 @@ export function UcuslarClient({ userId }: { userId: string }) {
               className="field !pl-9"
             />
           </div>
+          <select
+            value={logFiltre}
+            onChange={(e) => setLogFiltre(e.target.value)}
+            className="field !w-auto"
+            aria-label="Uçuş kaydı türüne göre filtrele"
+          >
+            {LOG_FILTRE.map((o) => (
+              <option key={o.k} value={o.k}>
+                {o.l}
+              </option>
+            ))}
+          </select>
         </div>
 
         {loading ? (
@@ -566,7 +680,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
                           Uç!
                         </button>
                       ))}
-                    {logPath[f.id] ? (
+                    {logPath[f.id] && (
                       <Link href={`/panel/ucuslar/analiz?flight=${f.id}`}>
                         <button
                           type="button"
@@ -577,23 +691,37 @@ export function UcuslarClient({ userId }: { userId: string }) {
                           Analiz
                         </button>
                       </Link>
-                    ) : (
+                    )}
+                    <button
+                      type="button"
+                      disabled={uploadingLog === f.id}
+                      onClick={() => {
+                        logTargetRef.current = f;
+                        logInputRef.current?.click();
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-3 transition-colors hover:border-line-2 hover:text-ink disabled:opacity-60"
+                      title="Uçuş kaydı ekle — .db, .tlog, .bin (birden fazla seçebilirsiniz)"
+                    >
+                      {uploadingLog === f.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Database size={14} />
+                      )}
+                      {uploadingLog === f.id
+                        ? "Yükleniyor"
+                        : (logFiles[f.id]?.length ?? 0) > 0
+                          ? `Kayıtlar (${logFiles[f.id].length})`
+                          : "Log Ekle"}
+                    </button>
+                    {(completed[f.id] || started[f.id]) && (
                       <button
                         type="button"
-                        disabled={uploadingLog === f.id}
-                        onClick={() => {
-                          logTargetRef.current = f;
-                          logInputRef.current?.click();
-                        }}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-3 transition-colors hover:border-line-2 hover:text-ink disabled:opacity-60"
-                        title="Uçuş kaydı (.db) ekle"
+                        onClick={() => setFormGecmisi(f)}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-3 transition-colors hover:border-line-2 hover:text-ink"
+                        title="Bu uçuşun doldurulmuş kontrol listesini gör"
                       >
-                        {uploadingLog === f.id ? (
-                          <Loader2 size={14} className="animate-spin" />
-                        ) : (
-                          <Database size={14} />
-                        )}
-                        {uploadingLog === f.id ? "Yükleniyor" : "Log Ekle"}
+                        <ClipboardCheck size={14} />
+                        Form
                       </button>
                     )}
                     <button
@@ -676,13 +804,19 @@ export function UcuslarClient({ userId }: { userId: string }) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Konum">
+            <Field label="Konum" hint="Listeden seçin ya da serbest yazın">
               <input
                 name="location"
+                list="ucus-sahalari"
                 defaultValue={editing?.location || ""}
                 placeholder="örn. ESTÜ Pisti"
                 className="field"
               />
+              <datalist id="ucus-sahalari">
+                {FLIGHT_SITES.map((sa) => (
+                  <option key={sa.key} value={sa.name} />
+                ))}
+              </datalist>
             </Field>
             <Field label="Süre (dakika)" hint="Uçuş sonrası doldurulabilir">
               <input
@@ -727,12 +861,13 @@ export function UcuslarClient({ userId }: { userId: string }) {
       <input
         ref={logInputRef}
         type="file"
-        accept=".db,.sqlite,.sqlite3,.db-wal"
+        accept=".db,.sqlite,.sqlite3,.tlog,.bin,.log"
+        multiple
         hidden
         onChange={(e) => {
-          const f = e.target.files?.[0];
+          const fs = Array.from(e.target.files || []);
           const target = logTargetRef.current;
-          if (f && target) attachLog(target, f);
+          if (fs.length && target) attachLogs(target, fs);
           logTargetRef.current = null;
           e.target.value = "";
         }}
@@ -754,6 +889,12 @@ export function UcuslarClient({ userId }: { userId: string }) {
         open={!!completing}
         onClose={() => setCompleting(null)}
         onCompleted={load}
+      />
+
+      <ChecklistGecmisi
+        flight={formGecmisi}
+        open={!!formGecmisi}
+        onClose={() => setFormGecmisi(null)}
       />
 
       <PreflightModal

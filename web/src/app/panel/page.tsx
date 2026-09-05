@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Boxes, Plane, ClipboardList, KanbanSquare, ArrowUpRight } from "lucide-react";
-import { getSession } from "@/lib/auth";
+import { getSession, canAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { UyariTablosu } from "@/components/panel/UyariTablosu";
+import { UcakDurumu } from "@/components/panel/UcakDurumu";
 import { DEPT_LABELS } from "@/lib/constants";
 
 export default async function PanelHome() {
@@ -20,6 +21,13 @@ export default async function PanelHome() {
 
   const name =
     session?.profile?.full_name || session?.email?.split("@")[0] || "Üye";
+
+  /* aircraft_sections RLS'iyle aynı küme */
+  const ilerlemeYazabilir = session
+    ? canAccess(session, {
+        allowedDepts: ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik"],
+      })
+    : false;
 
   const stats = [
     { label: "Açık İhtiyaç", value: needs.count ?? 0, href: "/panel/ihtiyaclar", icon: ClipboardList },
@@ -42,7 +50,11 @@ export default async function PanelHome() {
       {/* Kaptan yardımcısının isteği: uyarılar en başta */}
       <UyariTablosu />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Yapımdaki uçağın kuşbakışı durumu — herkes görür,
+          yüzdeleri yalnızca teknik departmanlar günceller */}
+      <UcakDurumu canWrite={ilerlemeYazabilir} />
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => {
           const Icon = s.icon;
           return (

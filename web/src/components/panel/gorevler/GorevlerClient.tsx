@@ -50,9 +50,17 @@ export function displayNameOf(p: {
 export function GorevlerClient({
   userId,
   myName,
+  role,
+  myDept,
+  isAdmin,
 }: {
   userId: string;
   myName: string;
+  /** admin | vice | captain | member */
+  role: string;
+  myDept: string;
+  /** Takım kaptanı veya yardımcısı — her departmanda tam yetkili */
+  isAdmin: boolean;
 }) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
@@ -124,6 +132,34 @@ export function GorevlerClient({
   /** profiles listelenemiyorsa (RLS) serbest metne düşeriz */
   const hasMemberList = memberNames.length > 0;
 
+  /** Görünen ad → kullanıcı kimliği. assignee_id'yi doldurmak için. */
+  const nameToId = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const p of members) {
+      const ad = displayNameOf(p);
+      if (ad && !m.has(ad)) m.set(ad, p.id);
+    }
+    return m;
+  }, [members]);
+
+  /**
+   * Bir departmanın görevlerini yönetebilir miyim?
+   *
+   * Kaptan ve yardımcısı her yerde; birim kaptanı yalnızca kendi
+   * biriminde. Üye hiçbir yerde — o sadece kendine atanan görevin
+   * durumunu taşıyabilir. Aynı kural veritabanında RLS + tetikleyici
+   * ile de uygulanıyor (supabase/gorev-yetkileri.sql); buradaki kontrol
+   * yalnızca arayüzü sadeleştirmek için.
+   */
+  const yonetebilir = useCallback(
+    (d?: string | null) =>
+      isAdmin || (role === "captain" && !!myDept && d === myDept),
+    [isAdmin, role, myDept]
+  );
+
+  /** Hiç görev açamayacaksa "Görev Oluştur" düğmesi hiç görünmesin */
+  const gorevAcabilir = isAdmin || (role === "captain" && !!myDept);
+
   /** Kendi görünen adım — "bana atananlar" bununla tam eşleşir */
   const myDisplayName = useMemo(() => {
     const mine = members.find((m) => m.id === userId);
@@ -187,6 +223,10 @@ export function GorevlerClient({
       description: trimTo(fd.get("description"), LIMITS.longText),
       dept: oneOf(fd.get("dept"), TASK_DEPTS, "ortak"),
       assignee: trimTo(fd.get("assignee"), LIMITS.name),
+      /* Kimliği de yazıyoruz: RLS "bu görev bana mı atanmış" sorusunu
+         ada göre değil kimliğe göre cevaplıyor. */
+      assignee_id:
+        nameToId.get(trimTo(fd.get("assignee"), LIMITS.name) || "") ?? null,
       deadline: trimTo(fd.get("deadline"), 20),
       priority: oneOf(fd.get("priority"), PRIORITIES, "medium"),
       status,
@@ -265,10 +305,12 @@ export function GorevlerClient({
         title="Görevler"
         desc="Departman görev panosu. Kartları sürükleyerek durum değiştirin."
       >
+        {gorevAcabilir && (
         <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
           <Plus size={16} />
           Görev Oluştur
         </Button>
+        )}
       </PageHeader>
 
       {/* Filtreler */}
@@ -375,14 +417,23 @@ export function GorevlerClient({
                     items.map((t) => (
                       <li
                         key={t.id}
-                        draggable
+                        /* Üye yalnızca KENDİNE atanan görevi taşıyabilir;
+                           kaptan/yardımcı ve birim kaptanı kendi biriminde
+                           serbest. Aynı kural DB tarafında da uygulanıyor. */
+                        draggable={
+                          yonetebilir(t.dept) || t.assignee_id === userId
+                        }
                         onDragStart={(e) => {
                           setDragId(t.id);
                           e.dataTransfer.effectAllowed = "move";
                           e.dataTransfer.setData("text/plain", t.id);
                         }}
                         onDragEnd={() => { setDragId(null); setDragOverCol(null); }}
-                        className={`group cursor-grab rounded-xl border border-line bg-bg p-3.5 transition-shadow active:cursor-grabbing ${
+                        className={`group rounded-xl border border-line bg-bg p-3.5 transition-shadow ${
+                          yonetebilir(t.dept) || t.assignee_id === userId
+                            ? "cursor-grab active:cursor-grabbing"
+                            : "cursor-default"
+                        } ${
                           dragId === t.id ? "opacity-45" : "hover:shadow-[var(--shadow-sm)]"
                         }`}
                       >
@@ -391,6 +442,7 @@ export function GorevlerClient({
                           <span className="flex-1 text-[13.5px] font-semibold leading-snug text-ink">
                             {t.title}
                           </span>
+                          {yonetebilir(t.dept) && (
                           <span className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                             <button
                               type="button"
@@ -409,6 +461,7 @@ export function GorevlerClient({
                               <Trash2 size={12} />
                             </button>
                           </span>
+                          )}
                         </div>
 
                         {t.description && (
