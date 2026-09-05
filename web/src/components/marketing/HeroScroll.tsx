@@ -46,7 +46,6 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 "radial-gradient(ellipse 110% 75% at 50% -8%, var(--hero-glow), transparent 62%)",
             }}
           />
-          <div className="grid-texture absolute inset-0" />
         </div>
 
         {/* Medya sahnesi */}

@@ -20,6 +20,8 @@ export const PANEL_NAV: NavGroup[] = [
       { href: "/panel", label: "Genel Bakış", icon: "LayoutDashboard" },
       { href: "/panel/gorevler", label: "Görevler", icon: "KanbanSquare" },
       { href: "/panel/ihtiyaclar", label: "İhtiyaç Tablosu", icon: "ClipboardList" },
+      { href: "/panel/toplanti", label: "Toplantı Odası", icon: "Video" },
+      { href: "/panel/ayarlar/profil", label: "Profilim", icon: "UserRound" },
     ],
   },
   {
@@ -29,7 +31,7 @@ export const PANEL_NAV: NavGroup[] = [
         href: "/panel/envanter",
         label: "Envanter",
         icon: "Boxes",
-        allowedDepts: ["yazilim", "yapisal", "kompozit", "aviyonik", "sponsorluk"],
+        allowedDepts: ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik", "sponsorluk"],
       },
       { href: "/panel/ucuslar", label: "Uçuş Kayıtları", icon: "Plane" },
       { href: "/panel/hava-durumu", label: "Hava Durumu", icon: "CloudSun" },
@@ -42,7 +44,7 @@ export const PANEL_NAV: NavGroup[] = [
         href: "/panel/notlar",
         label: "Uçuş Notları",
         icon: "NotebookPen",
-        allowedDepts: ["yazilim", "yapisal", "kompozit", "aviyonik"],
+        allowedDepts: ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik"],
       },
       {
         href: "/panel/telemetri",

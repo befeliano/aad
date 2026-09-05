@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { logAction } from "@/lib/audit";
 
 export function LoginForm() {
   const router = useRouter();
@@ -40,6 +41,10 @@ export function LoginForm() {
       setLoading(false);
       return;
     }
+
+    // Giriş kaydı — İşlem Kayıtları'nda "Giriş" satırı olarak görünür.
+    // Yönlendirmeyi bekletmemek için hata durumunda sessizce geçilir.
+    await logAction(supabase, "login", null, null, {});
 
     // Middleware'in yeni session cookie'sini görmesi için tam yönlendirme
     router.refresh();

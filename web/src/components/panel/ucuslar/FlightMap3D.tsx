@@ -26,7 +26,16 @@ const ION_TOKEN = process.env.NEXT_PUBLIC_CESIUM_ION_TOKEN;
 
 /** Takım sırasına göre 3D model — arkadaş ekibin hazırladığı .glb'ler */
 const MODELS = [
-  { uri: "/models/Shadowmk.glb", scale: 0.005, pitch: 0, heading: 0, roll: 0 },
+  {
+    uri: "/models/Shadowmk.glb",
+    scale: 0.005,
+    /* .glb'nin ileri ekseni Cesium'un beklediği yöne göre 90° dönük;
+       düzeltilmezse uçak yandan uçuyormuş gibi görünür.
+       Ters yöne dönmüşse buradaki işareti (+/-) çevirmek yeterli. */
+    heading: -Cesium.Math.PI_OVER_TWO,
+    pitch: 0,
+    roll: 0,
+  },
   {
     uri: "/models/kartal.glb",
     scale: 0.005,
@@ -140,11 +149,39 @@ export default function FlightMap3D({
         viewer.scene.globe.depthTestAgainstTerrain = true;
         viewer.cesiumWidget.creditContainer.setAttribute("style", "display:none");
 
+        /* 3D binalar (Cesium OSM Buildings).
+           Arazi zaten yüksekliğe sahipti ama binalar yalnızca uydu
+           görüntüsünde düz doku olarak görünüyordu; bu katman uçuş
+           sahasındaki yapıları gerçek hacimli hâle getirir.
+           Yüklenemezse harita çalışmaya devam eder. */
+        try {
+          const binalar = await Cesium.createOsmBuildingsAsync();
+          if (!cancelled && viewer) viewer.scene.primitives.add(binalar);
+        } catch {
+          /* bina katmanı isteğe bağlı */
+        }
+
         const [clat, clon] = session.center;
-        baseHeight =
-          viewer.scene.globe.getHeight(
-            Cesium.Cartographic.fromDegrees(clon, clat)
-          ) ?? 785;
+
+        /* Zemin yüksekliği — sahnedeki HER ŞEYİN referansı.
+           ESKİ HATA: globe.getHeight() arazi karoları daha yüklenmemişken
+           elipsoide düşüp 0 döndürüyordu ve `?? 785` ifadesi 0'ı yakalamıyor
+           (?? yalnızca null/undefined için çalışır). baseHeight 0 olunca
+           58 m irtifadaki uçak gerçek zeminin ~730 m ALTINA yerleşiyor,
+           kamera da toprağın içine giriyordu: ekran siyah, yalnız ufuk.
+           Çözüm: araziyi asenkron örnekle ve saçma değeri kabul etme. */
+        try {
+          const [ornek] = await Cesium.sampleTerrainMostDetailed(terrain, [
+            Cesium.Cartographic.fromDegrees(clon, clat),
+          ]);
+          const h = ornek?.height;
+          if (typeof h === "number" && Number.isFinite(h) && h > 1) {
+            baseHeight = h;
+          }
+        } catch {
+          /* örnekleme başarısızsa 785 m varsayılanı kalır */
+        }
+        if (cancelled) return;
 
         /* --- Uçak, iz ve hayalet varlıkları --- */
         session.teams.forEach((team, i) => {
@@ -287,12 +324,18 @@ export default function FlightMap3D({
                 baseHeight + Math.max(p.alt, 2)
               );
               const transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
+              /* Cesium kamerayı hedefin (heading + 180°) yönüne yerleştirir.
+                 Dolayısıyla heading olarak uçağın yaw'ını verince kamera tam
+                 ARKASINA geçer ve uçuşla aynı yöne bakar (flight-sim TPS).
+                 Önceki "yaw - 90" değeri kamerayı yan tarafta bırakıyordu.
+                 cfg.heading burada KULLANILMAZ: o, .glb modelinin ileri
+                 ekseni için bir düzeltme, gerçek rota yönü değil. */
               v.camera.lookAtTransform(
                 transform,
                 new Cesium.HeadingPitchRange(
-                  Cesium.Math.toRadians(p.yaw - 90),
-                  Cesium.Math.toRadians(-18),
-                  60
+                  Cesium.Math.toRadians(p.yaw),
+                  Cesium.Math.toRadians(-20),
+                  130
                 )
               );
             }

@@ -323,12 +323,14 @@ export default function SponsorlukPage() {
                 <div key={l.name} className="text-center">
                   <div className="text-sm font-bold text-ink">{l.name}</div>
                   <div className="text-[12.5px] text-ink-3">{l.role}</div>
-                  <a
-                    href={`tel:${l.phone.replace(/\s/g, "")}`}
-                    className="tabular mt-1 block text-[13px] text-accent hover:underline"
-                  >
-                    {l.phone}
-                  </a>
+                  {l.email && (
+                    <a
+                      href={`mailto:${l.email}`}
+                      className="mt-1 block break-all text-[13px] text-accent hover:underline"
+                    >
+                      {l.email}
+                    </a>
+                  )}
                 </div>
               ))}
             </div>

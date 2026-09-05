@@ -35,6 +35,7 @@ export default async function PanelLayout({
         name: displayName,
         dept: session.dept,
         isAdmin: session.isAdmin,
+        role: session.role,
       }}
     >
       {children}

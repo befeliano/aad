@@ -17,7 +17,6 @@ export default function GirisPage() {
         <ThemeToggle />
       </div>
       <div className="absolute inset-0" style={{background:"radial-gradient(ellipse 90% 70% at 50% 0%, var(--hero-glow), transparent 62%)"}} />
-      <div className="grid-texture absolute inset-0" />
 
       <div className="relative w-full max-w-md">
         <div className="mb-8 flex justify-center">

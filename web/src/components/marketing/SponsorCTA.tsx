@@ -12,7 +12,6 @@ export function SponsorCTA() {
             "radial-gradient(ellipse 75% 110% at 50% 100%, var(--hero-glow), transparent 62%)",
         }}
       />
-      <div className="grid-texture absolute inset-0" />
 
       <div className="relative mx-auto max-w-3xl px-5 py-28 text-center sm:px-8">
         <Reveal>

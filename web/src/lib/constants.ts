@@ -26,7 +26,6 @@ export const TEAM = {
 export interface TeamLead {
   name: string;
   role: string;
-  phone: string;
   email?: string;
 }
 
@@ -34,13 +33,11 @@ export const TEAM_LEADS: TeamLead[] = [
   {
     name: "Selman KOÇ",
     role: "Takım Kaptanı",
-    phone: "+90 541 951 82 78",
     email: "selman_koc@outlook.com.tr",
   },
   {
     name: "Emre KOŞAR",
     role: "Takım Kaptan Yardımcısı",
-    phone: "+90 505 938 44 84",
     email: "emrekosar@ogr.eskisehir.edu.tr",
   },
 ];
@@ -92,8 +89,12 @@ export const SOCIALS: SocialLink[] = [
  * Departman anahtarları.
  * NOT: Bunlar Supabase'deki mevcut `profiles.department` değerleridir —
  * RLS ve kayıtlı veriler buna bağlı olduğu için DEĞİŞTİRİLMEDİ.
- * Tanıtım dosyasındaki "Tasarım" alt ekibinin henüz bir DB anahtarı yok;
- * eklenmesi istenirse `tasarim` değeri DB'ye de tanıtılmalı.
+ * "Tasarım" alt ekibi `tasarim` anahtarıyla eklendi.
+ * Medya ve Sponsorluk tek ekip olduğu için tek anahtarda birleştirildi.
+ * Anahtar `sponsorluk` OLARAK KALDI çünkü sponsors/allocations tablolarının
+ * RLS politikaları `has_dept_access(ARRAY['sponsorluk'])` çağırıyor — anahtarı
+ * değiştirmek finans erişimini kırardı. Etiket "Medya & Sponsorluk".
+ * Eski `medya` kayıtlarının taşınması supabase/departman-birlestir.sql ile.
  */
 export type DeptKey =
   | "yazilim"
@@ -101,27 +102,43 @@ export type DeptKey =
   | "aviyonik"
   | "kompozit"
   | "sponsorluk"
-  | "medya"
   | "tasarim"
   | "ortak";
+
+/** Panelde gösterilen rol unvanları */
+export const ROLE_LABELS: Record<string, string> = {
+  admin: "Takım Kaptanı",
+  vice: "Takım Kaptan Yardımcısı",
+  captain: "Birim Kaptanı",
+  member: "Üye",
+};
+
+/**
+ * Tam yetkili roller — DB'deki is_admin() ile birebir aynı küme olmalı.
+ *
+ * DİKKAT: "captain" (birim kaptanı) BURAYA GİRMEZ. Birim kaptanı olmak
+ * finans gibi kritik verilere erişim vermez; yetkileri düz üye ile aynıdır,
+ * "Birim Kaptanı" yalnızca unvandır.
+ */
+export const LEADERSHIP_ROLES = ["admin", "vice"] as const;
 
 export const DEPT_LABELS: Record<string, string> = {
   yazilim: "Yazılım",
   yapisal: "Yapısal",
   aviyonik: "Aviyonik",
   kompozit: "Kompozit",
-  sponsorluk: "Sponsorluk",
-  medya: "Medya & Tanıtım",
+  sponsorluk: "Medya & Sponsorluk",
+  tasarim: "Tasarım",
   ortak: "Ortak",
 };
 
 export const DEPT_KEYS: DeptKey[] = [
   "yazilim",
+  "tasarim",
   "yapisal",
   "aviyonik",
   "kompozit",
   "sponsorluk",
-  "medya",
 ];
 
 /* ---------- BAŞARILAR (Instagram profilinden doğrulandı) ---------- */
@@ -334,7 +351,7 @@ export const FLEET: Aircraft[] = [
     name: "JAEGER",
     slug: "jaeger",
     codename: "2017",
-    role: "SAE Aero Design · Dünya Şampiyonu",
+    role: "SAE AERO DESIGN · Dünya Şampiyonu",
     desc: "2017'de ABD'de düzenlenen SAE Aero Design East yarışmasında Dünya Şampiyonluğu getiren, doğadan ilham alan (biyomimetik) modüler tasarım. 55 saniyelik montaj süresiyle tasarım disiplinimizin temel taşı.",
     year: "2017",
     specs: [

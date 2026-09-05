@@ -38,6 +38,9 @@ import { Badge, Button, Card } from "@/components/ui/Kit";
 import { TelemetryChart, SERIES } from "./TelemetryChart";
 import { PageHeader } from "@/components/panel/PageHeader";
 
+/** Uçuş kaydı üst sınırı (tarayıcıda ayrıştırılıyor) */
+const MAX_LOG_MB = 50;
+
 const FlightMap3D = dynamic(() => import("./FlightMap3D"), {
   ssr: false,
   loading: () => (
@@ -87,6 +90,18 @@ export function FlightAnalysis() {
   /* ---------- dosya yükleme ---------- */
   const handleFile = useCallback(async (file: File) => {
     setError(null);
+
+    /* Ayrıştırma tamamen tarayıcıda (sql.js) yapılıyor; sunucuya yükleme yok.
+       Yine de çok büyük dosya sekmeyi kilitleyebileceği için açık bir sınır
+       koyup anlaşılır bir mesaj veriyoruz. */
+    if (file.size > MAX_LOG_MB * 1048576) {
+      setError(
+        `Dosya çok büyük: ${(file.size / 1048576).toFixed(1)} MB. ` +
+          `Uçuş analizi için üst sınır ${MAX_LOG_MB} MB.`
+      );
+      return;
+    }
+
     setParsing(true);
     setPlaying(false);
     try {

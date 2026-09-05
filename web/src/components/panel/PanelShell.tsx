@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as Icons from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { DEPT_LABELS } from "@/lib/constants";
+import { DEPT_LABELS, ROLE_LABELS } from "@/lib/constants";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ToastProvider } from "@/components/ui/Toast";
@@ -26,7 +26,7 @@ export function PanelShell({
   children,
 }: {
   nav: NavGroup[];
-  user: { name: string; dept: string; isAdmin: boolean };
+  user: { name: string; dept: string; isAdmin: boolean; role: string };
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -124,9 +124,9 @@ export function PanelShell({
               <span className="size-2 rounded-full bg-ok" />
               <span className="text-sm font-medium text-ink">{user.name}</span>
               <span className="eyebrow hidden !text-[9.5px] sm:inline">
-                {user.isAdmin
-                  ? "KAPTAN"
-                  : DEPT_LABELS[user.dept]?.toUpperCase() || "ÜYE"}
+                {user.isAdmin || user.role === "captain"
+                  ? (ROLE_LABELS[user.role] || "Üye").toLocaleUpperCase("tr")
+                  : DEPT_LABELS[user.dept]?.toLocaleUpperCase("tr") || "ÜYE"}
               </span>
               <button
                 type="button"

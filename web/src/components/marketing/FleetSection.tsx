@@ -60,7 +60,6 @@ export function FleetSection() {
                           "radial-gradient(circle at 62% 32%, var(--accent-soft), transparent 62%)",
                       }}
                     />
-                    <div className="grid-texture absolute inset-0" />
                     <PlaneMark className="w-[62%] text-ink opacity-[0.10] transition-transform duration-700 group-hover:scale-105" />
                   </>
                 )}

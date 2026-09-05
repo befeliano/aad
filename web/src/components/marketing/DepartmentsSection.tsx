@@ -67,7 +67,7 @@ export function DepartmentsSection() {
           <Reveal key={d.key} delay={(i % 3) * 70}>
             <article className="group flex h-full flex-col bg-bg p-7 transition-colors hover:bg-bg-1">
               <div className="flex items-start justify-end">
-                <span className="eyebrow !text-[9.5px]">{d.short}</span>
+                <span lang="en" className="eyebrow !text-[9.5px]">{d.short}</span>
               </div>
               <h3 className="mt-6 text-xl font-bold text-ink">{d.name}</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-2">{d.desc}</p>

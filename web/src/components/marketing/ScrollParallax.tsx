@@ -18,7 +18,6 @@ export function ScrollParallax() {
             "radial-gradient(ellipse 90% 60% at 50% 30%, var(--hero-glow), transparent 65%)",
         }}
       />
-      <div className="grid-texture absolute inset-0" />
 
       {/* Metin */}
       <div className="relative z-[1] mx-auto max-w-3xl px-5 pt-[6vh] text-center sm:px-8">

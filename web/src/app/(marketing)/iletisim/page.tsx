@@ -69,12 +69,14 @@ export default function IletisimPage() {
                         {l.name}
                       </div>
                       <div className="text-[12.5px] text-ink-3">{l.role}</div>
-                      <a
-                        href={`tel:${l.phone.replace(/\s/g, "")}`}
-                        className="tabular mt-0.5 block text-[13.5px] text-ink-2 transition-colors hover:text-accent"
-                      >
-                        {l.phone}
-                      </a>
+                      {l.email && (
+                        <a
+                          href={`mailto:${l.email}`}
+                          className="mt-0.5 block break-all text-[13.5px] text-ink-2 transition-colors hover:text-accent"
+                        >
+                          {l.email}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

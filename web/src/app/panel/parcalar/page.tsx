@@ -5,7 +5,7 @@ import { ParcalarClient } from "@/components/panel/parcalar/ParcalarClient";
 export const metadata = { title: "Parçalar (3D)" };
 
 /** Görüntüleme herkese açık; yükleme/silme teknik departmanlara */
-const WRITE_DEPTS = ["yazilim", "yapisal", "kompozit", "aviyonik"];
+const WRITE_DEPTS = ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik"];
 
 export default async function Page() {
   const session = await getSession();

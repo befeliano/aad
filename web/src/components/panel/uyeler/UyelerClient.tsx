@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 
-const ROLES = ["member", "admin"] as const;
+const ROLES = ["member", "captain", "vice", "admin"] as const;
 
 export function UyelerClient({ myId }: { myId: string }) {
   const supabase = useMemo(() => createClient(), []);
@@ -70,7 +70,8 @@ export function UyelerClient({ myId }: { myId: string }) {
   const stats = useMemo(
     () => ({
       total: users.length,
-      admins: users.filter((u) => u.role === "admin").length,
+      admins: users.filter((u) => u.role === "admin" || u.role === "vice")
+        .length,
       unassigned: users.filter((u) => !u.department).length,
     }),
     [users]
@@ -138,7 +139,7 @@ export function UyelerClient({ myId }: { myId: string }) {
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Tile icon={<Users size={18} />} label="Toplam Üye" value={String(stats.total)} />
-        <Tile icon={<ShieldCheck size={18} />} label="Kaptan (Admin)" value={String(stats.admins)} />
+        <Tile icon={<ShieldCheck size={18} />} label="Kaptan + Yardımcı" value={String(stats.admins)} />
         <Tile
           icon={<UserCog size={18} />}
           label="Departmansız"
@@ -232,7 +233,9 @@ export function UyelerClient({ myId }: { myId: string }) {
                           aria-label={`${u.full_name} rolü`}
                         >
                           <option value="member">Üye</option>
-                          <option value="admin">Kaptan (Admin)</option>
+                          <option value="captain">Birim Kaptanı</option>
+                          <option value="vice">Takım Kaptan Yardımcısı</option>
+                          <option value="admin">Takım Kaptanı</option>
                         </select>
                       </td>
                       <td className="px-4 py-3 text-[12.5px] text-ink-3">
