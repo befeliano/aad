@@ -54,6 +54,8 @@ export interface Flight {
   location: string | null;
   duration: number | null;
   mission: string | null;
+  /** supabase/ucus-simulasyon.sql — SITL/X-Plane koşusu mu? */
+  is_sim?: boolean;
   created_by: string | null;
   created_at: string;
 }

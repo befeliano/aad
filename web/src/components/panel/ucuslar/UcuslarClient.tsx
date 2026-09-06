@@ -42,6 +42,13 @@ export interface LogDosyasi {
 const LOG_UZANTI = ["db", "sqlite", "sqlite3", "tlog", "bin", "log"] as const;
 
 /** Filtre seçenekleri — hangi tür kaydı olan uçuşlar gösterilsin */
+/** Gerçek uçuş / simülasyon süzgeci */
+const TUR_FILTRE = [
+  { k: "", l: "Gerçek + simülasyon" },
+  { k: "gercek", l: "Sadece gerçek uçuşlar" },
+  { k: "sim", l: "Sadece simülasyon" },
+] as const;
+
 const LOG_FILTRE = [
   { k: "", l: "Tüm uçuşlar" },
   { k: "db", l: "Sadece .db olanlar" },
@@ -96,6 +103,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
   const [logPath, setLogPath] = useState<Record<string, string>>({});
   const [logFiles, setLogFiles] = useState<Record<string, LogDosyasi[]>>({});
   const [logFiltre, setLogFiltre] = useState("");
+  const [turFiltre, setTurFiltre] = useState("");
   const [formGecmisi, setFormGecmisi] = useState<Flight | null>(null);
   /** Şu an log yüklenen uçuş */
   const [uploadingLog, setUploadingLog] = useState<string | null>(null);
@@ -201,7 +209,12 @@ export function UcuslarClient({ userId }: { userId: string }) {
       return liste.some((d) => d.ext === logFiltre);
     };
 
-    const match = (f: Flight) => metinTut(f) && kayitTut(f);
+    const turTut = (f: Flight) => {
+      if (!turFiltre) return true;
+      return turFiltre === "sim" ? !!f.is_sim : !f.is_sim;
+    };
+
+    const match = (f: Flight) => metinTut(f) && kayitTut(f) && turTut(f);
 
     /* Sınıflandırma önceliği:
        1) Tamamlandıysa → Geçmiş (planlanan saat gelecekte olsa bile)
@@ -232,7 +245,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
     });
 
     return { upcoming: up, past: pa };
-  }, [logFiltre, logFiles, flights, q, started, completed]);
+  }, [logFiltre, turFiltre, logFiles, flights, q, started, completed]);
 
   const stats = useMemo(() => {
     const now = new Date();
@@ -275,6 +288,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
       location: String(fd.get("location") || "").trim() || null,
       duration: fd.get("duration") ? Number(fd.get("duration")) : null,
       mission: String(fd.get("mission") || "").trim() || null,
+      is_sim: fd.get("is_sim") === "on",
     };
     if (!payload.flight_date || !payload.flight_time || !payload.aircraft) {
       toast("Tarih, saat ve uçak zorunlu.", "error");
@@ -308,6 +322,39 @@ export function UcuslarClient({ userId }: { userId: string }) {
     if (error) toast("Silinemedi: " + error.message, "error");
     else toast("Uçuş kaydı silindi.");
     setDelTarget(null);
+    load();
+  }
+
+  /**
+   * Simülasyon koşusunu doğrudan başlatır.
+   *
+   * Uçuş öncesi kontrol listesi ATLANIR: listedeki maddelerin tamamı
+   * fiziksel kontrol (pervane hasarı, batarya şişmesi, kontrol yüzeyi
+   * boşluğu) ve simülasyonda karşılıkları yok. Kayıt yine açılıyor ki
+   * kronometre ve "uçuşu tamamla" akışı aynı şekilde çalışsın.
+   */
+  async function simBaslat(flight: Flight) {
+    const { error } = await supabase.from("flight_checklists").upsert(
+      [
+        {
+          flight_id: flight.id,
+          checked: [],
+          note: "Simülasyon koşusu — kontrol listesi atlandı.",
+          started_at: new Date().toISOString(),
+        },
+      ],
+      { onConflict: "flight_id" }
+    );
+
+    if (error) {
+      toast("Başlatılamadı: " + error.message, "error");
+      return;
+    }
+    void logAction(supabase, "create", "flight_checklists", flight.id, {
+      aircraft: flight.aircraft,
+      simulasyon: true,
+    });
+    toast("Simülasyon koşusu başladı.");
     load();
   }
 
@@ -536,6 +583,18 @@ export function UcuslarClient({ userId }: { userId: string }) {
             />
           </div>
           <select
+            value={turFiltre}
+            onChange={(e) => setTurFiltre(e.target.value)}
+            className="field !w-auto"
+            aria-label="Uçuş türüne göre filtrele"
+          >
+            {TUR_FILTRE.map((o) => (
+              <option key={o.k} value={o.k}>
+                {o.l}
+              </option>
+            ))}
+          </select>
+          <select
             value={logFiltre}
             onChange={(e) => setLogFiltre(e.target.value)}
             className="field !w-auto"
@@ -608,6 +667,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
                       <Badge tone={isPast ? "neutral" : "accent"}>
                         {fmtTime(f.flight_time)}
                       </Badge>
+                      {f.is_sim && <Badge tone="warn">Simülasyon</Badge>}
                       {completed[f.id] && (
                         <Badge tone="ok">Tamamlandı</Badge>
                       )}
@@ -672,12 +732,18 @@ export function UcuslarClient({ userId }: { userId: string }) {
                       ) : (
                         <button
                           type="button"
-                          onClick={() => setPreflight(f)}
-                          title="Uçuş öncesi kontrol listesini aç"
+                          onClick={() =>
+                            f.is_sim ? simBaslat(f) : setPreflight(f)
+                          }
+                          title={
+                            f.is_sim
+                              ? "Simülasyon koşusunu başlat (kontrol listesi atlanır)"
+                              : "Uçuş öncesi kontrol listesini aç"
+                          }
                           className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-[12.5px] font-bold text-white transition-transform hover:scale-105"
                         >
                           <Rocket size={14} />
-                          Uç!
+                          {f.is_sim ? "Başlat" : "Uç!"}
                         </button>
                       ))}
                     {logPath[f.id] && (
@@ -828,6 +894,25 @@ export function UcuslarClient({ userId }: { userId: string }) {
               />
             </Field>
           </div>
+
+          <label className="flex cursor-pointer select-none items-start gap-3 rounded-xl border border-line bg-bg-1 p-4">
+            <input
+              type="checkbox"
+              name="is_sim"
+              defaultChecked={!!editing?.is_sim}
+              className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]"
+            />
+            <span>
+              <span className="block text-[13.5px] font-semibold text-ink">
+                Simülasyon uçuşu
+              </span>
+              <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-3">
+                SITL, X-Plane veya Gazebo koşusu. İşaretlenirse uçuş öncesi
+                kontrol listesi atlanır — pervane, batarya ve kontrol
+                yüzeyi kontrollerinin simülasyonda karşılığı yok.
+              </span>
+            </span>
+          </label>
 
           <Field label="Görev tanımı">
             <textarea

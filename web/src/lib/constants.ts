@@ -580,9 +580,11 @@ export interface Sponsor2025 {
 
 export const SPONSORS_2025: Sponsor2025[] = [
   { name: "ETİ", role: "Ana Sponsor", logo: "/images/sponsors/eti.png" },
-  { name: "T-Motor", role: "Ürün Sponsoru", logo: null },
-  { name: "Özzaim", role: "Destekçi", logo: null },
-  { name: "Dekor", role: "Destekçi", logo: null },
-  { name: "Selsil", role: "Destekçi", logo: null },
-  { name: "Gökhan İHA", role: "Destekçi", logo: null },
+  { name: "T-Motor", role: "Ürün Sponsoru", logo: "/images/sponsors/t-motor.png" },
+  { name: "Zaxe", role: "Ürün Sponsoru", logo: "/images/sponsors/zaxe.png" },
+  { name: "TESA", role: "Destekçi", logo: "/images/sponsors/tesa.jpg" },
+  { name: "Özzaim", role: "Destekçi", logo: "/images/sponsors/ozzaim.jpg" },
+  { name: "Dekor", role: "Destekçi", logo: "/images/sponsors/dekor.webp" },
+  { name: "Selsil", role: "Destekçi", logo: "/images/sponsors/selsil.png" },
+  { name: "Gökhan İHA", role: "Destekçi", logo: "/images/sponsors/gokhan-iha.png" },
 ];

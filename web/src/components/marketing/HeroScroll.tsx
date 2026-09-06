@@ -29,7 +29,11 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
 
   // Animasyonların tamamlanma aralığını 0.9'dan 0.5 - 0.6 bandına çekin:
   const stageScale = useTransform(scrollYProgress, [0, 0.6], [0.96, 1.12]);
-  const stageRadius = useTransform(scrollYProgress, [0, 0.6], [24, 0]);
+  /* PERFORMANS: borderRadius artık kaydırmayla değişmiyor.
+     `scale` derleyici (compositor) katmanında çalışır, bedava sayılır;
+     borderRadius ise BOYAMA katmanındadır ve her karede kadrajın ve
+     içindeki büyük görselin yeniden çizilmesine yol açıyordu. Kasmanın
+     asıl kaynağı buydu — yarıçap sabit bir sınıfa alındı. */
   const titleY = useTransform(scrollYProgress, [0, 0.2], [0, -180]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
   const footOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
@@ -54,11 +58,11 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
 
         {/* Medya sahnesi */}
         <motion.div
-          style={{ scale: stageScale, borderRadius: stageRadius }}
+          style={{ scale: stageScale, willChange: "transform" }}
           /* Mobilde sabit 50vh — altına buton ve istatistikler sığsın.
              sm üstünde 52.9vw (= 94vw'nin 16:9 karşılığı) ile 80vh'nin küçüğü:
              geniş ekranda navbar payından sonra kalan alanı doldurur. */
-          className="relative h-[50vh] w-[94vw] shrink-0 overflow-hidden border border-line-2 bg-bg-2 shadow-[var(--shadow-lg)] sm:h-[min(80vh,52.9vw)]"
+          className="relative h-[50vh] w-[94vw] shrink-0 overflow-hidden rounded-2xl border border-line-2 bg-bg-2 shadow-[var(--shadow)] sm:h-[min(80vh,52.9vw)]"
         >
           {media ? (
             media.type === "video" && media.src ? (
@@ -79,7 +83,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                     fill
                     priority
                     sizes="(max-width: 640px) 94vw, 55vw"
-                    className="kenburns absolute inset-0 object-cover transition-opacity duration-1000"
+                    className="absolute inset-0 object-cover transition-opacity duration-1000"
                     style={{ opacity: "var(--hero-light-op)" }}
                   />
                   <Image
@@ -88,7 +92,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                     fill
                     priority
                     sizes="(max-width: 640px) 94vw, 55vw"
-                    className="kenburns absolute inset-0 object-cover transition-opacity duration-1000"
+                    className="absolute inset-0 object-cover transition-opacity duration-1000"
                     style={{ opacity: "var(--hero-dark-op)" }}
                   />
                 </>
@@ -99,7 +103,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 fill
                 priority
                 sizes="(max-width: 640px) 94vw, 55vw"
-                className="kenburns object-cover"
+                className="object-cover"
               />
             ) : null // Eğer hiçbir src yoksa boş yere Image basmaya çalışıp preload hatası verdirmesin
           ) : (

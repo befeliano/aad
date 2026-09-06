@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Check, ArrowRight, Minus } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  Minus,
+  FileText,
+  Plane,
+  Shirt,
+  Megaphone,
+  Presentation,
+} from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/marketing/SectionHeading";
 import {
@@ -94,10 +103,152 @@ export default function SponsorlukPage() {
         </div>
       </section>
 
-      {/* Seviyeler */}
+      {/* Neden katkı */}
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
         <SectionHeading
           num="01"
+          title="Neden Katkı Yapmalısınız?"
+          kicker="Desteğinizin karşılığı"
+        />
+        <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {SPONSOR_REASONS.map((r, i) => (
+            <Reveal key={r.t} delay={i * 70}>
+              <article className="h-full rounded-2xl border border-line bg-bg-1 p-7">
+                <span className="display tabular text-2xl text-accent">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-4 text-lg font-bold text-ink">{r.t}</h3>
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">
+                  {r.d}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Görünürlük */}
+      <section className="border-t border-line bg-bg-1">
+        <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+          <SectionHeading
+            num="02"
+            title="Logonuz Nerede Görünür?"
+            kicker="Destek karşılığında somut olarak ne aldığınız"
+          />
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                Icon: Plane,
+                baslik: "Uçak gövdesinde",
+                metin:
+                  "Logonuz yarışmaya giden platformun gövdesinde yer alır. TEKNOFEST saha yayınlarında ve fotoğraflarda uçakla birlikte görünür.",
+              },
+              {
+                Icon: Shirt,
+                baslik: "Takım kıyafetlerinde",
+                metin:
+                  "Yarışma ve etkinlik tişörtlerinde logonuz basılı olur; 40 kişilik ekip sahada bunu taşır.",
+              },
+              {
+                Icon: Megaphone,
+                baslik: "Sosyal medyada",
+                metin:
+                  "Uçuş testleri, üretim aşamaları ve yarışma paylaşımlarında etiketlenir; sezon boyunca düzenli görünürlük sağlanır.",
+              },
+              {
+                Icon: Presentation,
+                baslik: "Tanıtım ve raporlarda",
+                metin:
+                  "Tanıtım dosyası, teknik raporlar, standımız ve üniversite etkinliklerinde destekçi olarak yer alırsınız.",
+              },
+            ].map(({ Icon, baslik, metin }, i) => (
+              <Reveal key={baslik} delay={i * 70}>
+                <article className="flex h-full flex-col rounded-2xl border border-line bg-bg p-6">
+                  <span className="flex size-11 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                    <Icon size={19} />
+                  </span>
+                  <h3 className="mt-5 text-[15px] font-bold text-ink">
+                    {baslik}
+                  </h3>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
+                    {metin}
+                  </p>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+
+          <p className="mt-8 max-w-2xl text-[13px] leading-relaxed text-ink-3">
+            Hangi seviyede neyin dâhil olduğunu sayfanın altındaki karşılaştırma
+            tablosunda görebilir, ayrıntılar için sponsorluk dosyamızı
+            indirebilirsiniz.
+          </p>
+        </div>
+      </section>
+
+      {/* Başarı şeridi */}
+      <section className="border-t border-line bg-bg-1">
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+          <div className="eyebrow mb-8 text-center">
+            Desteğiniz sonuç üreten bir takıma gidiyor
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {topAchievements.map((a) => (
+              <div
+                key={a.year + a.title}
+                className="rounded-2xl border border-accent/30 bg-[linear-gradient(135deg,var(--accent-soft),transparent_65%)] p-7 text-center"
+              >
+                <div className="display text-5xl text-accent">{a.rank}</div>
+                <div className="mt-3 text-[15px] font-bold text-ink">
+                  {a.title}
+                </div>
+                <div className="mt-1 text-[12.5px] text-ink-2">{a.detail}</div>
+                <div className="eyebrow mt-3 !text-[10px]">{a.year}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Destekçiler */}
+      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+        <SectionHeading
+          num="03"
+          title="Destekçilerimiz"
+          kicker="Bize güvenen markalar"
+        />
+        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+          {SPONSORS_2025.map((s) => (
+            <div
+              key={s.name}
+              className="flex flex-col items-center justify-center gap-3 bg-bg-1 px-5 py-9"
+            >
+              {s.logo ? (
+                /* Logolar çoğunlukla koyu renkli ve saydam zeminli; karanlık
+                   temada kaybolmasınlar diye beyaz bir plakaya oturuyorlar. */
+                <span className="flex h-16 w-full items-center justify-center rounded-xl bg-white px-4">
+                  <Image
+                    src={s.logo}
+                    alt={`${s.name} logosu`}
+                    width={180}
+                    height={72}
+                    className="max-h-11 w-auto object-contain"
+                  />
+                </span>
+              ) : (
+                <span className="display text-xl text-ink-2">{s.name}</span>
+              )}
+              <span className="eyebrow !text-[9.5px]">{s.role}</span>
+            </div>
+          ))}
+        </div>
+
+      </section>
+      {/* Seviyeler */}
+      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+        <SectionHeading
+          num="04"
           title="Seviyeler"
           kicker="Size uygun katkı düzeyi"
         />
@@ -167,7 +318,7 @@ export default function SponsorlukPage() {
       <section className="border-t border-line bg-bg-1">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
           <SectionHeading
-            num="02"
+            num="05"
             title="Haklar ve Avantajlar"
             kicker="Seviyelerin karşılaştırması"
           />
@@ -224,83 +375,9 @@ export default function SponsorlukPage() {
         </div>
       </section>
 
-      {/* Neden katkı */}
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <SectionHeading
-          num="03"
-          title="Neden Katkı Yapmalısınız?"
-          kicker="Desteğinizin karşılığı"
-        />
-        <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {SPONSOR_REASONS.map((r, i) => (
-            <Reveal key={r.t} delay={i * 70}>
-              <article className="h-full rounded-2xl border border-line bg-bg-1 p-7">
-                <span className="display tabular text-2xl text-accent">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-4 text-lg font-bold text-ink">{r.t}</h3>
-                <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">
-                  {r.d}
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
 
-      {/* Başarı şeridi */}
-      <section className="border-t border-line bg-bg-1">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
-          <div className="eyebrow mb-8 text-center">
-            Desteğiniz sonuç üreten bir takıma gidiyor
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {topAchievements.map((a) => (
-              <div
-                key={a.year + a.title}
-                className="rounded-2xl border border-accent/30 bg-[linear-gradient(135deg,var(--accent-soft),transparent_65%)] p-7 text-center"
-              >
-                <div className="display text-5xl text-accent">{a.rank}</div>
-                <div className="mt-3 text-[15px] font-bold text-ink">
-                  {a.title}
-                </div>
-                <div className="mt-1 text-[12.5px] text-ink-2">{a.detail}</div>
-                <div className="eyebrow mt-3 !text-[10px]">{a.year}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Destekçiler */}
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <SectionHeading
-          num="04"
-          title="Destekçilerimiz"
-          kicker="Bize güvenen markalar"
-        />
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
-          {SPONSORS_2025.map((s) => (
-            <div
-              key={s.name}
-              className="flex flex-col items-center justify-center gap-3 bg-bg-1 px-5 py-9"
-            >
-              {s.logo ? (
-                <Image
-                  src={s.logo}
-                  alt={`${s.name} logosu`}
-                  width={150}
-                  height={60}
-                  className="h-11 w-auto object-contain"
-                />
-              ) : (
-                <span className="display text-xl text-ink-2">{s.name}</span>
-              )}
-              <span className="eyebrow !text-[9.5px]">{s.role}</span>
-            </div>
-          ))}
-        </div>
-
+      {/* İletişim */}
+      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
         <Reveal>
           <div className="mt-14 rounded-2xl border border-line bg-bg-1 p-9 text-center">
             <h2 className="display-tight text-3xl text-ink sm:text-4xl">
@@ -310,10 +387,19 @@ export default function SponsorlukPage() {
               Sponsorluk dosyamızı gönderelim, ihtiyaçlarınıza göre birlikte bir
               iş birliği kurgulayalım.
             </p>
-            <div className="mt-7">
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/anatolia-aero-design-sponsorluk-dosyasi.pdf"
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+              >
+                <FileText size={16} />
+                Sponsorluk dosyasını indir
+              </a>
               <a
                 href={`mailto:${TEAM.email}`}
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+                className="inline-flex items-center gap-2 rounded-full border border-line-2 px-7 py-3.5 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
               >
                 {TEAM.email}
               </a>
@@ -337,6 +423,7 @@ export default function SponsorlukPage() {
           </div>
         </Reveal>
       </section>
+
     </>
   );
 }

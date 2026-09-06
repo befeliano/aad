@@ -1,8 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Plus,
+  ChevronRight,
   Search,
   Download,
   Upload,
@@ -48,6 +56,10 @@ export function EnvanterClient({ userId }: { userId: string }) {
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("");
   const [onlyLow, setOnlyLow] = useState(false);
+  /* Departmana göre grupla — filtre zaten vardı ama gruplama, hangi
+     birimin neye sahip olduğunu tek bakışta gösteriyor. */
+  const [grupla, setGrupla] = useState(true);
+  const [kapali, setKapali] = useState<Set<string>>(new Set());
 
   const [editing, setEditing] = useState<StockItem | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -103,6 +115,28 @@ export function EnvanterClient({ userId }: { userId: string }) {
       return true;
     });
   }, [items, q, dept, onlyLow]);
+
+  /**
+   * Departman grupları. Sıra DEPT_KEYS'e göre; tanımsız departmanlar sonda.
+   * Grup başlığında kalem sayısı ve o birimin toplam envanter değeri var.
+   */
+  const gruplar = useMemo(() => {
+    const m = new Map<string, StockItem[]>();
+    for (const it of filtered) {
+      const k = (it.dept || "").trim() || "ortak";
+      if (!m.has(k)) m.set(k, []);
+      m.get(k)!.push(it);
+    }
+    const sira = [...DEPT_KEYS, "ortak"] as string[];
+    return [...m.entries()].sort((a, b) => {
+      const ia = sira.indexOf(a[0]);
+      const ib = sira.indexOf(b[0]);
+      if (ia === -1 && ib === -1) return a[0].localeCompare(b[0], "tr");
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  }, [filtered]);
 
   /* ---------- özet ---------- */
   const summary = useMemo(() => {
@@ -274,6 +308,95 @@ export function EnvanterClient({ userId }: { userId: string }) {
     }
   }
 
+
+  /** Tek envanter satırı — hem düz listede hem grup içinde kullanılıyor */
+  function satir(s: StockItem) {
+                  const st = statusOf(s);
+                  const meta = STATUS_META[st];
+                  const total = Number(s.qty) * Number(s.price || 0);
+                  return (
+                    <tr
+                      key={s.id}
+                      className="border-b border-line last:border-0 transition-colors hover:bg-bg-2/60"
+                    >
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-ink">{s.name}</div>
+                        {s.min_stock ? (
+                          <div className="mt-0.5 text-[11.5px] text-ink-3">
+                            Min. {s.min_stock} {s.unit || ""}
+                          </div>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge tone="info">
+                          {DEPT_LABELS[s.dept] || s.dept}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => adjustQty(s, -1)}
+                            className="flex size-6 items-center justify-center rounded-md border border-line text-ink-3 transition-colors hover:border-line-2 hover:text-ink"
+                            aria-label="Azalt"
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <span className="tabular min-w-[3.5rem] text-right font-semibold text-ink">
+                            {s.qty} {s.unit || ""}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => adjustQty(s, 1)}
+                            className="flex size-6 items-center justify-center rounded-md border border-line text-ink-3 transition-colors hover:border-line-2 hover:text-ink"
+                            aria-label="Artır"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="tabular px-4 py-3 text-right text-ink-2">
+                        {s.price ? `${fmtMoney(s.price)} ₺` : "—"}
+                      </td>
+                      <td className="tabular px-4 py-3 text-right font-semibold text-ink">
+                        {total ? `${fmtMoney(total)} ₺` : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-ink-2">
+                        {s.location || "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <ExpiryCell item={s} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge tone={meta.tone}>{meta.label}</Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditing(s);
+                              setFormOpen(true);
+                            }}
+                            className="flex size-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-bg-2 hover:text-ink"
+                            aria-label="Düzenle"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDelTarget(s)}
+                            className="flex size-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-bad/12 hover:text-bad"
+                            aria-label="Sil"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+  }
+
   return (
     <>
       <PageHeader
@@ -389,6 +512,15 @@ export function EnvanterClient({ userId }: { userId: string }) {
             />
             Sadece dikkat gerektirenler
           </label>
+          <label className="flex cursor-pointer select-none items-center gap-2 text-sm text-ink-2">
+            <input
+              type="checkbox"
+              checked={grupla}
+              onChange={(e) => setGrupla(e.target.checked)}
+              className="size-4 accent-[var(--accent)]"
+            />
+            Departmana göre grupla
+          </label>
           <span className="ml-auto text-xs text-ink-3">
             {filtered.length} / {items.length} kayıt
           </span>
@@ -450,92 +582,55 @@ export function EnvanterClient({ userId }: { userId: string }) {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((s) => {
-                  const st = statusOf(s);
-                  const meta = STATUS_META[st];
-                  const total = Number(s.qty) * Number(s.price || 0);
-                  return (
-                    <tr
-                      key={s.id}
-                      className="border-b border-line last:border-0 transition-colors hover:bg-bg-2/60"
-                    >
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-ink">{s.name}</div>
-                        {s.min_stock ? (
-                          <div className="mt-0.5 text-[11.5px] text-ink-3">
-                            Min. {s.min_stock} {s.unit || ""}
-                          </div>
-                        ) : null}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge tone="info">
-                          {DEPT_LABELS[s.dept] || s.dept}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => adjustQty(s, -1)}
-                            className="flex size-6 items-center justify-center rounded-md border border-line text-ink-3 transition-colors hover:border-line-2 hover:text-ink"
-                            aria-label="Azalt"
-                          >
-                            <Minus size={12} />
-                          </button>
-                          <span className="tabular min-w-[3.5rem] text-right font-semibold text-ink">
-                            {s.qty} {s.unit || ""}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => adjustQty(s, 1)}
-                            className="flex size-6 items-center justify-center rounded-md border border-line text-ink-3 transition-colors hover:border-line-2 hover:text-ink"
-                            aria-label="Artır"
-                          >
-                            <Plus size={12} />
-                          </button>
-                        </div>
-                      </td>
-                      <td className="tabular px-4 py-3 text-right text-ink-2">
-                        {s.price ? `${fmtMoney(s.price)} ₺` : "—"}
-                      </td>
-                      <td className="tabular px-4 py-3 text-right font-semibold text-ink">
-                        {total ? `${fmtMoney(total)} ₺` : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-ink-2">
-                        {s.location || "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <ExpiryCell item={s} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <Badge tone={meta.tone}>{meta.label}</Badge>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditing(s);
-                              setFormOpen(true);
-                            }}
-                            className="flex size-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-bg-2 hover:text-ink"
-                            aria-label="Düzenle"
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDelTarget(s)}
-                            className="flex size-7 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-bad/12 hover:text-bad"
-                            aria-label="Sil"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {grupla
+                  ? gruplar.map(([anahtar, liste]) => {
+                      const acik = !kapali.has(anahtar);
+                      const deger = liste.reduce(
+                        (t, x) => t + Number(x.qty) * Number(x.price || 0),
+                        0
+                      );
+                      return (
+                        <Fragment key={anahtar}>
+                          <tr className="border-b border-line bg-bg-2/70">
+                            <th colSpan={9} className="px-4 py-2.5 text-left">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setKapali((v) => {
+                                    const n = new Set(v);
+                                    if (n.has(anahtar)) n.delete(anahtar);
+                                    else n.add(anahtar);
+                                    return n;
+                                  })
+                                }
+                                aria-expanded={acik}
+                                className="flex w-full items-center gap-2 text-left"
+                              >
+                                <ChevronRight
+                                  size={14}
+                                  className={`shrink-0 text-ink-3 transition-transform ${
+                                    acik ? "rotate-90" : ""
+                                  }`}
+                                />
+                                <span className="text-[13px] font-semibold text-ink">
+                                  {DEPT_LABELS[anahtar] || anahtar}
+                                </span>
+                                <span className="tabular text-[12px] font-normal text-ink-3">
+                                  {liste.length} kalem
+                                </span>
+                                {deger > 0 && (
+                                  <span className="tabular ml-auto text-[12px] font-normal text-ink-3">
+                                    {fmtMoney(deger)}
+                                  </span>
+                                )}
+                              </button>
+                            </th>
+                          </tr>
+                          {acik && liste.map(satir)}
+                        </Fragment>
+                      );
+                    })
+                  : filtered.map(satir)}
               </tbody>
             </table>
           </div>

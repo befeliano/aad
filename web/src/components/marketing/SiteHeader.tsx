@@ -6,9 +6,10 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { TurkishFlag } from "@/components/ui/TurkishMarks";
+import { UyeMenusu } from "./UyeMenusu";
 
 const NAV = [
-  { href: "/#filo", label: "Filo" },
+  { href: "/filo", label: "Filo" },
   { href: "/#basarilar", label: "Başarılar" },
   { href: "/#departmanlar", label: "Ekip" },
   { href: "/galeri", label: "Galeri" },
@@ -58,12 +59,7 @@ export function SiteHeader() {
             title="Türkiye"
           />
           <ThemeToggle />
-          <Link
-            href="/giris"
-            className="hidden rounded-full bg-ink px-4 py-2 text-sm font-semibold text-bg transition-opacity hover:opacity-90 sm:inline-block"
-          >
-            Takım Girişi
-          </Link>
+          <UyeMenusu />
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -89,13 +85,7 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
-            <Link
-              href="/giris"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-lg bg-accent px-3 py-3 text-center text-base font-semibold text-white"
-            >
-              Takım Girişi
-            </Link>
+            <UyeMenusu mobil />
           </nav>
         </div>
       )}
