@@ -55,11 +55,22 @@ export function heroSlides(max = 5): string[] {
 }
 
 /** Ana sayfa hero medyası: video varsa video, yoksa foto, o da yoksa null */
-export function heroMedia(): { type: "video" | "image"; src: string } | null {
+export function heroMedia(): { type: "video" | "image"; src?: string; srcLight?: string; srcDark?: string } | null {
   const video = firstAsset("images/hero/hero", VIDEO_EXTS);
   if (video) return { type: "video", src: video };
-  const image = firstAsset("images/hero/hero", IMAGE_EXTS);
+  
+  const darkImage = firstAsset("images/hero/hero", IMAGE_EXTS);
+  const lightImage = firstAsset("images/hero/hero2", IMAGE_EXTS);
+
+  // Eğer her iki görsel de varsa ikisini de gönder
+  if (darkImage && lightImage) {
+    return { type: "image", srcDark: darkImage, srcLight: lightImage };
+  }
+
+  // Sadece biri varsa fallback olarak normal src gönder
+  const image = darkImage || lightImage;
   if (image) return { type: "image", src: image };
+  
   return null;
 }
 
