@@ -324,10 +324,10 @@ export const FLEET: Aircraft[] = [
     sprite: { top: 264, left: 100, width: 403, height: 219 },
     codename: "2020 – 2025",
     role: "Savaşan İHA · Türkiye Şampiyonu",
-    desc: "2022 TEKNOFEST Savaşan İHA yarışmasında ekibimize Türkiye Şampiyonluğu getiren platform. V-kuyruk mimarisi ve yüksek manevra kabiliyetiyle it dalaşı senaryolarında rekabetçi. Proje 2025'te tamamlandı.",
+    desc: "2022 TEKNOFEST Savaşan İHA yarışmasında ekibimize Türkiye Şampiyonluğu getiren platform. Ters V-kuyruk mimarisi ve yüksek manevra kabiliyetiyle it dalaşı senaryolarında rekabetçi. Proje 2025'te tamamlandı.",
     year: "2020–2025",
     specs: [
-      { label: "Mimari", value: "V-Kuyruk" },
+      { label: "Mimari", value: "Ters V-Kuyruk" },
       { label: "Görev", value: "Hava-Hava Muharebe" },
       { label: "Otonomi", value: "Tam Otonom" },
       { label: "Başarı", value: "Türkiye 1.'si" },
