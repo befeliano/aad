@@ -15,7 +15,9 @@ import { TurkishFlag } from "@/components/ui/TurkishMarks";
  */
 export interface HeroMedia {
   type: "video" | "image";
-  src: string;
+  src?: string;
+  srcLight?: string;
+  srcDark?: string;
 }
 
 export function HeroScroll({ media }: { media?: HeroMedia | null }) {
@@ -59,7 +61,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
           className="relative h-[50vh] w-[94vw] shrink-0 overflow-hidden border border-line-2 bg-bg-2 shadow-[var(--shadow-lg)] sm:h-[min(80vh,52.9vw)]"
         >
           {media ? (
-            media.type === "video" ? (
+            media.type === "video" && media.src ? (
               <video
                 src={media.src}
                 autoPlay
@@ -69,16 +71,37 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 preload="metadata"
                 className="absolute inset-0 size-full object-cover"
               />
-            ) : (
+            ) : media.srcLight && media.srcDark ? (
+                <>
+                  <Image
+                    src={media.srcLight}
+                    alt="Anatolia Aero Design"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 94vw, 55vw"
+                    className="kenburns absolute inset-0 object-cover transition-opacity duration-1000"
+                    style={{ opacity: "var(--hero-light-op)" }}
+                  />
+                  <Image
+                    src={media.srcDark}
+                    alt="Anatolia Aero Design"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 94vw, 55vw"
+                    className="kenburns absolute inset-0 object-cover transition-opacity duration-1000"
+                    style={{ opacity: "var(--hero-dark-op)" }}
+                  />
+                </>
+              ) : media.src ? (
               <Image
                 src={media.src}
                 alt="Anatolia Aero Design — gün batımında test uçuşu"
                 fill
                 priority
-                sizes="100vw"
+                sizes="(max-width: 640px) 94vw, 55vw"
                 className="kenburns object-cover"
               />
-            )
+            ) : null // Eğer hiçbir src yoksa boş yere Image basmaya çalışıp preload hatası verdirmesin
           ) : (
             <>
               {/* public/images/hero/hero.jpg (veya .mp4) eklenince otomatik kullanılır */}
