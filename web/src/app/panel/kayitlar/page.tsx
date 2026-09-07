@@ -8,7 +8,11 @@ export const metadata = { title: "İşlem Kayıtları" };
 export default async function Page() {
   const session = await getSession();
   if (!session) redirect("/giris?next=/panel/kayitlar");
-  if (!session.isAdmin) {
+  /* Yalnızca takım kaptanı + yazılım ekibi. Kaptan yardımcısı bile
+     giremez: denetim günlüğü teknik bir araç. */
+  const yetkili =
+    session.role === "admin" || session.dept === "yazilim";
+  if (!yetkili) {
     return <AccessDenied title="İşlem Kayıtları" adminOnly />;
   }
   return <KayitlarClient />;

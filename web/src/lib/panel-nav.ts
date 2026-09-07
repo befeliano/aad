@@ -6,6 +6,8 @@ export interface NavEntry {
   icon: string; // lucide ikon adı
   allowedDepts?: string[];
   adminOnly?: boolean;
+  /** Tam rol eşleşmesi — bkz. canAccess */
+  exactRoles?: string[];
 }
 
 export interface NavGroup {
@@ -37,15 +39,22 @@ export const PANEL_NAV: NavGroup[] = [
       { href: "/panel/ucuslar", label: "Uçuş Kayıtları", icon: "Plane" },
       { href: "/panel/hava-durumu", label: "Hava Durumu", icon: "CloudSun" },
       {
+        // Medya & Sponsorluk'a kapalı — telemetri ham verisi teknik bir konu
         href: "/panel/ucuslar/analiz",
         label: "Uçuş Analizi",
         icon: "Activity",
+        allowedDepts: ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik"],
       },
       {
         href: "/panel/notlar",
         label: "Uçuş Notları",
         icon: "NotebookPen",
         allowedDepts: ["yazilim", "tasarim", "yapisal", "kompozit", "aviyonik"],
+      },
+      {
+        href: "/panel/arizalar",
+        label: "Arıza Günlüğü",
+        icon: "Wrench",
       },
       {
         href: "/panel/telemetri",
@@ -81,6 +90,12 @@ export const PANEL_NAV: NavGroup[] = [
         icon: "HandCoins",
         allowedDepts: ["sponsorluk"],
       },
+      {
+        href: "/panel/mesajlar",
+        label: "Gelen Kutusu",
+        icon: "Mail",
+        allowedDepts: ["sponsorluk"],
+      },
     ],
   },
   {
@@ -88,12 +103,25 @@ export const PANEL_NAV: NavGroup[] = [
     items: [
       { href: "/panel/uyeler", label: "Üye Yönetimi", icon: "Users", adminOnly: true },
       {
+        href: "/panel/mulakat",
+        label: "Mülakatlar",
+        icon: "UserPlus",
+      },
+      {
         href: "/panel/ayarlar/checklist",
         label: "Kontrol Listesi",
         icon: "ListChecks",
         adminOnly: true,
       },
-      { href: "/panel/kayitlar", label: "İşlem Kayıtları", icon: "ScrollText", adminOnly: true },
+      {
+        // Yalnızca takım kaptanı ve yazılım ekibi — kaptan yardımcısı dâhil
+        // değil. Denetim günlüğü teknik bir araç, yönetsel değil.
+        href: "/panel/kayitlar",
+        label: "İşlem Kayıtları",
+        icon: "ScrollText",
+        exactRoles: ["admin"],
+        allowedDepts: ["yazilim"],
+      },
     ],
   },
 ];

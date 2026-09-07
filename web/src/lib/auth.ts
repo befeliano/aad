@@ -82,8 +82,22 @@ async function tazeleSonGorulme(
 /** Bir modüle erişim kontrolü (RLS ile birlikte ikinci katman) */
 export function canAccess(
   session: SessionInfo,
-  opts: { allowedDepts?: string[]; adminOnly?: boolean }
+  opts: {
+    allowedDepts?: string[];
+    adminOnly?: boolean;
+    /**
+     * TAM rol eşleşmesi. Verilirse "kaptan her yere girer" kısayolu
+     * DEVRE DIŞI kalır — İşlem Kayıtları gibi kaptan yardımcısına bile
+     * kapalı olması istenen sayfalar için.
+     * allowedDepts ile birlikte kullanılırsa ikisi VEYA'lanır.
+     */
+    exactRoles?: string[];
+  }
 ): boolean {
+  if (opts.exactRoles) {
+    if (opts.exactRoles.includes(session.role)) return true;
+    return !!opts.allowedDepts?.includes(session.dept);
+  }
   if (session.isAdmin) return true;
   if (opts.adminOnly) return false;
   if (!opts.allowedDepts || opts.allowedDepts.length === 0) return true;

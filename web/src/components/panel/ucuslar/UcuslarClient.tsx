@@ -79,7 +79,14 @@ function flightDate(f: Flight): Date {
   return new Date(`${f.flight_date}T${f.flight_time || "00:00:00"}`);
 }
 
-export function UcuslarClient({ userId }: { userId: string }) {
+export function UcuslarClient({
+  userId,
+  canManage,
+}: {
+  userId: string;
+  /** Uçuş planlama, düzenleme, silme ve uçuş başlatma yetkisi */
+  canManage: boolean;
+}) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
 
@@ -512,15 +519,17 @@ export function UcuslarClient({ userId }: { userId: string }) {
           <Download size={15} />
           CSV indir
         </Button>
-        <Button
-          onClick={() => {
-            setEditing(null);
-            setFormOpen(true);
-          }}
-        >
-          <Plus size={16} />
-          Uçuş Planla
-        </Button>
+        {canManage && (
+          <Button
+            onClick={() => {
+              setEditing(null);
+              setFormOpen(true);
+            }}
+          >
+            <Plus size={16} />
+            Uçuş Planla
+          </Button>
+        )}
       </PageHeader>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -627,15 +636,17 @@ export function UcuslarClient({ userId }: { userId: string }) {
             }
             action={
               tab === "upcoming" ? (
-                <Button
-                  onClick={() => {
-                    setEditing(null);
-                    setFormOpen(true);
-                  }}
-                >
-                  <Plus size={16} />
-                  Uçuş Planla
-                </Button>
+                canManage ? (
+                  <Button
+                    onClick={() => {
+                      setEditing(null);
+                      setFormOpen(true);
+                    }}
+                  >
+                    <Plus size={16} />
+                    Uçuş Planla
+                  </Button>
+                ) : undefined
               ) : undefined
             }
           />
@@ -715,7 +726,8 @@ export function UcuslarClient({ userId }: { userId: string }) {
                   </div>
 
                   <div className="flex items-center gap-1.5">
-                    {!isPast &&
+                    {canManage &&
+                      !isPast &&
                       !completed[f.id] &&
                       (started[f.id] ? (
                         <button
@@ -758,6 +770,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
                         </button>
                       </Link>
                     )}
+                    {canManage && (
                     <button
                       type="button"
                       disabled={uploadingLog === f.id}
@@ -779,6 +792,7 @@ export function UcuslarClient({ userId }: { userId: string }) {
                           ? `Kayıtlar (${logFiles[f.id].length})`
                           : "Log Ekle"}
                     </button>
+                    )}
                     {(completed[f.id] || started[f.id]) && (
                       <button
                         type="button"
@@ -790,25 +804,29 @@ export function UcuslarClient({ userId }: { userId: string }) {
                         Form
                       </button>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditing(f);
-                        setFormOpen(true);
-                      }}
-                      className="flex size-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-bg-2 hover:text-ink"
-                      aria-label="Düzenle"
-                    >
-                      <Pencil size={15} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDelTarget(f)}
-                      className="flex size-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-bad/12 hover:text-bad"
-                      aria-label="Sil"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                    {canManage && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditing(f);
+                            setFormOpen(true);
+                          }}
+                          className="flex size-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-bg-2 hover:text-ink"
+                          aria-label="Düzenle"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDelTarget(f)}
+                          className="flex size-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-bad/12 hover:text-bad"
+                          aria-label="Sil"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </li>
               );

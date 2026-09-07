@@ -18,6 +18,7 @@ export default async function PanelLayout({
       canAccess(session, {
         allowedDepts: it.allowedDepts,
         adminOnly: it.adminOnly,
+        exactRoles: it.exactRoles,
       })
     ),
   })).filter((g) => g.items.length > 0);
