@@ -10,7 +10,8 @@ export default function MarketingLayout({
     <>
       <SiteHeader />
       <main className="flex-1">{children}</main>
-      <SiteFooter />
+      {/* Yıl sunucuda hesaplanıyor — altbilgi istemci bileşeni */}
+      <SiteFooter yil={new Date().getFullYear()} />
     </>
   );
 }

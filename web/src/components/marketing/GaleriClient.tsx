@@ -5,6 +5,7 @@ import { ImageIcon, X, ExternalLink } from "lucide-react";
 import { createClientSafe } from "@/lib/supabase/client";
 import type { MediaAsset } from "@/lib/types";
 import { TEAM } from "@/lib/constants";
+import { S, useT } from "@/lib/i18n";
 import { safeUrl } from "@/lib/security";
 
 interface GalleryItem {
@@ -33,6 +34,7 @@ export function GaleriClient({
   /** public/images/gallery/ içindeki fotoğraflar (sunucuda okundu) */
   local?: { src: string; alt: string }[];
 }) {
+  const t = useT();
   const [items, setItems] = useState<GalleryItem[]>([]);
 
   /* Yerel fotoğraflar her zaman gösterilir; panelden yüklenenler bunlara eklenir */
@@ -134,12 +136,10 @@ export function GaleriClient({
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-line-2 bg-bg-1 px-6 py-20 text-center">
         <ImageIcon size={30} className="text-ink-3" />
         <p className="mt-4 text-base font-bold text-ink">
-          Galeri yakında dolacak
+          {t(S.galeri.bosBaslik)}
         </p>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-2">
-          Takım fotoğraf ve videoları panelden yüklendiğinde burada
-          görünecek. Şimdilik en güncel içeriklerimizi Instagram&apos;da
-          bulabilirsiniz.
+          {t(S.galeri.bosMetin)}
         </p>
         <a
           href={TEAM.instagramUrl}
@@ -147,7 +147,7 @@ export function GaleriClient({
           rel="noopener noreferrer"
           className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
         >
-          Instagram&apos;da gör
+          {t(S.galeri.instagram)}
           <ExternalLink size={15} />
         </a>
       </div>
@@ -193,7 +193,7 @@ export function GaleriClient({
             type="button"
             onClick={() => setLightbox(null)}
             className="absolute right-5 top-5 flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-            aria-label="Kapat"
+            aria-label={t(S.galeri.kapat)}
           >
             <X size={20} />
           </button>

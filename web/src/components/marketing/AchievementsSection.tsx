@@ -1,5 +1,8 @@
+"use client";
+
 import { Trophy } from "lucide-react";
-import { ACHIEVEMENTS } from "@/lib/constants";
+import { useAchievements } from "@/lib/content";
+import { S, useT } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
@@ -12,9 +15,12 @@ import { SectionHeading } from "./SectionHeading";
  * alta listeleniyor.
  */
 export function AchievementsSection() {
+  const t = useT();
+  const achievements = useAchievements();
+
   /* Yıla göre grupla, yeniden eskiye */
   const yillar = Object.entries(
-    ACHIEVEMENTS.reduce<Record<string, typeof ACHIEVEMENTS>>((acc, a) => {
+    achievements.reduce<Record<string, typeof achievements>>((acc, a) => {
       (acc[a.year] ||= []).push(a);
       return acc;
     }, {})
@@ -25,8 +31,8 @@ export function AchievementsSection() {
       <div className="mx-auto max-w-5xl px-5 py-24 sm:px-8 sm:py-28">
         <SectionHeading
           num="02"
-          title="Başarılar"
-          kicker="2013'ten bugüne ulusal ve uluslararası derecelerimiz"
+          title={t(S.basarilar.baslik)}
+          kicker={t(S.basarilar.kicker)}
         />
 
         <ol className="relative mt-14">
@@ -107,9 +113,11 @@ export function AchievementsSection() {
                               </span>
                               <span className="eyebrow mt-2 block !text-[9.5px]">
                                 {a.scope === "uluslararasi"
-                                  ? "Uluslararası"
-                                  : "Ulusal"}
-                                {a.highlight ? " · Şampiyonluk" : ""}
+                                  ? t(S.basarilar.uluslararasi)
+                                  : t(S.basarilar.ulusal)}
+                                {a.highlight
+                                  ? ` · ${t(S.basarilar.sampiyonluk)}`
+                                  : ""}
                               </span>
                             </span>
                           </li>

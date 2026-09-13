@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import { createClientSafe } from "@/lib/supabase/client";
+import { S, useT } from "@/lib/i18n";
 
 /**
  * Navbar'ın sağ ucu.
@@ -14,6 +15,7 @@ import { createClientSafe } from "@/lib/supabase/client";
  * ana sayfada gezinip menüden geçebiliyor.
  */
 export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
+  const t = useT();
   const supabase = useMemo(() => createClientSafe(), []);
   const [ad, setAd] = useState<string | null>(null);
   const [yuklendi, setYuklendi] = useState(false);
@@ -102,14 +104,14 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
         href="/giris"
         className="mt-2 rounded-lg bg-accent px-3 py-3 text-center text-base font-semibold text-white"
       >
-        Takım Girişi
+        {t(S.nav.giris)}
       </Link>
     ) : (
       <Link
         href="/giris"
         className="hidden rounded-full bg-ink px-4 py-2 text-sm font-semibold text-bg transition-opacity hover:opacity-90 sm:inline-block"
       >
-        Takım Girişi
+        {t(S.nav.giris)}
       </Link>
     );
   }
@@ -119,26 +121,26 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
     return (
       <div className="mt-2 flex flex-col gap-1 border-t border-line pt-3">
         <span className="px-3 pb-1 text-[13px] text-ink-3">
-          Hoş geldin, <b className="text-ink">{ad}</b>
+          {t(S.nav.hosgeldin)} <b className="text-ink">{ad}</b>
         </span>
         <Link
           href="/panel"
           className="rounded-lg px-3 py-3 text-base font-medium text-ink-2 hover:bg-bg-2 hover:text-ink"
         >
-          Panel
+          {t(S.nav.panel)}
         </Link>
         <Link
           href="/panel/ayarlar/profil"
           className="rounded-lg px-3 py-3 text-base font-medium text-ink-2 hover:bg-bg-2 hover:text-ink"
         >
-          Profilim
+          {t(S.nav.profil)}
         </Link>
         <button
           type="button"
           onClick={cikis}
           className="rounded-lg px-3 py-3 text-left text-base font-medium text-bad hover:bg-bad/10"
         >
-          Çıkış
+          {t(S.nav.cikis)}
         </button>
       </div>
     );
@@ -155,7 +157,7 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
         className="flex items-center gap-2 rounded-full border border-line bg-bg-1 py-1.5 pl-3.5 pr-2.5 text-sm transition-colors hover:border-ink-3"
       >
         <span className="size-1.5 rounded-full bg-ok" />
-        <span className="text-ink-3">Hoş geldin,</span>
+        <span className="text-ink-3">{t(S.nav.hosgeldin)}</span>
         <span className="max-w-[130px] truncate font-semibold text-ink">
           {ad}
         </span>
@@ -177,7 +179,7 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
             className="flex items-center gap-2.5 px-4 py-3 text-sm text-ink-2 transition-colors hover:bg-bg-2 hover:text-ink"
           >
             <LayoutDashboard size={15} />
-            Panel
+            {t(S.nav.panel)}
           </Link>
           <Link
             href="/panel/ayarlar/profil"
@@ -186,7 +188,7 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
             className="flex items-center gap-2.5 border-t border-line px-4 py-3 text-sm text-ink-2 transition-colors hover:bg-bg-2 hover:text-ink"
           >
             <UserRound size={15} />
-            Profilim
+            {t(S.nav.profil)}
           </Link>
           <button
             type="button"
@@ -195,7 +197,7 @@ export function UyeMenusu({ mobil = false }: { mobil?: boolean }) {
             className="flex w-full items-center gap-2.5 border-t border-line px-4 py-3 text-left text-sm text-bad transition-colors hover:bg-bad/10"
           >
             <LogOut size={15} />
-            Çıkış
+            {t(S.nav.cikis)}
           </button>
         </div>
       )}

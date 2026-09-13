@@ -578,6 +578,14 @@ export interface Sponsor2025 {
   logo: string | null;
 }
 
+/**
+ * Takıma katılım başvuru formu (Google Forms).
+ * Form değişirse yalnızca bu satırı güncelleyin — /katil sayfası
+ * gömülü sürümü buradan türetiyor.
+ */
+export const BASVURU_FORMU =
+  "https://docs.google.com/forms/d/e/1FAIpQLSeoVJqII8kcXFiZfvzz4WbdpafNmuuIHxrzHpfxDQxkpkGGKw/viewform";
+
 export const SPONSORS_2025: Sponsor2025[] = [
   { name: "ETİ", role: "Ana Sponsor", logo: "/images/sponsors/eti.png" },
   { name: "T-Motor", role: "Ürün Sponsoru", logo: "/images/sponsors/t-motor.png" },

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Sora, Inter } from "next/font/google";
+import { LangSync } from "@/components/ui/LangSync";
 import "./globals.css";
 
 const display = Sora({
@@ -51,13 +52,21 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-/* Tema flash'ını (FOUC) önler — React hydration'dan önce çalışır */
+/* Tema ve dil flash'ını (FOUC) önler — React hydration'dan önce çalışır.
+   Dil yalnızca halka açık sayfalarda uygulanıyor: panel Türkçe kalıyor ve
+   <html lang> CSS'in uppercase kuralını belirliyor (tr: i → İ, en: i → I). */
 const THEME_SCRIPT = `
 (function(){
   try {
     var t = localStorage.getItem('aad-theme');
     if (t === 'dark' || t === 'light') {
       document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) {}
+  try {
+    if (localStorage.getItem('aad-lang') === 'en' &&
+        location.pathname.indexOf('/panel') !== 0) {
+      document.documentElement.lang = 'en';
     }
   } catch (e) {}
 })();
@@ -74,6 +83,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col bg-bg text-ink">
+        <LangSync />
         {children}
       </body>
     </html>

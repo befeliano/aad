@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, Send } from "lucide-react";
 
 import { TEAM } from "@/lib/constants";
+import { S, useT } from "@/lib/i18n";
 import { createClientSafe } from "@/lib/supabase/client";
 
 const TEAM_EMAIL = TEAM.email;
@@ -21,6 +22,7 @@ type Durum = "bos" | "gonderiliyor" | "kaydedildi" | "mailto";
  * posta uygulamasını açar; mesaj hiçbir koşulda kaybolmaz.
  */
 export function ContactForm() {
+  const t = useT();
   const [durum, setDurum] = useState<Durum>("bos");
 
   function mailtoAc(
@@ -29,7 +31,9 @@ export function ContactForm() {
     subject: string,
     message: string
   ) {
-    const body = `Ad Soyad: ${name}\nE-posta: ${email}\n\n${message}`;
+    const body = `${t(S.form.adSoyad)}: ${name}\n${t(
+      S.form.eposta
+    )}: ${email}\n\n${message}`;
     window.location.href = `mailto:${TEAM_EMAIL}?subject=${encodeURIComponent(
       `[Web] ${subject}`
     )}&body=${encodeURIComponent(body)}`;
@@ -43,7 +47,8 @@ export function ContactForm() {
     const name = String(fd.get("name") || "").trim().slice(0, 200);
     const email = String(fd.get("email") || "").trim().slice(0, 200);
     const subject =
-      String(fd.get("subject") || "").trim().slice(0, 200) || "İletişim Formu";
+      String(fd.get("subject") || "").trim().slice(0, 200) ||
+      t(S.form.varsayilanKonu);
     const message = String(fd.get("message") || "").trim().slice(0, 5000);
 
     if (!message) return;
@@ -78,22 +83,22 @@ export function ContactForm() {
       className="rounded-2xl border border-line bg-bg-1 p-7 sm:p-9"
     >
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Ad Soyad" name="name" required />
-        <Field label="E-posta" name="email" type="email" required />
+        <Field label={t(S.form.adSoyad)} name="name" required />
+        <Field label={t(S.form.eposta)} name="email" type="email" required />
       </div>
       <div className="mt-5">
-        <Field label="Konu" name="subject" />
+        <Field label={t(S.form.konu)} name="subject" />
       </div>
       <div className="mt-5">
         <label className="block">
-          <span className="eyebrow mb-2 block">Mesajınız</span>
+          <span className="eyebrow mb-2 block">{t(S.form.mesaj)}</span>
           <textarea
             name="message"
             rows={5}
             required
             maxLength={5000}
             className="w-full resize-y rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
-            placeholder="Nasıl yardımcı olabiliriz?"
+            placeholder={t(S.form.placeholder)}
           />
         </label>
       </div>
@@ -108,22 +113,20 @@ export function ContactForm() {
         ) : (
           <Send size={16} />
         )}
-        {gonderiliyor ? "Gönderiliyor…" : "Gönder"}
+        {gonderiliyor ? t(S.form.gonderiliyor) : t(S.form.gonder)}
       </button>
 
       {durum === "kaydedildi" && (
-        <p className="mt-4 text-sm text-ok">
-          Mesajınız iletildi. En kısa sürede dönüş yapacağız.
-        </p>
+        <p className="mt-4 text-sm text-ok">{t(S.form.basarili)}</p>
       )}
 
       {durum === "mailto" && (
         <p className="mt-4 text-sm text-ink-2">
-          Posta uygulamanız açıldı. Açılmadıysa doğrudan{" "}
+          {t(S.form.mailto1)}{" "}
           <a href={`mailto:${TEAM_EMAIL}`} className="underline">
             {TEAM_EMAIL}
           </a>{" "}
-          adresine yazabilirsiniz.
+          {t(S.form.mailto2)}
         </p>
       )}
     </form>

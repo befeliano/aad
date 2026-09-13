@@ -15,11 +15,6 @@ const SUPABASE_WS = SUPABASE_ORIGIN.replace(/^https:/, "wss:");
  * - frame-ancestors 'none': clickjacking'e karşı
  * - form-action 'self': formun dışarı POST etmesini engeller
  */
-// Jitsi Meet — panel içi toplantı odası (gömülü video + sohbet).
-// Kendi sunucunuza geçerseniz NEXT_PUBLIC_JITSI_ORIGIN ile değiştirin.
-const JITSI_ORIGIN =
-  process.env.NEXT_PUBLIC_JITSI_ORIGIN || "https://meet.jit.si";
-
 const csp = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -29,8 +24,7 @@ const csp = [
   // 'unsafe-eval' YALNIZCA geliştirmede: React dev araçları (callstack
   // yeniden kurma vb.) eval kullanır. Üretimde React eval kullanmaz,
   // bu yüzden prod CSP'sinde yer almaz.
-  // Jitsi external_api.js gömülü toplantı için buradan yüklenir
-  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${JITSI_ORIGIN}${
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${
     process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
   }`,
   "style-src 'self' 'unsafe-inline'",
@@ -43,10 +37,12 @@ const csp = [
   `connect-src 'self' ${SUPABASE_ORIGIN} ${SUPABASE_WS} https://api.open-meteo.com https://api.cesium.com https://assets.ion.cesium.com https://services.arcgisonline.com https://server.arcgisonline.com${
     process.env.NODE_ENV === "development" ? " ws: wss:" : ""
   }`,
-  // Toplantı odası iframe'i. frame-ancestors 'none' ile karıştırmayın:
-  // o bizim sayfamızın başkasınca gömülmesini engeller, bu ise bizim
-  // hangi siteyi gömebileceğimizi belirler.
-  `frame-src 'self' ${JITSI_ORIGIN}`,
+  // Yalnızca /katil sayfasındaki gömülü başvuru formu.
+  // Jitsi ARTIK GÖMÜLMÜYOR: meet.jit.si gömülü çağrıları 5 dakikada
+  // kesiyor, o yüzden toplantı yeni sekmede açılıyor.
+  // frame-ancestors 'none' ile karıştırmayın: o bizim sayfamızın
+  // başkasınca gömülmesini engeller, bu ise bizim neyi gömebileceğimizi.
+  "frame-src 'self' https://docs.google.com",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "upgrade-insecure-requests",

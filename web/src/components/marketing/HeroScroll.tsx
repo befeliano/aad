@@ -7,6 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Trophy } from "lucide-react";
 import { TAKIM_ISTATISTIK, TEAM } from "@/lib/constants";
 import { TurkishFlag } from "@/components/ui/TurkishMarks";
+import { S, useT } from "@/lib/i18n";
 
 /**
  * Apple tarzı scroll hero.
@@ -21,6 +22,7 @@ export interface HeroMedia {
 }
 
 export function HeroScroll({ media }: { media?: HeroMedia | null }) {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -99,7 +101,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               ) : media.src ? (
               <Image
                 src={media.src}
-                alt="Anatolia Aero Design — gün batımında test uçuşu"
+                alt={`Anatolia Aero Design — ${t(S.hero.gorselAlt)}`}
                 fill
                 priority
                 sizes="(max-width: 640px) 94vw, 55vw"
@@ -127,7 +129,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               <div className="absolute left-5 top-4 flex items-center gap-2">
                 <span className="size-1.5 animate-pulse rounded-full bg-accent" />
                 <span className="eyebrow !text-[10px]">
-                  Hero görseli · medya alanı
+                  {t(S.hero.medyaAlani)}
                 </span>
               </div>
             </>
@@ -162,25 +164,24 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
           <div className="mb-5 flex items-center rounded-full border border-line-2 bg-bg/70 px-4 py-1.5 backdrop-blur-md">
             <TurkishFlag className="mr-2 h-3 w-[18px] shrink-0 rounded-[2px]" />
             <span className="eyebrow !text-[10.5px]">
-              EST. {TEAM.founded} · {TEAM.university}
+              {t(S.hero.kurulus)} {TEAM.founded} · {t(S.hero.universite)}
             </span>
           </div>
 
           {/* Şampiyonluk rozetleri — sponsorun ilk gördüğü şey */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
-            {[
-              "Teknofest 2022 · Türkiye 1.",
-              "SAE Aero Design 2017 · Dünya 1.",
-              "Teknofest 2018 · Türkiye 1.",
-            ].map((b) => (
-              <span
-                key={b}
-                className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-black/45 px-3.5 py-1.5 text-[11.5px] font-semibold text-white backdrop-blur-md sm:text-[12.5px]"
-              >
-                <Trophy size={12} className="text-accent-2" />
-                {b}
-              </span>
-            ))}
+            {[S.hero.rozet1, S.hero.rozet2, S.hero.rozet3].map((k) => {
+              const b = t(k);
+              return (
+                <span
+                  key={b}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-black/45 px-3.5 py-1.5 text-[11.5px] font-semibold text-white backdrop-blur-md sm:text-[12.5px]"
+                >
+                  <Trophy size={12} className="text-accent-2" />
+                  {b}
+                </span>
+              );
+            })}
           </div>
           <h1
             className={`display-tight ${media ? "text-white" : "text-ink"}`}
@@ -192,7 +193,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 : undefined,
             }}
           >
-            Gökyüzünü
+            {t(S.hero.baslik1)}
             <br />
             <span
               style={{
@@ -202,7 +203,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                   : undefined,
               }}
             >
-              tasarlıyoruz.
+              {t(S.hero.baslik2)}
             </span>
           </h1>
         </motion.div>
@@ -217,7 +218,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               href="/sponsorluk"
               className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
             >
-              Sponsor Ol
+              {t(S.hero.sponsorOl)}
               <ArrowRight
                 size={15}
                 className="transition-transform group-hover:translate-x-0.5"
@@ -227,20 +228,20 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               href="/#filo"
               className="rounded-full border border-line-2 bg-bg/70 px-5 py-2.5 text-[13px] font-semibold text-ink backdrop-blur-md transition-colors hover:border-ink-3"
             >
-              Filoyu Keşfet
+              {t(S.hero.filoyuKesfet)}
             </Link>
           </div>
 
           <div className="grid w-full max-w-lg grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-            <Stat num={TAKIM_ISTATISTIK.sampiyonluk} label="Şampiyonluk" />
-            <Stat num={TAKIM_ISTATISTIK.uye} label="Takım Üyesi" />
-            <Stat num={TAKIM_ISTATISTIK.mezun} label="Mezun" />
-            <Stat num={TAKIM_ISTATISTIK.kurulus} label="Kuruluş" />
+            <Stat num={TAKIM_ISTATISTIK.sampiyonluk} label={t(S.hero.sampiyonluk)} />
+            <Stat num={TAKIM_ISTATISTIK.uye} label={t(S.hero.uye)} />
+            <Stat num={TAKIM_ISTATISTIK.mezun} label={t(S.hero.mezun)} />
+            <Stat num={TAKIM_ISTATISTIK.kurulus} label={t(S.hero.kurulusYili)} />
           </div>
 
           <div className="flex items-center gap-2 text-ink-3">
             <ArrowDown size={13} className="animate-bounce" />
-            <span className="eyebrow !text-[10px]">Kaydır</span>
+            <span className="eyebrow !text-[10px]">{t(S.hero.kaydir)}</span>
           </div>
         </motion.div>
       </div>

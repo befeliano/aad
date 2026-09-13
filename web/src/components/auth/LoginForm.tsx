@@ -5,8 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { logAction } from "@/lib/audit";
+import { S, useT } from "@/lib/i18n";
 
 export function LoginForm() {
+  const t = useT();
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") || "/panel";
@@ -35,8 +37,8 @@ export function LoginForm() {
     if (err) {
       setError(
         err.message === "Invalid login credentials"
-          ? "E-posta veya parola hatalı."
-          : "Giriş başarısız: " + err.message
+          ? t(S.giris.hataKimlik)
+          : t(S.giris.hataGenel) + err.message
       );
       setLoading(false);
       return;
@@ -54,7 +56,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-7 space-y-4">
       <label className="block">
-        <span className="eyebrow mb-2 block">E-posta</span>
+        <span className="eyebrow mb-2 block">{t(S.giris.eposta)}</span>
         <input
           type="email"
           name="email"
@@ -65,7 +67,7 @@ export function LoginForm() {
       </label>
 
       <label className="block">
-        <span className="eyebrow mb-2 block">Parola</span>
+        <span className="eyebrow mb-2 block">{t(S.giris.parola)}</span>
         <input
           type="password"
           name="password"
@@ -96,7 +98,7 @@ export function LoginForm() {
         className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.01] disabled:opacity-60"
       >
         {loading && <Loader2 size={16} className="animate-spin" />}
-        {loading ? "Giriş yapılıyor" : "Giriş Yap"}
+        {loading ? t(S.giris.girisYapiliyor) : t(S.giris.girisYap)}
       </button>
     </form>
   );

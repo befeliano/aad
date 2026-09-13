@@ -12,6 +12,8 @@ import {
   Save,
   Trash2,
   TriangleAlert,
+  ListTodo,
+  Plus,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trimTo, LIMITS } from "@/lib/security";
@@ -19,6 +21,9 @@ import { logAction } from "@/lib/audit";
 import { useToast } from "@/components/ui/Toast";
 import { Button, Card, Field, Modal } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
+import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
+
+const IS_DEPTS = [...DEPT_KEYS, "ortak"] as const;
 
 type Tur = "calisma" | "tatil" | "etkinlik" | "yarisma";
 
@@ -50,6 +55,22 @@ interface Kural {
   note: string | null;
   active: boolean;
 }
+
+interface Is {
+  id: string;
+  title: string;
+  note: string | null;
+  dept: string;
+  starts_on: string;
+  ends_on: string;
+  status: "planli" | "devam" | "bitti";
+}
+
+const IS_DURUM: Record<Is["status"], { etiket: string; sinif: string }> = {
+  planli: { etiket: "Planlı", sinif: "bg-info/20 text-info border-info/40" },
+  devam: { etiket: "Devam ediyor", sinif: "bg-accent/20 text-accent border-accent/45" },
+  bitti: { etiket: "Bitti", sinif: "bg-ok/20 text-ok border-ok/40" },
+};
 
 interface UcusIsareti {
   id: string;
@@ -108,6 +129,10 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
   const [kaydediliyor, setKaydediliyor] = useState(false);
 
   const [kurallarAcik, setKurallarAcik] = useState(false);
+  const [isler, setIsler] = useState<Is[]>([]);
+  const [isTabloYok, setIsTabloYok] = useState(false);
+  const [isFormAcik, setIsFormAcik] = useState(false);
+  const [duzenlenenIs, setDuzenlenenIs] = useState<Is | null>(null);
 
   useEffect(() => {
     const d = new Date();
@@ -155,6 +180,22 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
       setKurallar((kr as Kural[]) || []);
     }
 
+    /* Çok günlü işler — bu ayla kesişenler */
+    const { data: isVeri, error: isErr } = await supabase
+      .from("calendar_tasks")
+      .select("*")
+      .lte("starts_on", sonGun)
+      .gte("ends_on", ilkGun)
+      .order("starts_on");
+
+    if (isErr) {
+      setIsTabloYok(true);
+      setIsler([]);
+    } else {
+      setIsTabloYok(false);
+      setIsler((isVeri as Is[]) || []);
+    }
+
     /* Uçuşlar — salt okunur işaret */
     const { data: uc } = await supabase
       .from("flights")
@@ -181,6 +222,7 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
       .channel("takvim-canli")
       .on("postgres_changes", { event: "*", schema: "public", table: "calendar_days" }, () => void load())
       .on("postgres_changes", { event: "*", schema: "public", table: "calendar_rules" }, () => void load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "calendar_tasks" }, () => void load())
       .subscribe();
     return () => {
       void supabase.removeChannel(ch);
@@ -225,6 +267,12 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
       };
     },
     [gunler, kurallar]
+  );
+
+  /** O güne denk gelen çok günlü işler */
+  const gununIsleri = useCallback(
+    (k: string) => isler.filter((i) => k >= i.starts_on && k <= i.ends_on),
+    [isler]
   );
 
   const izgara = useMemo(() => {
@@ -403,6 +451,10 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
           Kuraldan gelen
         </span>
         <span className="inline-flex items-center gap-1.5">
+          <ListTodo size={12} />
+          Çok günlü iş
+        </span>
+        <span className="inline-flex items-center gap-1.5">
           <Plane size={12} />
           Planlı uçuş
         </span>
@@ -428,6 +480,7 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
               }
               const e = etkinGun(h.k);
               const gunUcus = ucuslar[h.k] || [];
+              const gunIsler = gununIsleri(h.k);
               const secliMi = secili === h.k;
               const bugunMu = bugun === h.k;
 
@@ -466,6 +519,25 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
                   {e && !e.title && !e.starts_at && (
                     <span className="mt-1 block text-[11px] text-ink-3">
                       {TUR[e.kind].etiket}
+                    </span>
+                  )}
+
+                  {gunIsler.length > 0 && (
+                    <span className="mt-1 block space-y-0.5">
+                      {gunIsler.slice(0, 2).map((i) => (
+                        <span
+                          key={i.id}
+                          title={`${i.title} - ${i.starts_on} / ${i.ends_on}`}
+                          className={`block truncate rounded border px-1 py-0.5 text-[9.5px] font-semibold ${IS_DURUM[i.status].sinif}`}
+                        >
+                          {i.title}
+                        </span>
+                      ))}
+                      {gunIsler.length > 2 && (
+                        <span className="block text-[9.5px] text-ink-3">
+                          +{gunIsler.length - 2} is
+                        </span>
+                      )}
                     </span>
                   )}
 
@@ -518,6 +590,62 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
                     Bu gün bir kuraldan geliyor. Kaydedersen yalnızca bu gün
                     için kuralı ezersin.
                   </div>
+                )}
+              </div>
+
+              {/* O güne denk gelen çok günlü işler */}
+              <div className="mt-4 rounded-xl border border-line bg-bg-2 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="eyebrow !text-[9.5px]">İşler</span>
+                  {canWrite && !isTabloYok && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDuzenlenenIs(null);
+                        setIsFormAcik(true);
+                      }}
+                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-accent hover:underline"
+                    >
+                      <Plus size={12} />
+                      İş ekle
+                    </button>
+                  )}
+                </div>
+
+                {isTabloYok ? (
+                  <p className="text-[12px] text-ink-3">
+                    <code>supabase/takvim-isler.sql</code> çalıştırılmamış.
+                  </p>
+                ) : gununIsleri(secili).length === 0 ? (
+                  <p className="text-[12.5px] text-ink-3">
+                    Bu güne denk gelen iş yok.
+                  </p>
+                ) : (
+                  <ul className="space-y-1.5">
+                    {gununIsleri(secili).map((i) => (
+                      <li key={i.id}>
+                        <button
+                          type="button"
+                          disabled={!canWrite}
+                          onClick={() => {
+                            setDuzenlenenIs(i);
+                            setIsFormAcik(true);
+                          }}
+                          className={`w-full rounded-lg border p-2 text-left ${IS_DURUM[i.status].sinif} ${
+                            canWrite ? "hover:opacity-80" : "cursor-default"
+                          }`}
+                        >
+                          <span className="block text-[12.5px] font-semibold">
+                            {i.title}
+                          </span>
+                          <span className="tabular block text-[11px] opacity-80">
+                            {i.starts_on} / {i.ends_on} ·{" "}
+                            {DEPT_LABELS[i.dept] || i.dept}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
 
@@ -607,6 +735,19 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
           )}
         </Card>
       </div>
+
+      {canWrite && (
+        <IsFormu
+          open={isFormAcik}
+          onClose={() => {
+            setIsFormAcik(false);
+            setDuzenlenenIs(null);
+          }}
+          mevcut={duzenlenenIs}
+          varsayilanGun={secili}
+          yenile={load}
+        />
+      )}
 
       {canWrite && (
         <KurallarPenceresi
@@ -781,6 +922,195 @@ function KurallarPenceresi({
           <Button type="submit" disabled={saving}>
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Repeat size={15} />}
             Kural ekle
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+/* ============================================================
+   Çok günlü iş formu
+
+   calendar_days (günün durumu) ve calendar_rules (tekrar kuralı)
+   ile karıştırılmamalı: bu, başlangıcı ve bitişi olan bir İŞ.
+   Takvimde gün kutularının içinde renkli şerit olarak görünür.
+   ============================================================ */
+function IsFormu({
+  open,
+  onClose,
+  mevcut,
+  varsayilanGun,
+  yenile,
+}: {
+  open: boolean;
+  onClose: () => void;
+  mevcut: Is | null;
+  varsayilanGun: string | null;
+  yenile: () => void;
+}) {
+  const supabase = useMemo(() => createClient(), []);
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
+
+  async function kaydet(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const title = trimTo(fd.get("title"), LIMITS.title);
+    const starts_on = String(fd.get("starts_on") || "");
+    const ends_on = String(fd.get("ends_on") || "");
+
+    if (!title || !starts_on || !ends_on) {
+      toast("Başlık ve iki tarih de zorunlu.", "error");
+      return;
+    }
+    if (ends_on < starts_on) {
+      toast("Bitiş tarihi başlangıçtan önce olamaz.", "error");
+      return;
+    }
+
+    const payload = {
+      title,
+      note: trimTo(fd.get("note"), LIMITS.shortText),
+      dept: String(fd.get("dept") || "ortak"),
+      starts_on,
+      ends_on,
+      status: String(fd.get("status") || "planli"),
+    };
+
+    setSaving(true);
+    const { error } = mevcut
+      ? await supabase.from("calendar_tasks").update(payload).eq("id", mevcut.id)
+      : await supabase.from("calendar_tasks").insert([payload]);
+    setSaving(false);
+
+    if (error) {
+      toast("Kaydedilemedi: " + error.message, "error");
+      return;
+    }
+    void logAction(
+      supabase,
+      mevcut ? "update" : "create",
+      "calendar_tasks",
+      mevcut?.id ?? null,
+      { baslik: title }
+    );
+    toast(mevcut ? "İş güncellendi." : "İş eklendi.");
+    onClose();
+    yenile();
+  }
+
+  async function sil() {
+    if (!mevcut) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("calendar_tasks")
+      .delete()
+      .eq("id", mevcut.id);
+    setSaving(false);
+    if (error) {
+      toast("Silinemedi: " + error.message, "error");
+      return;
+    }
+    void logAction(supabase, "delete", "calendar_tasks", mevcut.id, {});
+    toast("İş silindi.");
+    onClose();
+    yenile();
+  }
+
+  const bas = mevcut?.starts_on ?? varsayilanGun ?? "";
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={mevcut ? "İşi Düzenle" : "Çok Günlü İş Ekle"}
+    >
+      <form onSubmit={kaydet} className="space-y-4">
+        <Field label="İş" hint="Tek cümlelik başlık">
+          <input
+            name="title"
+            required
+            defaultValue={mevcut?.title || ""}
+            maxLength={LIMITS.title}
+            placeholder="örn. Sol kanat kalıbı üretimi"
+            className="field"
+          />
+        </Field>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Başlangıç">
+            <input
+              name="starts_on"
+              type="date"
+              required
+              defaultValue={bas}
+              className="field"
+            />
+          </Field>
+          <Field label="Bitiş" hint="Farklı bir gün olabilir">
+            <input
+              name="ends_on"
+              type="date"
+              required
+              defaultValue={mevcut?.ends_on ?? bas}
+              className="field"
+            />
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Birim">
+            <select
+              name="dept"
+              defaultValue={mevcut?.dept || "ortak"}
+              className="field"
+            >
+              {IS_DEPTS.map((k) => (
+                <option key={k} value={k}>
+                  {DEPT_LABELS[k] || k}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Durum">
+            <select
+              name="status"
+              defaultValue={mevcut?.status || "planli"}
+              className="field"
+            >
+              {(Object.keys(IS_DURUM) as Is["status"][]).map((d) => (
+                <option key={d} value={d}>
+                  {IS_DURUM[d].etiket}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+
+        <Field label="Not" hint="İsteğe bağlı">
+          <textarea
+            name="note"
+            rows={2}
+            defaultValue={mevcut?.note || ""}
+            maxLength={LIMITS.shortText}
+            className="field resize-y"
+          />
+        </Field>
+
+        <div className="flex justify-end gap-2.5 border-t border-line pt-4">
+          {mevcut && (
+            <Button type="button" variant="ghost" onClick={sil} disabled={saving}>
+              <Trash2 size={15} />
+              Sil
+            </Button>
+          )}
+          <Button type="button" variant="outline" onClick={onClose}>
+            Vazgeç
+          </Button>
+          <Button type="submit" disabled={saving}>
+            {saving && <Loader2 size={15} className="animate-spin" />}
+            Kaydet
           </Button>
         </div>
       </form>

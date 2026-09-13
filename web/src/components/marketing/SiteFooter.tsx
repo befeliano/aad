@@ -1,10 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { TEAM, SOCIALS } from "@/lib/constants";
+import { S, useT } from "@/lib/i18n";
 
-export function SiteFooter() {
+/**
+ * Altbilgi.
+ *
+ * `yil` sunucudan geliyor: bileşen istemci tarafında çalıştığı için
+ * render sırasında `new Date()` çağırmak hem react-hooks/purity
+ * kuralına takılır hem de sunucu/istemci çıktısını ayırabilir.
+ */
+export function SiteFooter({ yil }: { yil: number }) {
+  const t = useT();
+
   return (
     <footer className="relative border-t border-line bg-bg-1">
       <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
@@ -12,8 +24,7 @@ export function SiteFooter() {
           <div>
             <Logo size={36} />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-2">
-              {TEAM.university} insansız hava aracı tasarım, üretim ve test
-              takımı. Teknofest Savaşan İHA ve UAV Turkey Türkiye birincisi.
+              {t(S.footer.aciklama)}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {SOCIALS.map((s) => (
@@ -33,24 +44,25 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <div className="eyebrow mb-4">Site</div>
+            <div className="eyebrow mb-4">{t(S.footer.site)}</div>
             <ul className="space-y-2.5 text-sm text-ink-2">
-              <li><Link href="/#filo" className="hover:text-ink">Filo</Link></li>
-              <li><Link href="/#basarilar" className="hover:text-ink">Başarılar</Link></li>
-              <li><Link href="/galeri" className="hover:text-ink">Galeri</Link></li>
-              <li><Link href="/sponsorluk" className="hover:text-ink">Sponsorluk</Link></li>
-              <li><Link href="/iletisim" className="hover:text-ink">İletişim</Link></li>
-              <li><Link href="/giris" className="hover:text-ink">Takım Girişi</Link></li>
+              <li><Link href="/#filo" className="hover:text-ink">{t(S.nav.filo)}</Link></li>
+              <li><Link href="/#basarilar" className="hover:text-ink">{t(S.nav.basarilar)}</Link></li>
+              <li><Link href="/galeri" className="hover:text-ink">{t(S.nav.galeri)}</Link></li>
+              <li><Link href="/sponsorluk" className="hover:text-ink">{t(S.nav.sponsorluk)}</Link></li>
+              <li><Link href="/katil" className="hover:text-ink">{t(S.nav.katil)}</Link></li>
+              <li><Link href="/iletisim" className="hover:text-ink">{t(S.nav.iletisim)}</Link></li>
+              <li><Link href="/giris" className="hover:text-ink">{t(S.nav.giris)}</Link></li>
             </ul>
           </div>
 
           <div>
-            <div className="eyebrow mb-4">İletişim</div>
+            <div className="eyebrow mb-4">{t(S.footer.iletisim)}</div>
             <ul className="space-y-3.5 text-sm text-ink-2">
               <li className="flex gap-2.5">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-ink-3" />
                 <span>
-                  {TEAM.university}
+                  {t(S.hero.universite)}
                   <br />
                   {TEAM.address}
                 </span>
@@ -67,9 +79,11 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-xs text-ink-3 sm:flex-row sm:items-center">
           <span>
-            © {new Date().getFullYear()} {TEAM.name} · {TEAM.university}
+            © {yil} {TEAM.name} · {t(S.hero.universite)}
           </span>
-          <span>EST. {TEAM.founded} · Eskişehir, Türkiye</span>
+          <span>
+            {t(S.hero.kurulus)} {TEAM.founded} · {t(S.footer.sehir)}
+          </span>
         </div>
       </div>
     </footer>

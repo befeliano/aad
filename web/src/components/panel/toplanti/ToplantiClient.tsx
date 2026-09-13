@@ -1,14 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ExternalLink,
   Loader2,
-  LogIn,
   PhoneOff,
   Radio,
   Users,
   Video,
-  VideoOff,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trimTo, LIMITS } from "@/lib/security";
@@ -16,20 +15,6 @@ import { logAction } from "@/lib/audit";
 import { useToast } from "@/components/ui/Toast";
 import { Button, Card, EmptyState } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
-
-/** Jitsi dış API'sinin kullandığımız kadarı */
-interface JitsiApi {
-  dispose(): void;
-  addListener(event: string, fn: () => void): void;
-}
-declare global {
-  interface Window {
-    JitsiMeetExternalAPI?: new (
-      domain: string,
-      options: Record<string, unknown>
-    ) => JitsiApi;
-  }
-}
 
 interface Meeting {
   id: string;
@@ -40,37 +25,28 @@ interface Meeting {
   ended_at: string | null;
 }
 
+/**
+ * Toplantı odası adresi.
+ *
+ * GÖMMEK YERİNE YENİ SEKME: meet.jit.si gömülü kullanıldığında
+ * "Embedding meet.jit.si is only meant for demo purposes" uyarısı
+ * veriyor ve görüşmeyi 5 DAKİKADA kesiyor. Sınır yalnızca gömmede;
+ * yeni sekmede açıldığında süre sınırı yok ve ücretsiz.
+ *
+ * Kendi Jitsi sunucunuza ya da JaaS'a geçerseniz yalnızca
+ * NEXT_PUBLIC_JITSI_ORIGIN değerini değiştirmeniz yeterli.
+ */
 const JITSI_ORIGIN =
   process.env.NEXT_PUBLIC_JITSI_ORIGIN || "https://meet.jit.si";
-const JITSI_DOMAIN = JITSI_ORIGIN.replace(/^https?:\/\//, "");
 
-/** external_api.js'i bir kez yükler, sonraki çağrılarda aynı sözü döndürür */
-let scriptPromise: Promise<void> | null = null;
-function loadJitsiScript(): Promise<void> {
-  if (window.JitsiMeetExternalAPI) return Promise.resolve();
-  if (scriptPromise) return scriptPromise;
-  scriptPromise = new Promise<void>((resolve, reject) => {
-    const el = document.createElement("script");
-    el.src = `${JITSI_ORIGIN}/external_api.js`;
-    el.async = true;
-    el.onload = () => resolve();
-    el.onerror = () => {
-      scriptPromise = null;
-      reject(new Error("Jitsi yüklenemedi"));
-    };
-    document.head.appendChild(el);
-  });
-  return scriptPromise;
-}
+const odaAdresi = (room: string) => `${JITSI_ORIGIN}/${room}`;
 
 export function ToplantiClient({
   userId,
   displayName,
-  isAdmin,
 }: {
   userId: string;
   displayName: string;
-  isAdmin: boolean;
 }) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
@@ -79,11 +55,7 @@ export function ToplantiClient({
   const [loading, setLoading] = useState(true);
   const [tableMissing, setTableMissing] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [joined, setJoined] = useState(false);
   const [title, setTitle] = useState("");
-
-  const boxRef = useRef<HTMLDivElement>(null);
-  const apiRef = useRef<JitsiApi | null>(null);
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -124,44 +96,12 @@ export function ToplantiClient({
     };
   }, [supabase, load]);
 
-  /* Odaya girildiyse Jitsi'yi kur; çıkışta temizle */
-  useEffect(() => {
-    if (!joined || !meeting || !boxRef.current) return;
-    let iptal = false;
-
-    loadJitsiScript()
-      .then(() => {
-        if (iptal || !boxRef.current || !window.JitsiMeetExternalAPI) return;
-        const api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
-          roomName: meeting.room,
-          parentNode: boxRef.current,
-          width: "100%",
-          height: "100%",
-          userInfo: { displayName },
-          configOverwrite: {
-            prejoinPageEnabled: false,
-            startWithAudioMuted: true,
-          },
-          interfaceConfigOverwrite: {
-            MOBILE_APP_PROMO: false,
-            SHOW_JITSI_WATERMARK: false,
-          },
-        });
-        apiRef.current = api;
-        api.addListener("videoConferenceLeft", () => setJoined(false));
-        api.addListener("readyToClose", () => setJoined(false));
-      })
-      .catch(() => {
-        toast("Toplantı yüklenemedi. Bağlantınızı kontrol edin.", "error");
-        setJoined(false);
-      });
-
-    return () => {
-      iptal = true;
-      apiRef.current?.dispose();
-      apiRef.current = null;
-    };
-  }, [joined, meeting, displayName, toast]);
+  /** Odayı yeni sekmede açar — görünen ad adres satırından geçiriliyor */
+  function odayaGit(m: Meeting) {
+    const u = new URL(odaAdresi(m.room));
+    u.searchParams.set("userInfo.displayName", displayName);
+    window.open(u.toString(), "_blank", "noopener");
+  }
 
   async function baslat() {
     setBusy(true);
@@ -186,8 +126,9 @@ export function ToplantiClient({
       baslik: title,
     });
     setTitle("");
-    setMeeting(data as Meeting);
-    setJoined(true);
+    const yeni = data as Meeting;
+    setMeeting(yeni);
+    odayaGit(yeni);
   }
 
   async function bitir() {
@@ -206,13 +147,12 @@ export function ToplantiClient({
     void logAction(supabase, "update", "meetings", meeting.id, {
       durum: "bitirildi",
     });
-    setJoined(false);
     setMeeting(null);
     toast("Toplantı sonlandırıldı.");
   }
 
-  const bitirebilir =
-    !!meeting && (isAdmin || meeting.started_by === userId);
+  /* RLS herkese açık: toplantıyı başlatan da başkası da bitirebilir */
+  const bitirebilir = !!meeting;
 
   return (
     <>
@@ -220,12 +160,6 @@ export function ToplantiClient({
         title="Toplantı Odası"
         desc="Takım içi görüşme ve mülakatlar. Görüntü, ses ve sohbet tarayıcıda; uygulama kurmaya gerek yok."
       >
-        {meeting && joined && (
-          <Button variant="ghost" onClick={() => setJoined(false)}>
-            <VideoOff size={15} />
-            Odadan çık
-          </Button>
-        )}
         {bitirebilir && (
           <Button variant="danger" onClick={bitir} disabled={busy}>
             <PhoneOff size={15} />
@@ -247,11 +181,6 @@ export function ToplantiClient({
           <Loader2 size={15} className="animate-spin" />
           Yükleniyor…
         </Card>
-      ) : joined && meeting ? (
-        <div
-          ref={boxRef}
-          className="h-[72vh] w-full overflow-hidden rounded-2xl border border-line bg-black"
-        />
       ) : meeting ? (
         <Card className="p-8 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-ok/15 text-ok">
@@ -264,10 +193,13 @@ export function ToplantiClient({
             {new Date(meeting.started_at).toLocaleString("tr-TR")} itibarıyla
             devam ediyor.
           </p>
-          <Button className="mt-6" onClick={() => setJoined(true)}>
-            <LogIn size={15} />
+          <Button className="mt-6" onClick={() => odayaGit(meeting)}>
+            <ExternalLink size={15} />
             Toplantıya katıl
           </Button>
+          <p className="mt-3 text-[12.5px] text-ink-3">
+            Yeni sekmede açılır. Görüntü, ses ve sohbet orada.
+          </p>
         </Card>
       ) : (
         <Card className="p-8 text-center">

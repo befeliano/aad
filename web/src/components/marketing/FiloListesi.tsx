@@ -1,18 +1,32 @@
+"use client";
+
 import Image from "next/image";
-import { FLEET, FLEET_ARCHIVE } from "@/lib/constants";
+import { FLEET_ARCHIVE } from "@/lib/constants";
+import { useFleet } from "@/lib/content";
+import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
-import { fleetImage } from "@/lib/public-assets";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * /filo sayfasının gövdesi.
+ *
+ * Görsel yolları sunucuda okunup prop olarak geliyor; bileşenin kendisi
+ * dile bağlı olduğu için istemcide çalışıyor.
  */
-export function FiloListesi() {
+export function FiloListesi({
+  images,
+}: {
+  images: Record<string, string | null>;
+}) {
+  const t = useT();
+  const fleet = useFleet();
+
   return (
     <>
       <div className="space-y-8">
-        {FLEET.map((ac, i) => {
-          const img = fleetImage(ac.slug);
+        {fleet.map((ac, i) => {
+          const img = images[ac.slug] ?? null;
+          const alt = `${ac.name} ${t(S.filo.ihaAlt)}`;
           return (
             <Reveal key={ac.name} delay={Math.min(i, 3) * 70}>
               <article
@@ -27,7 +41,7 @@ export function FiloListesi() {
                     {img ? (
                       <Image
                         src={img}
-                        alt={`${ac.name} insansız hava aracı`}
+                        alt={alt}
                         fill
                         sizes="(max-width: 1024px) 100vw, 620px"
                         className="object-cover"
@@ -35,7 +49,7 @@ export function FiloListesi() {
                     ) : ac.sprite ? (
                       <AircraftSprite
                         box={ac.sprite}
-                        alt={`${ac.name} insansız hava aracı`}
+                        alt={alt}
                         className="size-full"
                       />
                     ) : (
@@ -58,7 +72,7 @@ export function FiloListesi() {
                     </span>
                     {ac.flagship && (
                       <span className="absolute right-4 top-3.5 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        Amiral Gemisi
+                        {t(S.filo.amiralGemisi)}
                       </span>
                     )}
                   </div>
@@ -128,7 +142,7 @@ export function FiloListesi() {
       {/* Arşiv */}
       <Reveal>
         <div className="mt-10 rounded-2xl border border-line bg-bg-1 p-7">
-          <div className="eyebrow mb-4">Arşiv · geçmiş platformlarımız</div>
+          <div className="eyebrow mb-4">{t(S.filo.arsiv)}</div>
           <ul className="flex flex-wrap gap-2">
             {FLEET_ARCHIVE.map((a) => (
               <li

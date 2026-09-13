@@ -24,6 +24,7 @@ import {
   Globe,
   Map as MapIcon,
   Video,
+  Library,
 } from "lucide-react";
 import {
   parseFlightDb,
@@ -37,6 +38,7 @@ import { fmtDuration } from "@/lib/format";
 import { Badge, Button, Card } from "@/components/ui/Kit";
 import { TelemetryChart, SERIES } from "./TelemetryChart";
 import { PageHeader } from "@/components/panel/PageHeader";
+import { LogKutuphanesi } from "./LogKutuphanesi";
 
 /** Uçuş kaydı üst sınırı (tarayıcıda ayrıştırılıyor) */
 const MAX_LOG_MB = 50;
@@ -72,6 +74,7 @@ export function FlightAnalysis() {
   const [parsing, setParsing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [kutuphaneAcik, setKutuphaneAcik] = useState(false);
 
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -116,6 +119,32 @@ export function FlightAnalysis() {
       setParsing(false);
     }
   }, []);
+
+  /** Kütüphaneden seçilen kaydı storage'dan indirip çözümler */
+  const kutuphanedenYukle = useCallback(
+    async (path: string, ad: string) => {
+      setParsing(true);
+      setError(null);
+      try {
+        const { data: signed, error: sErr } = await supabase.storage
+          .from("flight-logs")
+          .createSignedUrl(path, 600);
+        if (sErr || !signed) throw new Error("Dosya bağlantısı alınamadı.");
+
+        const blob = await (await fetch(signed.signedUrl)).blob();
+        const sess = await parseFlightDb(new File([blob], ad));
+        setSession(sess);
+        setTime(0);
+        setSelectedTeam(sess.teams[0] ?? null);
+        setLinkedFlight(ad);
+      } catch (ex) {
+        setError((ex as Error).message);
+      } finally {
+        setParsing(false);
+      }
+    },
+    [supabase]
+  );
 
   /* ---------- ?flight= ile gelen uçuşun kaydını otomatik yükle ---------- */
   const loadLinkedFlight = useCallback(
@@ -290,13 +319,23 @@ export function FlightAnalysis() {
                 biçimindeki SQLite uçuş kaydı desteklenir. Dosya tamamen
                 tarayıcınızda çözümlenir — hiçbir veri yüklenmez.
               </p>
-              <Button
-                className="mt-7"
-                onClick={() => fileRef.current?.click()}
-              >
-                <Upload size={16} />
-                Dosya Seç
-              </Button>
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+                <Button onClick={() => fileRef.current?.click()}>
+                  <Upload size={16} />
+                  Dosya Seç
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setKutuphaneAcik(true)}
+                >
+                  <Library size={16} />
+                  Kütüphaneden Seç
+                </Button>
+              </div>
+              <p className="mt-3 text-[12.5px] text-ink-3">
+                Daha önce bir uçuşa yüklediğiniz kayıtlar kütüphanede duruyor —
+                aynı dosyayı tekrar yüklemeniz gerekmez.
+              </p>
             </>
           )}
 
@@ -308,6 +347,11 @@ export function FlightAnalysis() {
           )}
         </div>
 
+        <LogKutuphanesi
+          open={kutuphaneAcik}
+          onClose={() => setKutuphaneAcik(false)}
+          onSec={kutuphanedenYukle}
+        />
         <input
           ref={fileRef}
           type="file"
