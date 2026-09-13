@@ -6,10 +6,6 @@ import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * /filo sayfasının gövdesi.
- *
- * Ana sayfadaki bölümün aksine burada her platform TAM GENİŞLİK ve alt alta:
- * görsel solda, künye sağda, teknik değerler kutularıyla birlikte. Ana
- * sayfada kutular yok — orada yalnızca ad ve kısa tanım var.
  */
 export function FiloListesi() {
   return (
@@ -24,6 +20,7 @@ export function FiloListesi() {
                   ac.flagship ? "border-accent/40" : "border-line"
                 }`}
               >
+                {/* ÜST BÖLÜM */}
                 <div className="grid gap-0 lg:grid-cols-[minmax(0,52%)_minmax(0,48%)]">
                   {/* Görsel */}
                   <div className="relative aspect-[16/10] overflow-hidden border-b border-line bg-bg-2 lg:border-b-0 lg:border-r">
@@ -81,15 +78,21 @@ export function FiloListesi() {
                     <p className="mt-4 text-sm leading-relaxed text-ink-2">
                       {ac.desc}
                     </p>
+                  </div>
+                </div>
 
+                {/* ALT BÖLÜM: Detaylı Özellikler ve Spekler */}
+                {(ac.features || ac.specs) && (
+                  <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
+                    {/* Özellikler */}
                     {ac.features && (
-                      <ul className="mt-6 space-y-3 border-t border-line pt-5">
+                      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {ac.features.map((f) => (
                           <li key={f.t}>
                             <span className="text-[13.5px] font-bold text-ink">
                               {f.t}
                             </span>
-                            <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-3">
+                            <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
                               {f.d}
                             </span>
                           </li>
@@ -97,18 +100,25 @@ export function FiloListesi() {
                       </ul>
                     )}
 
-                    <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-                      {ac.specs.map((s) => (
-                        <div key={s.label} className="bg-bg-1 px-3 py-3">
-                          <dt className="eyebrow !text-[9.5px]">{s.label}</dt>
-                          <dd className="mt-1 text-sm font-semibold text-ink">
-                            {s.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
+                    {/* Teknik Değerler (Grid yerine arka plansız, ortalanmış Flexbox) */}
+                    {ac.specs && (
+                      <dl
+                        className={`flex flex-wrap items-center justify-center gap-x-8 gap-y-6 ${
+                          ac.features ? "mt-10 border-t border-line/50 pt-8" : ""
+                        }`}
+                      >
+                        {ac.specs.map((s) => (
+                          <div key={s.label} className="flex flex-col items-center text-center">
+                            <dt className="eyebrow !text-[9.5px]">{s.label}</dt>
+                            <dd className="mt-1.5 text-[15px] font-semibold text-ink">
+                              {s.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
                   </div>
-                </div>
+                )}
               </article>
             </Reveal>
           );

@@ -23,27 +23,6 @@ export default function FiloPage() {
           Sabit kanat gövdelerden hidrojen yakıt hücresi Ar-Ge&apos;sine kadar
           tasarım, üretim ve uçuş testlerinin tamamı takım içinde yapılıyor.
         </p>
-
-        <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
-          <div>
-            <dt className="eyebrow !text-[9.5px]">Aktif platform</dt>
-            <dd className="display tabular mt-1 text-2xl text-ink">
-              {FLEET.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="eyebrow !text-[9.5px]">Arşivdeki platform</dt>
-            <dd className="display tabular mt-1 text-2xl text-ink">
-              {FLEET_ARCHIVE.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="eyebrow !text-[9.5px]">Kuruluş</dt>
-            <dd className="display tabular mt-1 text-2xl text-ink">
-              {TEAM.founded}
-            </dd>
-          </div>
-        </dl>
       </header>
 
       <div className="mt-14">
