@@ -142,10 +142,11 @@ export const DEPT_KEYS: DeptKey[] = [
 ];
 
 /* ---------- BAŞARILAR (Instagram profilinden doğrulandı) ---------- */
+/* ---------- BAŞARILAR ---------- */
 export interface Achievement {
   year: string;
-  title: string;
-  detail: string;
+  title: readonly [string, string];
+  detail: readonly [string, string];
   rank: string;
   highlight?: boolean;
   scope: "ulusal" | "uluslararasi";
@@ -154,36 +155,128 @@ export interface Achievement {
 export const ACHIEVEMENTS: Achievement[] = [
   {
     year: "2022",
-    title: "TEKNOFEST Savaşan İHA",
-    detail: "Türkiye Şampiyonluğu",
-    rank: "1.",
-    highlight: true,
+    title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
+    detail: ["Türkiye Şampiyonluğu", "Champion of Türkiye"],
+    rank: "1",
     scope: "ulusal",
   },
   {
     year: "2018",
-    title: "TEKNOFEST TÜBİTAK İHA",
-    detail: "Türkiye birinciliği",
-    rank: "1.",
-    highlight: true,
-    scope: "ulusal",
+    title: [
+      "TEKNOFEST TÜBİTAK Uluslararası İHA",
+      "TEKNOFEST TÜBİTAK International UAV",
+    ],
+    detail: ["Türkiye birinciliği", "1st Place in Türkiye"],
+    rank: "1",
+    scope: "uluslararasi",
   },
   {
     year: "2017",
-    title: "SAE Aero Design East (ABD)",
-    detail: "Dünya Şampiyonluğu — Jaeger ile",
-    rank: "1.",
-    highlight: true,
+    title: ["SAE Aero Design East (ABD)", "SAE Aero Design East (USA)"],
+    detail: ["Dünya Şampiyonluğu — Jaeger ile", "World Champion — with Jaeger"],
+    rank: "1",
     scope: "uluslararasi",
   },
-  { year: "2022", title: "TEKNOFEST Karma Sürü Simülasyon", detail: "Üçüncülük", rank: "3.", scope: "ulusal" },
-  { year: "2021", title: "TEKNOFEST Savaşan İHA", detail: "İkincilik", rank: "2.", scope: "ulusal" },
-  { year: "2020", title: "TEKNOFEST Sürü İHA", detail: "İkincilik", rank: "2.", scope: "ulusal" },
-  { year: "2019", title: "TEKNOFEST TÜBİTAK İHA", detail: "Beşincilik", rank: "5.", scope: "ulusal" },
-  { year: "2016", title: "SAE Aero Design", detail: "Genel sıralamada üçüncülük", rank: "3.", scope: "uluslararasi" },
-  { year: "2015", title: "Future Flight Design", detail: "Genel sıralamada ikincilik", rank: "2.", scope: "uluslararasi" },
-  { year: "2014", title: "SAE Aero Design", detail: "Genel sıralamada altıncılık", rank: "6.", scope: "uluslararasi" },
-  { year: "2013", title: "SAE Aero Design", detail: "On birincilik", rank: "11.", scope: "uluslararasi" },
+  {
+    year: "2026",
+    title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
+    detail: ["Finalistlik", "Finalist"],
+    rank: "99",
+    scope: "ulusal",
+  },
+  {
+    year: "2026",
+    title: ["AI Grand Prix", "AI Grand Prix"],
+    detail: ["On dördüncülük", "14th Place"],
+    rank: "14",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2025",
+    title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
+    detail: ["Finalistlik", "Finalist"],
+    rank: "99",
+    scope: "ulusal",
+  },
+  {
+    year: "2025",
+    title: [
+      "TEKNOFEST TÜBİTAK Uluslararası İHA",
+      "TEKNOFEST TÜBİTAK International UAV",
+    ],
+    detail: ["Finalistlik", "Finalist"],
+    rank: "99",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2024",
+    title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
+    detail: ["Yedincilik", "7th Place"],
+    rank: "7",
+    scope: "ulusal",
+  },
+  {
+    year: "2022",
+    title: [
+      "TEKNOFEST Karma Sürü Simülasyon",
+      "TEKNOFEST Mixed Swarm Simulation",
+    ],
+    detail: ["Üçüncülük", "3rd Place"],
+    rank: "3",
+    scope: "ulusal",
+  },
+  {
+    year: "2021",
+    title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
+    detail: ["İkincilik", "2nd Place"],
+    rank: "2",
+    scope: "ulusal",
+  },
+  {
+    year: "2020",
+    title: ["TEKNOFEST Sürü İHA", "TEKNOFEST Swarm UAV"],
+    detail: ["İkincilik", "2nd Place"],
+    rank: "2",
+    scope: "ulusal",
+  },
+  {
+    year: "2019",
+    title: [
+      "TEKNOFEST TÜBİTAK Uluslararası İHA",
+      "TEKNOFEST TÜBİTAK International UAV",
+    ],
+    detail: ["Beşincilik", "5th Place"],
+    rank: "5",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2016",
+    title: ["SAE Aero Design", "SAE Aero Design"],
+    detail: ["Genel sıralamada üçüncülük", "3rd Place Overall"],
+    rank: "3",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2015",
+    title: ["Future Flight Design", "Future Flight Design"],
+    detail: ["Genel sıralamada ikincilik", "2nd Place Overall"],
+    rank: "2",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2014",
+    title: ["SAE Aero Design", "SAE Aero Design"],
+    detail: ["Genel sıralamada altıncılık", "6th Place Overall"],
+    rank: "6",
+    scope: "uluslararasi",
+  },
+  {
+    year: "2013",
+    title: ["SAE Aero Design", "SAE Aero Design"],
+    detail: ["On birincilik", "11th Place"],
+    rank: "11",
+    scope: "uluslararasi",
+  },
 ];
 
 export const TAKIM_ISTATISTIK = {
