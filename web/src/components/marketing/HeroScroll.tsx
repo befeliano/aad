@@ -224,11 +224,17 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 className="transition-transform group-hover:translate-x-0.5"
               />
             </Link>
+            <Link
+              href="/#filo"
+              className="rounded-full border border-line-2 bg-bg/70 px-5 py-2.5 text-[13px] font-semibold text-ink backdrop-blur-md transition-colors hover:border-ink-3"
+            >
+              {t(S.hero.filoyuKesfet)}
+            </Link>
             <a
               href={BASVURU_FORMU}
               target="_blank"
               rel="noopener"
-              className="group inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-bg/70 px-5 py-2.5 text-[13px] font-semibold text-ink backdrop-blur-md transition-colors hover:border-accent hover:text-accent"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
             >
               {t(S.hero.takimaKatil)}
               <ArrowUpRight
@@ -236,12 +242,6 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
                 className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
               />
             </a>
-            <Link
-              href="/#filo"
-              className="rounded-full border border-line-2 bg-bg/70 px-5 py-2.5 text-[13px] font-semibold text-ink backdrop-blur-md transition-colors hover:border-ink-3"
-            >
-              {t(S.hero.filoyuKesfet)}
-            </Link>
           </div>
 
           <div className="grid w-full max-w-lg grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
