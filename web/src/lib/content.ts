@@ -13,7 +13,6 @@
 import { useMemo } from "react";
 import { useLang } from "./i18n";
 import {
-  ACHIEVEMENTS,
   ADVISORS,
   DEPARTMENTS,
   FLEET,
@@ -24,19 +23,16 @@ import {
   SPONSOR_REASONS,
   SPONSOR_TIERS,
   TEAM_LEADS,
-  type Achievement,
   type Aircraft,
   type Department,
   type SponsorTier,
 } from "./constants";
 import {
-  ACHIEVEMENTS_EN,
   ADVISORS_EN,
   DEPARTMENTS_EN,
   FLEET_EN,
   LEAD_ROLE_EN,
   PROCESS_EN,
-  RANK_EN,
   SPONSOR_MATRIX_ROWS_EN,
   SPONSOR_NOTE_EN,
   SPONSOR_REASONS_EN,
@@ -60,24 +56,6 @@ export function useFleet(): Aircraft[] {
         desc: ov.desc ?? ac.desc,
         specs: ov.specs ?? ac.specs,
         features: ov.features ?? ac.features,
-      };
-    });
-  }, [lang]);
-}
-
-/* ---------- BAŞARILAR ---------- */
-
-export function useAchievements(): Achievement[] {
-  const lang = useLang();
-  return useMemo(() => {
-    if (lang === "tr") return ACHIEVEMENTS;
-    return ACHIEVEMENTS.map((a) => {
-      const ov = ACHIEVEMENTS_EN[`${a.year}|${a.title}`];
-      return {
-        ...a,
-        title: ov?.title ?? a.title,
-        detail: ov?.detail ?? a.detail,
-        rank: RANK_EN[a.rank] ?? a.rank,
       };
     });
   }, [lang]);

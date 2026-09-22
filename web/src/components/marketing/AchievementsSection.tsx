@@ -1,7 +1,7 @@
 "use client";
 
 import { Trophy, Award } from "lucide-react";
-import { useAchievements } from "@/lib/content";
+import { ACHIEVEMENTS } from "@/lib/constants";
 import { S, useT } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
@@ -60,11 +60,11 @@ function getRankConfig(rank: string | number) {
 
 export function AchievementsSection() {
   const t = useT();
-  const achievements = useAchievements();
 
-  /* Yıla göre grupla, yeniden eskiye */
+  /* Yıla göre grupla, yeniden eskiye.
+     ACHIEVEMENTS artık iki dilli: başlık/açıklama [tr, en] çifti. */
   const yillar = Object.entries(
-    achievements.reduce<Record<string, typeof achievements>>((acc, a) => {
+    ACHIEVEMENTS.reduce<Record<string, typeof ACHIEVEMENTS>>((acc, a) => {
       (acc[a.year] ||= []).push(a);
       return acc;
     }, {})

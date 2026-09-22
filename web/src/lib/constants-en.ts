@@ -104,68 +104,6 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   },
 };
 
-/* ---------- BAŞARILAR ---------- */
-
-/** `${year}|${title}` → İngilizce başlık ve açıklama */
-export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> =
-  {
-    "2022|TEKNOFEST Savaşan İHA": {
-      title: "TEKNOFEST Combat UAV",
-      detail: "Champion of Türkiye",
-    },
-    "2018|TEKNOFEST TÜBİTAK İHA": {
-      title: "TEKNOFEST TÜBİTAK UAV",
-      detail: "First place in Türkiye",
-    },
-    "2017|SAE Aero Design East (ABD)": {
-      title: "SAE Aero Design East (USA)",
-      detail: "World Championship — with Jaeger",
-    },
-    "2022|TEKNOFEST Karma Sürü Simülasyon": {
-      title: "TEKNOFEST Mixed Swarm Simulation",
-      detail: "Third place",
-    },
-    "2021|TEKNOFEST Savaşan İHA": {
-      title: "TEKNOFEST Combat UAV",
-      detail: "Second place",
-    },
-    "2020|TEKNOFEST Sürü İHA": {
-      title: "TEKNOFEST Swarm UAV",
-      detail: "Second place",
-    },
-    "2019|TEKNOFEST TÜBİTAK İHA": {
-      title: "TEKNOFEST TÜBİTAK UAV",
-      detail: "Fifth place",
-    },
-    "2016|SAE Aero Design": {
-      title: "SAE Aero Design",
-      detail: "Third overall",
-    },
-    "2015|Future Flight Design": {
-      title: "Future Flight Design",
-      detail: "Second overall",
-    },
-    "2014|SAE Aero Design": {
-      title: "SAE Aero Design",
-      detail: "Sixth overall",
-    },
-    "2013|SAE Aero Design": {
-      title: "SAE Aero Design",
-      detail: "Eleventh place",
-    },
-  };
-
-/** "1." → "1st" — sıra ekleri dile göre değişir */
-export const RANK_EN: Record<string, string> = {
-  "1.": "1st",
-  "2.": "2nd",
-  "3.": "3rd",
-  "4.": "4th",
-  "5.": "5th",
-  "6.": "6th",
-  "11.": "11th",
-};
-
 /* ---------- DEPARTMANLAR ---------- */
 
 /** key → İngilizce ad ve açıklamalar. `short` bilerek boş: İngilizcede

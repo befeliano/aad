@@ -104,6 +104,7 @@ export const S = {
     baslik1: ["Gökyüzünü", "We design"] as M,
     baslik2: ["tasarlıyoruz.", "the sky."] as M,
     sponsorOl: ["Sponsor Ol", "Become a Sponsor"] as M,
+    takimaKatil: ["Takıma Katıl", "Join the Team"] as M,
     filoyuKesfet: ["Filoyu Keşfet", "Explore the Fleet"] as M,
     kaydir: ["Kaydır", "Scroll"] as M,
     gorselAlt: ["gün batımında test uçuşu", "test flight at sunset"] as M,
@@ -352,6 +353,8 @@ export const S = {
       "You can see exactly what each tier includes in the comparison table further down the page, and download our sponsorship deck for the details.",
     ] as M,
 
+    /* Şerit yalnızca birincilikleri gösteriyor */
+    birincilik: ["1.", "1st"] as M,
     basariSerit: [
       "Desteğiniz sonuç üreten bir takıma gidiyor",
       "Your support goes to a team that delivers results",
