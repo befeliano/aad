@@ -1,31 +1,21 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { MulakatClient } from "@/components/panel/mulakat/MulakatClient";
-import { AccessDenied } from "@/components/panel/AccessDenied";
 
-export const metadata = { title: "Mülakat Değerlendirme" };
+export const metadata = { title: "Mülakatlar" };
 
 /**
- * Mülakat kayıtlarını takım kaptanı, yardımcısı ve birim kaptanları görür.
+ * Aday listesi. Panele giren herkes görür, aday ekler ve not düzenler —
+ * rol kısıtı şimdilik bilerek yok, ileride eklenebilir. Aynı kural RLS'te:
+ * supabase/mulakat-form.sql. Silme yalnızca kaptan, yardımcısı ve adayın
+ * birim kaptanında (aday sayfasında).
  *
- * Bilerek dar: burada aday adı, yaşı, iletişim bilgisi ve değerlendirme
- * notu var. Aynı kural RLS'te de uygulanıyor (supabase/mulakat.sql);
- * buradaki kontrol yalnızca boş ekran yerine açıklama göstermek için.
+ * Başvuru formunu dolduran her kişi webhook ile otomatik eklenir
+ * (api/mulakat/form).
  */
 export default async function Page() {
   const session = await getSession();
   if (!session) redirect("/giris?next=/panel/mulakat");
 
-  const yetkili = session.isAdmin || session.role === "captain";
-  if (!yetkili) {
-    return <AccessDenied title="Mülakat Değerlendirme" />;
-  }
-
-  return (
-    <MulakatClient
-      userId={session.userId}
-      isAdmin={session.isAdmin}
-      myDept={session.dept}
-    />
-  );
+  return <MulakatClient userId={session.userId} />;
 }
