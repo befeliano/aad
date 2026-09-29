@@ -1,17 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
+  ChevronRight,
+  FileText,
+  Loader2,
   Plus,
   Search,
-  Loader2,
+  Star,
   TriangleAlert,
   UserPlus,
-  Star,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
-import { BECERILER, sorulariGetir, beceriEtiketi } from "@/lib/interview";
+import { DURUMLAR, DURUM_META, type Mulakat } from "@/lib/interview";
+import { telefonGoster } from "@/lib/interview-form";
 import { fmtDate } from "@/lib/format";
 import { reqText, trimTo, oneOf, LIMITS } from "@/lib/security";
 import { logAction } from "@/lib/audit";
@@ -20,93 +25,63 @@ import {
   Badge,
   Button,
   Card,
-  ConfirmDialog,
   EmptyState,
   Field,
   Modal,
 } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 
-type Durum = "planlandi" | "yapildi" | "kabul" | "red" | "beklemede";
+/** Liste için gereken kolonlar — form_data ve not gövdesi burada çekilmez */
+type Satir = Pick<
+  Mulakat,
+  | "id"
+  | "first_name"
+  | "last_name"
+  | "program"
+  | "phone"
+  | "email"
+  | "dept"
+  | "status"
+  | "score"
+  | "source"
+  | "submitted_at"
+  | "created_at"
+>;
 
-const DURUMLAR = ["planlandi", "yapildi", "kabul", "red", "beklemede"] as const;
+const KOLONLAR =
+  "id, first_name, last_name, program, phone, email, dept, status, score, source, submitted_at, created_at";
 
-const DURUM_META: Record<
-  Durum,
-  { etiket: string; tone: "neutral" | "info" | "ok" | "bad" | "warn" }
-> = {
-  planlandi: { etiket: "Planlandı", tone: "neutral" },
-  yapildi: { etiket: "Görüşüldü", tone: "info" },
-  kabul: { etiket: "Kabul", tone: "ok" },
-  red: { etiket: "Red", tone: "bad" },
-  beklemede: { etiket: "Beklemede", tone: "warn" },
-};
+/** Başvuru anı: formdan geldiyse gönderim, elle eklendiyse oluşturma */
+const basvuruAni = (m: Satir) => m.submitted_at || m.created_at;
 
-interface Mulakat {
-  id: string;
-  first_name: string;
-  last_name: string;
-  age: number | null;
-  program: string | null;
-  email: string | null;
-  phone: string | null;
-  dept: string;
-  skills: string[];
-  answers: Record<string, string>;
-  score: number | null;
-  notes: string | null;
-  status: Durum;
-  interviewed_at: string | null;
-  created_at: string;
-}
-
-export function MulakatClient({
-  userId,
-  isAdmin,
-  myDept,
-}: {
-  userId: string;
-  isAdmin: boolean;
-  myDept: string;
-}) {
+export function MulakatClient({ userId }: { userId: string }) {
   const supabase = useMemo(() => createClient(), []);
+  const router = useRouter();
   const { toast } = useToast();
 
-  const [kayitlar, setKayitlar] = useState<Mulakat[]>([]);
+  const [kayitlar, setKayitlar] = useState<Satir[]>([]);
   const [loading, setLoading] = useState(true);
-  const [yok, setYok] = useState(false);
+  const [hata, setHata] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [durumFiltre, setDurumFiltre] = useState("");
+  const [birimFiltre, setBirimFiltre] = useState("");
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<Mulakat | null>(null);
   const [saving, setSaving] = useState(false);
-  const [delTarget, setDelTarget] = useState<Mulakat | null>(null);
-
-  /* Form durumu — departman değişince beceri ve sorular yenilenir */
-  const [dept, setDept] = useState<string>(isAdmin ? "yazilim" : myDept);
-  const [beceriler, setBeceriler] = useState<Set<string>>(new Set());
-  const [cevaplar, setCevaplar] = useState<Record<string, string>>({});
-  const [puan, setPuan] = useState<number | null>(null);
-
-  /** Kaptan/yardımcı her birime alır; birim kaptanı yalnızca kendi birimine */
-  const secilebilirDepts = useMemo(
-    () => (isAdmin ? ([...DEPT_KEYS] as string[]) : myDept ? [myDept] : []),
-    [isAdmin, myDept]
-  );
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("interviews")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("interviews").select(KOLONLAR);
 
     if (error) {
-      setYok(true);
+      setHata(error.message);
       setKayitlar([]);
     } else {
-      setYok(false);
-      setKayitlar((data as Mulakat[]) || []);
+      setHata(null);
+      setKayitlar(
+        ((data as Satir[]) || []).sort((a, b) =>
+          basvuruAni(b).localeCompare(basvuruAni(a))
+        )
+      );
     }
     setLoading(false);
   }, [supabase]);
@@ -115,22 +90,35 @@ export function MulakatClient({
     // load() asenkrondur: setState ağ yanıtından sonra çalışır.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-  }, [load]);
+    // Formdan yeni başvuru düşünce liste kendiliğinden yenilenir
+    const ch = supabase
+      .channel("mulakat-liste")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "interviews" },
+        () => void load()
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(ch);
+    };
+  }, [supabase, load]);
 
   const filtreli = useMemo(() => {
     const needle = q.trim().toLocaleLowerCase("tr");
     return kayitlar.filter((m) => {
       if (durumFiltre && m.status !== durumFiltre) return false;
+      if (birimFiltre && (m.dept || "") !== birimFiltre) return false;
       if (
         needle &&
-        !`${m.first_name} ${m.last_name} ${m.program || ""}`
+        !`${m.first_name} ${m.last_name} ${m.program || ""} ${m.email || ""} ${m.phone || ""}`
           .toLocaleLowerCase("tr")
           .includes(needle)
       )
         return false;
       return true;
     });
-  }, [kayitlar, q, durumFiltre]);
+  }, [kayitlar, q, durumFiltre, birimFiltre]);
 
   const sayim = useMemo(() => {
     const c: Record<string, number> = {};
@@ -138,114 +126,62 @@ export function MulakatClient({
     return c;
   }, [kayitlar]);
 
-  function formuAc(m: Mulakat | null) {
-    setEditing(m);
-    const d = m?.dept || (isAdmin ? "yazilim" : myDept) || "yazilim";
-    setDept(d);
-    setBeceriler(new Set(m?.skills || []));
-    setCevaplar(m?.answers || {});
-    setPuan(m?.score ?? null);
-    setFormOpen(true);
-  }
-
-  function beceriDegis(k: string) {
-    setBeceriler((v) => {
-      const n = new Set(v);
-      if (n.has(k)) n.delete(k);
-      else n.add(k);
-      return n;
-    });
-  }
-
-  async function kaydet(e: React.FormEvent<HTMLFormElement>) {
+  async function ekle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const ad = reqText(fd.get("first_name"), LIMITS.name);
     const soyad = reqText(fd.get("last_name"), LIMITS.name);
-    if (!ad || !soyad) {
-      toast("Ad ve soyad zorunlu.", "error");
+    if (!ad) {
+      toast("Ad zorunlu.", "error");
       return;
     }
 
-    const yasHam = fd.get("age");
+    const dept = oneOf(fd.get("dept"), ["", ...DEPT_KEYS] as const, "");
     const payload = {
       first_name: ad,
       last_name: soyad,
-      age: yasHam ? Number(yasHam) : null,
-      program: trimTo(fd.get("program"), LIMITS.name),
-      email: trimTo(fd.get("email"), LIMITS.name),
       phone: trimTo(fd.get("phone"), 40),
-      dept: oneOf(fd.get("dept"), secilebilirDepts, secilebilirDepts[0] || "yazilim"),
-      skills: [...beceriler],
-      answers: cevaplar,
-      score: puan,
-      status: oneOf(fd.get("status"), DURUMLAR, "planlandi"),
-      notes: trimTo(fd.get("notes"), LIMITS.longText),
+      email: trimTo(fd.get("email"), LIMITS.name),
+      program: trimTo(fd.get("program"), LIMITS.name),
+      dept: dept || null,
+      source: "manuel",
+      created_by: userId,
+      interviewer: userId,
     };
 
     setSaving(true);
-    const { data, error } = editing
-      ? await supabase
-          .from("interviews")
-          .update(payload)
-          .eq("id", editing.id)
-          .select()
-      : await supabase
-          .from("interviews")
-          .insert([{ ...payload, created_by: userId, interviewer: userId }])
-          .select();
+    const { data, error } = await supabase
+      .from("interviews")
+      .insert([payload])
+      .select("id")
+      .single();
     setSaving(false);
 
-    if (error) {
-      toast("Kaydedilemedi: " + error.message, "error");
+    if (error || !data) {
+      toast("Kaydedilemedi: " + (error?.message ?? "bilinmeyen hata"), "error");
       return;
     }
-    void logAction(
-      supabase,
-      editing ? "update" : "create",
-      "interviews",
-      data?.[0]?.id ?? editing?.id ?? null,
-      { aday: `${ad} ${soyad}`, birim: payload.dept }
-    );
-    toast(editing ? "Mülakat güncellendi." : "Mülakat kaydedildi.");
+    void logAction(supabase, "create", "interviews", data.id, {
+      aday: `${ad} ${soyad}`.trim(),
+      birim: payload.dept,
+    });
     setFormOpen(false);
-    setEditing(null);
-    void load();
+    router.push(`/panel/mulakat/${data.id}`);
   }
-
-  async function sil() {
-    if (!delTarget) return;
-    const { error } = await supabase
-      .from("interviews")
-      .delete()
-      .eq("id", delTarget.id);
-    if (error) toast("Silinemedi: " + error.message, "error");
-    else {
-      void logAction(supabase, "delete", "interviews", delTarget.id, {
-        aday: `${delTarget.first_name} ${delTarget.last_name}`,
-      });
-      toast("Kayıt silindi.");
-    }
-    setDelTarget(null);
-    void load();
-  }
-
-  const formBeceriler = BECERILER[dept] || [];
-  const formSorular = sorulariGetir(dept);
 
   return (
     <>
       <PageHeader
-        title="Mülakat Değerlendirme"
-        desc="Aday künyesi, birime göre beceri listesi ve sorular. Görüşme sırasında telefondan doldurabilirsiniz."
+        title="Mülakatlar"
+        desc="Başvuru formunu dolduran her aday buraya otomatik düşer. Adayın adına tıklayın, görüşme notunuzu yazın — not kendiliğinden kaydedilir."
       >
-        <Button onClick={() => formuAc(null)}>
+        <Button onClick={() => setFormOpen(true)}>
           <Plus size={16} />
-          Yeni Mülakat
+          Aday Ekle
         </Button>
       </PageHeader>
 
-      {yok ? (
+      {hata ? (
         <Card className="p-6">
           <div className="flex items-start gap-3">
             <TriangleAlert size={18} className="mt-0.5 shrink-0 text-warn" />
@@ -254,20 +190,23 @@ export function MulakatClient({
                 Mülakat tablosu hazır değil
               </h2>
               <p className="mt-1 text-sm text-ink-2">
-                <code>supabase/mulakat.sql</code> dosyasını Supabase SQL
-                Editor&apos;da çalıştırın.
+                Supabase SQL Editor&apos;da önce <code>supabase/mulakat.sql</code>{" "}
+                (daha önce çalıştırılmadıysa), sonra{" "}
+                <code>supabase/mulakat-form.sql</code> dosyasını çalıştırın.
               </p>
+              <p className="mt-2 text-xs text-ink-3">{hata}</p>
             </div>
           </div>
         </Card>
       ) : (
         <>
-          {/* Özet */}
-          <div className="mb-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {/* Özet — tıklayınca filtreler */}
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {DURUMLAR.map((d) => (
               <button
                 key={d}
                 type="button"
+                aria-pressed={durumFiltre === d}
                 onClick={() => setDurumFiltre(durumFiltre === d ? "" : d)}
                 className={`rounded-xl border p-3 text-left transition-colors ${
                   durumFiltre === d
@@ -294,10 +233,24 @@ export function MulakatClient({
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Aday ara…"
+                placeholder="Ad, bölüm, telefon veya e-posta ara…"
+                aria-label="Aday ara"
                 className="field !pl-9"
               />
             </div>
+            <select
+              value={birimFiltre}
+              onChange={(e) => setBirimFiltre(e.target.value)}
+              aria-label="Birime göre filtrele"
+              className="field !w-auto"
+            >
+              <option value="">Tüm birimler</option>
+              {DEPT_KEYS.map((k) => (
+                <option key={k} value={k}>
+                  {DEPT_LABELS[k] || k}
+                </option>
+              ))}
+            </select>
             <span className="ml-auto text-xs text-ink-3">
               {filtreli.length} aday
             </span>
@@ -312,158 +265,116 @@ export function MulakatClient({
             <Card className="p-8">
               <EmptyState
                 icon={<UserPlus size={28} />}
-                title={
-                  kayitlar.length === 0 ? "Henüz mülakat yok" : "Sonuç yok"
-                }
+                title={kayitlar.length === 0 ? "Henüz aday yok" : "Sonuç yok"}
                 desc={
                   kayitlar.length === 0
-                    ? "İlk adayı ekleyin; görüşme sırasında doldurabilirsiniz."
+                    ? "Başvuru formu bağlandığında adaylar burada kendiliğinden belirir. Elle de ekleyebilirsiniz."
                     : "Filtreyi değiştirmeyi deneyin."
                 }
               />
             </Card>
           ) : (
-            <div className="space-y-3">
+            <Card className="divide-y divide-line overflow-hidden">
               {filtreli.map((m) => (
-                <Card key={m.id} className="p-5">
-                  <div className="flex flex-wrap items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-[15px] font-semibold text-ink">
-                          {m.first_name} {m.last_name}
-                        </h3>
-                        <Badge tone={DURUM_META[m.status].tone}>
-                          {DURUM_META[m.status].etiket}
-                        </Badge>
+                <Link
+                  key={m.id}
+                  href={`/panel/mulakat/${m.id}`}
+                  className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-bg-2"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[15px] font-semibold text-ink group-hover:text-accent">
+                        {m.first_name} {m.last_name}
+                      </span>
+                      <Badge tone={DURUM_META[m.status].tone}>
+                        {DURUM_META[m.status].etiket}
+                      </Badge>
+                      {m.dept && (
                         <Badge tone="neutral">
                           {DEPT_LABELS[m.dept] || m.dept}
                         </Badge>
-                        {m.score !== null && (
-                          <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-accent">
-                            <Star size={12} fill="currentColor" />
-                            {m.score}/5
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-ink-3">
-                        {m.age && <span>{m.age} yaş</span>}
-                        {m.program && <span>{m.program}</span>}
-                        {m.email && <span className="break-all">{m.email}</span>}
-                        {m.interviewed_at && (
-                          <span>Görüşme {fmtDate(m.interviewed_at)}</span>
-                        )}
-                      </div>
-
-                      {m.skills?.length > 0 && (
-                        <div className="mt-2.5 flex flex-wrap gap-1.5">
-                          {m.skills.map((k) => (
-                            <span
-                              key={k}
-                              className="rounded-full border border-line px-2.5 py-0.5 text-[11.5px] text-ink-2"
-                            >
-                              {beceriEtiketi(m.dept, k)}
-                            </span>
-                          ))}
-                        </div>
                       )}
-
-                      {m.notes && (
-                        <p className="mt-3 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-2">
-                          {m.notes}
-                        </p>
+                      {m.source === "form" && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[11.5px] text-ink-3"
+                          title="Başvuru formundan geldi"
+                        >
+                          <FileText size={12} />
+                          Form
+                        </span>
+                      )}
+                      {m.score !== null && (
+                        <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-accent">
+                          <Star size={12} fill="currentColor" />
+                          {m.score}/5
+                        </span>
                       )}
                     </div>
-
-                    <div className="flex shrink-0 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => formuAc(m)}
-                        className="rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-2 transition-colors hover:border-ink-3 hover:text-ink"
-                      >
-                        Aç
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDelTarget(m)}
-                        className="rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-3 transition-colors hover:border-bad hover:text-bad"
-                      >
-                        Sil
-                      </button>
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-[12.5px] text-ink-3">
+                      {m.program && <span>{m.program}</span>}
+                      {m.phone && (
+                        <span className="tabular">{telefonGoster(m.phone)}</span>
+                      )}
+                      <span>Başvuru {fmtDate(basvuruAni(m))}</span>
                     </div>
                   </div>
-                </Card>
+                  <ChevronRight
+                    size={18}
+                    className="shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5 group-hover:text-accent"
+                  />
+                </Link>
               ))}
-            </div>
+            </Card>
           )}
         </>
       )}
 
-      {/* Mülakat formu */}
-      <Modal
-        open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditing(null);
-        }}
-        title={editing ? "Mülakatı Düzenle" : "Yeni Mülakat"}
-        wide
-      >
-        <form onSubmit={kaydet} className="space-y-5">
-          {/* Künye */}
+      {/* Elle aday ekleme — formu doldurmamış biri için */}
+      <Modal open={formOpen} onClose={() => setFormOpen(false)} title="Aday Ekle">
+        <form onSubmit={ekle} className="space-y-4">
+          <p className="text-[13px] text-ink-3">
+            Formu dolduranlar zaten otomatik ekleniyor. Bunu yalnızca formu
+            doldurmamış biriyle görüşecekseniz kullanın.
+          </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Ad">
               <input
                 name="first_name"
                 required
-                defaultValue={editing?.first_name || ""}
                 maxLength={LIMITS.name}
                 className="field"
               />
             </Field>
             <Field label="Soyad">
+              <input name="last_name" maxLength={LIMITS.name} className="field" />
+            </Field>
+            <Field label="Telefon" hint="İsteğe bağlı">
               <input
-                name="last_name"
-                required
-                defaultValue={editing?.last_name || ""}
+                name="phone"
+                type="tel"
+                maxLength={40}
+                className="field"
+              />
+            </Field>
+            <Field label="E-posta" hint="İsteğe bağlı">
+              <input
+                name="email"
+                type="email"
                 maxLength={LIMITS.name}
                 className="field"
               />
             </Field>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="Yaş">
-              <input
-                name="age"
-                type="number"
-                min={15}
-                max={70}
-                defaultValue={editing?.age ?? ""}
-                className="field"
-              />
-            </Field>
-            <Field label="Bölüm" hint="Üniversitedeki bölümü">
+            <Field label="Üniversite / bölüm" hint="İsteğe bağlı">
               <input
                 name="program"
-                defaultValue={editing?.program || ""}
                 maxLength={LIMITS.name}
-                placeholder="örn. Bilgisayar Müh."
                 className="field"
               />
             </Field>
-            <Field label="Alınacağı birim">
-              <select
-                name="dept"
-                value={dept}
-                onChange={(e) => {
-                  setDept(e.target.value);
-                  /* Birim değişince beceriler geçersiz kalır */
-                  setBeceriler(new Set());
-                }}
-                className="field"
-              >
-                {secilebilirDepts.map((k) => (
+            <Field label="Birim">
+              <select name="dept" defaultValue="" className="field">
+                <option value="">Seçilmedi</option>
+                {DEPT_KEYS.map((k) => (
                   <option key={k} value={k}>
                     {DEPT_LABELS[k] || k}
                   </option>
@@ -471,156 +382,21 @@ export function MulakatClient({
               </select>
             </Field>
           </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="E-posta" hint="İsteğe bağlı">
-              <input
-                name="email"
-                type="email"
-                defaultValue={editing?.email || ""}
-                className="field"
-              />
-            </Field>
-            <Field label="Telefon" hint="İsteğe bağlı">
-              <input
-                name="phone"
-                defaultValue={editing?.phone || ""}
-                maxLength={40}
-                className="field"
-              />
-            </Field>
-          </div>
-
-          {/* Beceriler — birime göre */}
-          {formBeceriler.length > 0 && (
-            <div className="rounded-xl border border-line bg-bg-1 p-4">
-              <div className="eyebrow mb-3 !text-[10px]">
-                Bildiği programlar / beceriler
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {formBeceriler.map((b) => {
-                  const secili = beceriler.has(b.key);
-                  return (
-                    <button
-                      key={b.key}
-                      type="button"
-                      aria-pressed={secili}
-                      onClick={() => beceriDegis(b.key)}
-                      className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
-                        secili
-                          ? "border-accent bg-accent text-white"
-                          : "border-line bg-bg text-ink-2 hover:border-ink-3 hover:text-ink"
-                      }`}
-                    >
-                      {b.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Sorular — birime göre + genel */}
-          <div className="space-y-4">
-            <div className="eyebrow !text-[10px]">Sorular</div>
-            {formSorular.map((s) => (
-              <Field key={s.key} label={s.label}>
-                {s.uzun ? (
-                  <textarea
-                    rows={3}
-                    value={cevaplar[s.key] || ""}
-                    onChange={(e) =>
-                      setCevaplar((v) => ({ ...v, [s.key]: e.target.value }))
-                    }
-                    maxLength={LIMITS.longText}
-                    className="field resize-y"
-                  />
-                ) : (
-                  <input
-                    value={cevaplar[s.key] || ""}
-                    onChange={(e) =>
-                      setCevaplar((v) => ({ ...v, [s.key]: e.target.value }))
-                    }
-                    maxLength={LIMITS.shortText}
-                    className="field"
-                  />
-                )}
-              </Field>
-            ))}
-          </div>
-
-          {/* Değerlendirme */}
-          <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
-            <Field label="Puan" hint="1 = zayıf, 5 = çok iyi">
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    aria-pressed={puan === n}
-                    onClick={() => setPuan(puan === n ? null : n)}
-                    className={`flex size-10 items-center justify-center rounded-lg border text-sm font-bold transition-colors ${
-                      puan !== null && n <= puan
-                        ? "border-accent bg-accent text-white"
-                        : "border-line bg-bg text-ink-3 hover:border-ink-3"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </Field>
-            <Field label="Durum">
-              <select
-                name="status"
-                defaultValue={editing?.status || "planlandi"}
-                className="field"
-              >
-                {DURUMLAR.map((d) => (
-                  <option key={d} value={d}>
-                    {DURUM_META[d].etiket}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          </div>
-
-          <Field label="Genel not" hint="Görüşmede aklınızda kalanlar">
-            <textarea
-              name="notes"
-              rows={3}
-              defaultValue={editing?.notes || ""}
-              maxLength={LIMITS.longText}
-              className="field resize-y"
-            />
-          </Field>
-
           <div className="flex justify-end gap-2.5 border-t border-line pt-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                setFormOpen(false);
-                setEditing(null);
-              }}
+              onClick={() => setFormOpen(false)}
             >
               Vazgeç
             </Button>
             <Button type="submit" disabled={saving}>
               {saving && <Loader2 size={15} className="animate-spin" />}
-              Kaydet
+              Ekle ve Aç
             </Button>
           </div>
         </form>
       </Modal>
-
-      <ConfirmDialog
-        open={!!delTarget}
-        title="Mülakat kaydını sil"
-        message={`${delTarget?.first_name} ${delTarget?.last_name} kaydı kalıcı olarak silinecek.`}
-        onCancel={() => setDelTarget(null)}
-        onConfirm={sil}
-      />
     </>
   );
 }
