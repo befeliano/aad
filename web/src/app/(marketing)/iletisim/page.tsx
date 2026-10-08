@@ -4,7 +4,7 @@ import { IletisimIcerik } from "@/components/marketing/IletisimIcerik";
 export const metadata: Metadata = {
   title: "İletişim",
   description:
-    "Anatolia Aero Design ile iletişime geçin — sponsorluk, iş birliği ve sorularınız için.",
+    "Anatolia Aero Design ile sponsorluk, iş birliği ve diğer konular için iletişime geçebilirsiniz.",
 };
 
 export default function IletisimPage() {

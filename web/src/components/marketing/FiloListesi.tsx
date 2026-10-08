@@ -30,9 +30,7 @@ export function FiloListesi({
           return (
             <Reveal key={ac.name} delay={Math.min(i, 3) * 70}>
               <article
-                className={`overflow-hidden rounded-2xl border bg-bg-1 transition-colors hover:border-line-2 ${
-                  ac.flagship ? "border-accent/40" : "border-line"
-                }`}
+                className="overflow-hidden rounded-2xl border border-line bg-bg-1 transition-colors hover:border-line-2"
               >
                 {/* ÜST BÖLÜM */}
                 <div className="grid gap-0 lg:grid-cols-[minmax(0,52%)_minmax(0,48%)]">
@@ -70,23 +68,12 @@ export function FiloListesi({
                     >
                       {ac.codename}
                     </span>
-                    {ac.flagship && (
-                      <span className="absolute right-4 top-3.5 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        {t(S.filo.amiralGemisi)}
-                      </span>
-                    )}
                   </div>
 
                   {/* Künye */}
                   <div className="p-6 sm:p-8">
                     <div className="eyebrow">{ac.role}</div>
-                    <h2
-                      className={`display-tight mt-2 text-ink ${
-                        ac.flagship
-                          ? "text-4xl sm:text-6xl"
-                          : "text-3xl sm:text-4xl"
-                      }`}
-                    >
+                    <h2 className="display-tight mt-2 text-3xl text-ink sm:text-4xl">
                       {ac.name}
                     </h2>
                     <p className="mt-4 text-sm leading-relaxed text-ink-2">
@@ -95,41 +82,56 @@ export function FiloListesi({
                   </div>
                 </div>
 
-                {/* ALT BÖLÜM: Detaylı Özellikler ve Spekler */}
+                {/* Alt bölüm: teknik tablo ve hava aracına özgü bilgiler */}
                 {(ac.features || ac.specs) && (
                   <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
-                    {/* Özellikler */}
+                    {ac.specs && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full min-w-[280px] border-collapse text-left text-sm">
+                          <thead>
+                            <tr className="border-b border-line text-ink-3">
+                              <th scope="col" className="py-3 pr-5 font-semibold">
+                                {t(S.filo.specOzellik)}
+                              </th>
+                              <th scope="col" className="py-3 font-semibold">
+                                {t(S.filo.specDeger)}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ac.specs.map((spec) => (
+                              <tr key={spec.label} className="border-b border-line/60 last:border-0">
+                                <th
+                                  scope="row"
+                                  className="py-3 pr-5 font-medium text-ink-2"
+                                >
+                                  {spec.label}
+                                </th>
+                                <td className="py-3 text-ink">{spec.value}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
                     {ac.features && (
-                      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {ac.features.map((f) => (
-                          <li key={f.t}>
+                      <ul
+                        className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ${
+                          ac.specs ? "mt-8 border-t border-line/50 pt-8" : ""
+                        }`}
+                      >
+                        {ac.features.map((feature) => (
+                          <li key={feature.t}>
                             <span className="text-[13.5px] font-bold text-ink">
-                              {f.t}
+                              {feature.t}
                             </span>
                             <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
-                              {f.d}
+                              {feature.d}
                             </span>
                           </li>
                         ))}
                       </ul>
-                    )}
-
-                    {/* Teknik Değerler (Grid yerine arka plansız, ortalanmış Flexbox) */}
-                    {ac.specs && (
-                      <dl
-                        className={`flex flex-wrap items-center justify-center gap-x-8 gap-y-6 ${
-                          ac.features ? "mt-10 border-t border-line/50 pt-8" : ""
-                        }`}
-                      >
-                        {ac.specs.map((s) => (
-                          <div key={s.label} className="flex flex-col items-center text-center">
-                            <dt className="eyebrow !text-[9.5px]">{s.label}</dt>
-                            <dd className="mt-1.5 text-[15px] font-semibold text-ink">
-                              {s.value}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
                     )}
                   </div>
                 )}

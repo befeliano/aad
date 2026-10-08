@@ -40,7 +40,8 @@ export function SponsorlukIcerik() {
   const topAchievements = achievements.filter((a) => a.highlight);
 
   const reach = [
-    { num: TAKIM_ISTATISTIK.sampiyonluk, label: t(S.sponsor.sampiyonluk) },
+    { num: TAKIM_ISTATISTIK.birincilik, label: t(S.sponsor.birincilik) },
+    { num: TAKIM_ISTATISTIK.derece, label: t(S.sponsor.derece) },
     { num: TAKIM_ISTATISTIK.uye, label: t(S.sponsor.uye) },
     { num: TAKIM_ISTATISTIK.mezun, label: t(S.sponsor.mezun) },
     { num: TAKIM_ISTATISTIK.kurulus, label: t(S.sponsor.kurulus) },
@@ -117,7 +118,7 @@ export function SponsorlukIcerik() {
 
       {/* Rakamlar */}
       <section className="border-b border-line bg-bg-1">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden bg-line sm:grid-cols-4">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden bg-line sm:grid-cols-5">
           {reach.map((r) => (
             <div key={r.label} className="bg-bg-1 px-5 py-10 text-center">
               <div className="display tabular text-4xl text-accent sm:text-6xl">

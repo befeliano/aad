@@ -101,11 +101,6 @@ export function FleetSectionClient({
                   >
                     {ac.codename}
                   </span>
-                  {ac.flagship && (
-                    <span className="absolute right-4 top-3.5 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                      {t(S.filo.amiralGemisi)}
-                    </span>
-                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">

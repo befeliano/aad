@@ -4,7 +4,7 @@ import { KatilIcerik } from "@/components/marketing/KatilIcerik";
 export const metadata: Metadata = {
   title: "Takıma Katıl",
   description:
-    "Anatolia Aero Design'a katılmak için başvuru formunu doldurun. Yazılım, tasarım, kompozit, aviyonik, yapısal ve medya ekiplerine alım yapıyoruz.",
+    "Anatolia Aero Design ekibine katılmak için başvuru formunu doldurabilirsiniz. Yazılım, tasarım, kompozit, aviyonik, yapısal ve medya ekiplerine başvurular alınmaktadır.",
 };
 
 export default function KatilPage() {

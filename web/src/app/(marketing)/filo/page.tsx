@@ -7,7 +7,7 @@ import { fleetImage } from "@/lib/public-assets";
 export const metadata: Metadata = {
   title: "Filo",
   description:
-    "Anatolia Aero Design'ın 2011'den bugüne tasarlayıp ürettiği insansız hava araçları: DABAN, GÖLGE, MERLIN, JAEGER, DORJE ve HYDRA.",
+    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3 ve HYDRA MK3.",
 };
 
 export default function FiloPage() {

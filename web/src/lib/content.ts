@@ -72,11 +72,11 @@ export function useAchievements(): Achievement[] {
   return useMemo(() => {
     if (lang === "tr") return ACHIEVEMENTS;
     return ACHIEVEMENTS.map((a) => {
-      const ov = ACHIEVEMENTS_EN[`${a.year}|${a.title}`];
+      const ov = ACHIEVEMENTS_EN[`${a.year}|${a.title[0]}`];
       return {
         ...a,
-        title: ov?.title ?? a.title,
-        detail: ov?.detail ?? a.detail,
+        title: [a.title[0], ov?.title ?? a.title[1]] as const,
+        detail: [a.detail[0], ov?.detail ?? a.detail[1]] as const,
         rank: RANK_EN[a.rank] ?? a.rank,
       };
     });

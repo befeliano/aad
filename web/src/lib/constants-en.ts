@@ -21,8 +21,9 @@ type FleetOverlay = Partial<
 /** slug → İngilizce künye */
 export const FLEET_EN: Record<string, FleetOverlay> = {
   daban: {
-    role: "Combat UAV · Flagship",
-    desc: "Our 2027 Combat UAV platform. A twin-engine, fully autonomous combat UAV that folds years of competition experience into a more aggressive and more durable airframe. Its large internal volume carries advanced sensor fusion and on-board AI.",
+    codename: "In Development",
+    role: "Planned Aircraft",
+    desc: "DABAN is our planned full-composite aircraft. Design work is ongoing.",
     specs: [
       { label: "Wingspan", value: "2.6 m" },
       { label: "Take-off Weight", value: "8 kg" },
@@ -35,71 +36,96 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     ],
     features: [
       {
-        t: "Twin-Engine Configuration",
-        d: "Instant manoeuvrability at high speed plus full system redundancy. Gives a decisive speed and climb advantage in a dogfight.",
-      },
-      {
-        t: "Advanced Airframe, Large Volume",
-        d: "Houses more complex avionics and high-performance compute units without giving up aerodynamic efficiency.",
-      },
-      {
-        t: "Superior Autonomy",
-        d: "Far more precise target tracking and fully autonomous mission execution through advanced sensor fusion.",
+        t: "Full-Composite Structure",
+        d: "The planned DABAN aircraft is expected to have a full-composite airframe.",
       },
     ],
   },
 
   golge: {
-    role: "Combat UAV · Champion of Türkiye",
-    desc: "The platform that won our team the Turkish championship at the 2022 TEKNOFEST Combat UAV competition. Its inverted V-tail architecture and high manoeuvrability kept it competitive in dogfight scenarios. The project closed in 2025.",
+    codename: "2026",
+    role: "Combat UAV",
+    desc: "Development of the GÖLGE platform is ongoing. Its inverted V-tail is designed for both air-to-air and air-to-ground missions.",
     specs: [
       { label: "Architecture", value: "Inverted V-Tail" },
-      { label: "Mission", value: "Air-to-Air Combat" },
+      { label: "Mission", value: "Air-to-Air and Air-to-Ground" },
       { label: "Autonomy", value: "Fully Autonomous" },
-      { label: "Result", value: "1st in Türkiye" },
+    ],
+    features: [
+      {
+        t: "Two Mission Profiles",
+        d: "Developed for air-to-ground missions in addition to air-to-air combat.",
+      },
     ],
   },
 
   merlin: {
-    role: "Fixed Wing · Payload",
-    desc: "Designed against International UAV Competition criteria, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
+    role: "TÜBİTAK International UAV Competition",
+    desc: "Designed to the criteria of the TÜBİTAK International UAV Competition, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
     specs: [
       { label: "Assembly", value: "1 min 46 s" },
-      { label: "Target Payload Ratio", value: "2.5× its own weight" },
+      { label: "Payload Ratio", value: "2.5× its own weight" },
       { label: "Structure", value: "Modular" },
       { label: "Mission", value: "Autonomous Payload Drop" },
+    ],
+    features: [
+      {
+        t: "Modular Design",
+        d: "Designed to fit in a transport case and be prepared for flight in a short time.",
+      },
     ],
   },
 
   jaeger: {
-    role: "SAE AERO DESIGN · World Champion",
-    desc: "The biomimetic, modular design that took the World Championship at SAE Aero Design East in the USA in 2017. With a 55-second assembly time it remains the cornerstone of our design discipline.",
+    role: "SAE Aero Design",
+    desc: "A modular aircraft used in the 2017 SAE Aero Design East competition.",
     specs: [
       { label: "Airframe Weight", value: "305 g" },
       { label: "Payload", value: "1287 g" },
-      { label: "Efficiency", value: "3.1× empty weight" },
       { label: "Assembly", value: "55 seconds" },
+    ],
+    features: [
+      {
+        t: "Biomimetic Design",
+        d: "Its design draws inspiration from structures and forms of movement found in nature.",
+      },
     ],
   },
 
   dorje: {
-    codename: "Fixed Wing",
-    role: "International UAV Competition",
-    desc: "Designed by our former academic advisor Lect. Dr. Emre Özbek, DORJE competed in the fixed-wing category of the International UAV Competition.",
+    codename: "2025",
+    role: "TÜBİTAK International UAV Competition",
+    desc: "DORJE was developed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
     specs: [
       { label: "Configuration", value: "Fixed Wing" },
       { label: "Category", value: "International UAV" },
+    ],
+    features: [
+      {
+        t: "Fixed-Wing Category",
+        d: "The aircraft was designed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
+      },
     ],
   },
 
   hydra: {
     role: "R&D · Hydrogen Propulsion",
-    desc: "A UAV programme running on advanced PEM fuel-cell technology, built around zero-emission, long-endurance flight. It marries a hydrogen propulsion system with avionics developed in-house.",
+    codename: "2020",
+    desc: "An aircraft developed for zero-emission flight and long range, powered by a hydrogen fuel cell.",
     specs: [
-      { label: "Propulsion", value: "PEM Fuel Cell" },
-      { label: "Emissions", value: "Zero" },
-      { label: "Goal", value: "Long Range" },
-      { label: "Status", value: "In Development" },
+      { label: "Fuselage", value: "Composite" },
+      { label: "Wing", value: "EPS Foam" },
+      { label: "Tail", value: "Birch + Balsa Covering" },
+      { label: "Wing Position", value: "High Wing" },
+      { label: "Tail Configuration", value: "T-tail" },
+      { label: "Landing Gear", value: "None" },
+      { label: "Motor Position", value: "Nose-mounted" },
+    ],
+    features: [
+      {
+        t: "Hydrogen Fuel System",
+        d: "The aircraft runs on a hydrogen fuel cell and is being developed for zero-emission, long-range flight.",
+      },
     ],
   },
 };
@@ -111,15 +137,23 @@ export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> 
   {
     "2022|TEKNOFEST Savaşan İHA": {
       title: "TEKNOFEST Combat UAV",
-      detail: "Champion of Türkiye",
+      detail: "1st Place",
     },
-    "2018|TEKNOFEST TÜBİTAK İHA": {
-      title: "TEKNOFEST TÜBİTAK UAV",
-      detail: "First place in Türkiye",
+    "2018|TEKNOFEST TÜBİTAK Uluslararası İHA": {
+      title: "TEKNOFEST TÜBİTAK International UAV",
+      detail: "1st Place",
     },
-    "2017|SAE Aero Design East (ABD)": {
-      title: "SAE Aero Design East (USA)",
-      detail: "World Championship — with Jaeger",
+    "2026|TEKNOFEST Savaşan İHA": {
+      title: "TEKNOFEST Combat UAV",
+      detail: "Finalist",
+    },
+    "2017|SAE Aero Design East": {
+      title: "SAE Aero Design East",
+      detail: "1st Place",
+    },
+    "2026|Anduril AI Grand Prix": {
+      title: "Anduril AI Grand Prix",
+      detail: "14th Place",
     },
     "2022|TEKNOFEST Karma Sürü Simülasyon": {
       title: "TEKNOFEST Mixed Swarm Simulation",
@@ -127,14 +161,22 @@ export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> 
     },
     "2021|TEKNOFEST Savaşan İHA": {
       title: "TEKNOFEST Combat UAV",
-      detail: "Second place",
+      detail: "Fifth place",
+    },
+    "2025|TEKNOFEST Savaşan İHA": {
+      title: "TEKNOFEST Combat UAV",
+      detail: "Finalist",
+    },
+    "2025|TEKNOFEST TÜBİTAK Uluslararası İHA": {
+      title: "TEKNOFEST TÜBİTAK International UAV",
+      detail: "Finalist",
     },
     "2020|TEKNOFEST Sürü İHA": {
       title: "TEKNOFEST Swarm UAV",
       detail: "Second place",
     },
-    "2019|TEKNOFEST TÜBİTAK İHA": {
-      title: "TEKNOFEST TÜBİTAK UAV",
+    "2019|TEKNOFEST TÜBİTAK Uluslararası İHA": {
+      title: "TEKNOFEST TÜBİTAK International UAV",
       detail: "Fifth place",
     },
     "2016|SAE Aero Design": {
@@ -332,23 +374,23 @@ export const SPONSOR_NOTE_EN =
 export const SPONSOR_REASONS_EN: { t: string; d: string }[] = [
   {
     t: "Brand Visibility and Reputation",
-    d: "Your logo appears on our aircraft, our team apparel, our social media content and our competition presentations. Your brand stands out at events such as TEKNOFEST that reach millions of people.",
+    d: "Your logo appears on the team's aircraft, apparel, social media content and competition presentations. It is also visible at events such as TEKNOFEST.",
   },
   {
     t: "Access to a Qualified Talent Pool",
-    d: "Every member of our team has hands-on experience in UAV technology and engineering. We are an ideal talent pool for internships, part-time roles and graduate hiring.",
+    d: "Team members gain practical experience in UAV technology and engineering. Internship and career opportunities can be discussed with the team.",
   },
   {
     t: "Product Testing and R&D Collaboration",
-    d: "We test your products — adhesives, electronic components, sensors — under extreme flight conditions: high speed, vibration, varying altitudes. We analyse the performance data and give you technical feedback.",
+    d: "Products such as adhesives, electronic components and sensors are tested under flight conditions. Performance data is analysed and technical feedback is provided.",
   },
   {
     t: "Corporate Social Responsibility",
-    d: "While investing in Türkiye's future you contribute directly to the careers of young engineers and become part of a sustainable education ecosystem.",
+    d: "This support contributes to the career development of young engineers and supports a sustainable education ecosystem.",
   },
   {
     t: "A Dedicated Sponsorship Portfolio",
-    d: "Bespoke reporting that highlights your contribution across every achievement, event and media appearance through the year — concrete content and metrics for your own social responsibility reports.",
+    d: "A dedicated report highlights your contribution across the year's achievements, events and media coverage, with content and metrics for social responsibility reporting.",
   },
 ];
 
@@ -363,16 +405,16 @@ export const SPONSOR_ROLE_EN: Record<string, string> = {
 
 /** Türkçe ad → İngilizce ad ve unvan */
 export const ADVISORS_EN: Record<string, { name: string; role: string }> = {
-  "Dr. Öğr. Üyesi Emre ÖZBEK": {
+  "Dr. Öğr. Üy. Emre ÖZBEK": {
     name: "Asst. Prof. Dr. Emre ÖZBEK",
     role: "Academic Advisor",
   },
-  "Ar. Gör. Mustafa AZER": {
+  "Araş. Gör. Mustafa AZER": {
     name: "Res. Asst. Mustafa AZER",
     role: "Academic Advisor",
   },
-  "Dr. İbrahim Yavuz DAL": {
-    name: "Dr. İbrahim Yavuz DAL",
+  "Öğr. Gör. Dr. İbrahim Yavuz DAL": {
+    name: "Lect. Dr. İbrahim Yavuz DAL",
     role: "Advisor Pilot",
   },
 };

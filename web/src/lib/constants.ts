@@ -18,7 +18,7 @@ export const TEAM = {
   /** Tanıtım dosyası: 2011'de kuruldu, 14 yıllık usta-çırak geleneği */
   founded: "2011",
   memberCount: "40",
-  alumniCount: "46+",
+  alumniCount: "250+",
   branchCount: "12",
 };
 
@@ -31,28 +31,27 @@ export interface TeamLead {
 
 export const TEAM_LEADS: TeamLead[] = [
   {
-    name: "Selman KOÇ",
+    name: "Emin Sakallıoğlu",
     role: "Takım Kaptanı",
-    email: "selman_koc@outlook.com.tr",
   },
   {
-    name: "Emre KOŞAR",
+    name: "Yekta Özüer",
     role: "Takım Kaptan Yardımcısı",
-    email: "emrekosar@ogr.eskisehir.edu.tr",
   },
 ];
 
+// TODO: Takım yönetimi e-posta adresleri daha sonra eklenecek.
 /** Akademik danışmanlar */
 export const ADVISORS = [
-  { name: "Dr. Öğr. Üyesi Emre ÖZBEK", role: "Danışman" },
-  { name: "Ar. Gör. Mustafa AZER", role: "Danışman" },
-  { name: "Dr. İbrahim Yavuz DAL", role: "Danışman Pilot" },
+  { name: "Dr. Öğr. Üy. Emre ÖZBEK", role: "Danışman" },
+  { name: "Araş. Gör. Mustafa AZER", role: "Danışman" },
+  { name: "Öğr. Gör. Dr. İbrahim Yavuz DAL", role: "Danışman Pilot" },
 ];
 
 /** 2026 hedef yarışma */
 export const COMPETITION_2026 = {
-  name: "TEKNOFEST Savaşan İHA",
-  subtitle: "TÜBİTAK Uluslararası İHA Yarışması",
+  name: "TEKNOFEST TÜBİTAK Uluslararası İHA Yarışması",
+  subtitle: "Savaşan İHA Kategorisi",
   location: "Şanlıurfa",
   date: "Ağustos – Eylül 2026",
   highlights: [
@@ -61,12 +60,12 @@ export const COMPETITION_2026 = {
       d: "İHA'lar kalkıştan inişe kadar tüm uçuş manevralarını hiçbir manuel müdahale olmadan kendi yazılımlarıyla gerçekleştirir.",
     },
     {
-      t: "Hava Muharebesi ve Kilitlenme",
-      d: "Rakip İHA'lar havada otonom olarak tespit edilir, başarıyla kilitlenir ve elde edilen kilit paketi anlık olarak yarışma sunucusuna gönderilir.",
+      t: "Hava Muharebesi ve Hedef Takibi",
+      d: "Rakip hava araçları otonom olarak tespit edilir ve hedef takip verileri anlık olarak yarışma sunucusuna gönderilir.",
     },
     {
       t: "Görev Başarısı ve Puanlama",
-      d: "Bir hafta süren final maratonunda görevleri başarıyla tamamlayıp en yüksek puanı toplayan takım şampiyon olur.",
+      d: "Bir hafta süren final maratonunda görevleri tamamlayıp en yüksek puanı toplayan takım birincilik elde eder.",
     },
   ],
 };
@@ -156,9 +155,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     year: "2022",
     title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
-    detail: ["Türkiye Şampiyonluğu", "Champion of Türkiye"],
+    detail: ["1.'lik", "1st Place"],
     rank: "1",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2018",
@@ -166,14 +165,14 @@ export const ACHIEVEMENTS: Achievement[] = [
       "TEKNOFEST TÜBİTAK Uluslararası İHA",
       "TEKNOFEST TÜBİTAK International UAV",
     ],
-    detail: ["Türkiye birinciliği", "1st Place in Türkiye"],
+    detail: ["1.'lik", "1st Place"],
     rank: "1",
     scope: "uluslararasi",
   },
   {
     year: "2017",
-    title: ["SAE Aero Design East (ABD)", "SAE Aero Design East (USA)"],
-    detail: ["Dünya Şampiyonluğu — Jaeger ile", "World Champion — with Jaeger"],
+    title: ["SAE Aero Design East", "SAE Aero Design East"],
+    detail: ["1.'lik", "1st Place"],
     rank: "1",
     scope: "uluslararasi",
   },
@@ -182,12 +181,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
     detail: ["Finalistlik", "Finalist"],
     rank: "99",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2026",
-    title: ["AI Grand Prix", "AI Grand Prix"],
-    detail: ["On dördüncülük", "14th Place"],
+    title: ["Anduril AI Grand Prix", "Anduril AI Grand Prix"],
+    detail: ["14.'lük", "14th Place"],
     rank: "14",
     scope: "uluslararasi",
   },
@@ -196,7 +195,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
     detail: ["Finalistlik", "Finalist"],
     rank: "99",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2025",
@@ -211,9 +210,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     year: "2024",
     title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
-    detail: ["Yedincilik", "7th Place"],
+    detail: ["7.'lik", "7th Place"],
     rank: "7",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2022",
@@ -221,23 +220,23 @@ export const ACHIEVEMENTS: Achievement[] = [
       "TEKNOFEST Karma Sürü Simülasyon",
       "TEKNOFEST Mixed Swarm Simulation",
     ],
-    detail: ["Üçüncülük", "3rd Place"],
+    detail: ["3.'lük", "3rd Place"],
     rank: "3",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2021",
     title: ["TEKNOFEST Savaşan İHA", "TEKNOFEST Fighter UAV"],
-    detail: ["İkincilik", "2nd Place"],
-    rank: "2",
-    scope: "ulusal",
+    detail: ["5.'lik", "5th Place"],
+    rank: "5",
+    scope: "uluslararasi",
   },
   {
     year: "2020",
     title: ["TEKNOFEST Sürü İHA", "TEKNOFEST Swarm UAV"],
-    detail: ["İkincilik", "2nd Place"],
+    detail: ["2.'lik", "2nd Place"],
     rank: "2",
-    scope: "ulusal",
+    scope: "uluslararasi",
   },
   {
     year: "2019",
@@ -245,35 +244,35 @@ export const ACHIEVEMENTS: Achievement[] = [
       "TEKNOFEST TÜBİTAK Uluslararası İHA",
       "TEKNOFEST TÜBİTAK International UAV",
     ],
-    detail: ["Beşincilik", "5th Place"],
+    detail: ["5.'lik", "5th Place"],
     rank: "5",
     scope: "uluslararasi",
   },
   {
     year: "2016",
     title: ["SAE Aero Design", "SAE Aero Design"],
-    detail: ["Genel sıralamada üçüncülük", "3rd Place Overall"],
+    detail: ["Genel sıralamada 3.'lük", "3rd Place Overall"],
     rank: "3",
     scope: "uluslararasi",
   },
   {
     year: "2015",
     title: ["Future Flight Design", "Future Flight Design"],
-    detail: ["Genel sıralamada ikincilik", "2nd Place Overall"],
+    detail: ["Genel sıralamada 2.'lik", "2nd Place Overall"],
     rank: "2",
     scope: "uluslararasi",
   },
   {
     year: "2014",
     title: ["SAE Aero Design", "SAE Aero Design"],
-    detail: ["Genel sıralamada altıncılık", "6th Place Overall"],
+    detail: ["Genel sıralamada 6.'lık", "6th Place Overall"],
     rank: "6",
     scope: "uluslararasi",
   },
   {
     year: "2013",
     title: ["SAE Aero Design", "SAE Aero Design"],
-    detail: ["On birincilik", "11th Place"],
+    detail: ["11.'lik", "11th Place"],
     rank: "11",
     scope: "uluslararasi",
   },
@@ -282,8 +281,9 @@ export const ACHIEVEMENTS: Achievement[] = [
 export const TAKIM_ISTATISTIK = {
   kurulus: "2011",
   uye: "40",
-  mezun: "46+",
-  sampiyonluk: "3x",
+  mezun: "250+",
+  birincilik: "1",
+  derece: "7",
 };
 
 /* ---------- DEPARTMANLAR ---------- */
@@ -311,9 +311,9 @@ export const DEPARTMENTS: Department[] = [
     num: "02",
     name: "Tasarım",
     short: "Design",
-    desc: "Uçağın tasarımı ve komponent tasarımları.",
+    desc: "Hava araçlarının tasarımı ve bileşen tasarımları.",
     detail:
-      "Uçağın genel tasarımı ve komponent tasarımları üzerinde çalışmalarını yürütür. Aerodinamik form, CAD modelleme ve simülasyon doğrulaması bu ekibin sorumluluğunda.",
+      "Hava araçlarının genel tasarımı ve bileşen tasarımları üzerinde çalışmalar yürütülür. Aerodinamik form, CAD modelleme ve simülasyon doğrulaması bu ekibin sorumluluğundadır.",
   },
   {
     key: "kompozit",
@@ -338,9 +338,9 @@ export const DEPARTMENTS: Department[] = [
     num: "05",
     name: "Yapısal",
     short: "Structures",
-    desc: "Komponent üretimi, tamir ve birleştirme.",
+    desc: "Bileşen üretimi, onarımı ve montajı.",
     detail:
-      "Komponent üretimi, tamir ve birleştirilmesi gibi çalışmalar yapar. Montaj süreçleri ve saha bakımı bu ekibin sorumluluğunda.",
+      "Bileşen üretimi, onarımı ve montajı gerçekleştirilir. Montaj süreçleri ve saha bakımı bu ekibin sorumluluğundadır.",
   },
   {
     key: "medya",
@@ -365,7 +365,6 @@ export interface Aircraft {
   year: string;
   specs: { label: string; value: string }[];
   features?: { t: string; d: string }[];
-  flagship?: boolean;
   /** harpy-golge-hydra.svg içindeki kırpma kutusu (596×843 koordinat alanı) */
   sprite?: { top: number; left: number; width: number; height: number };
 }
@@ -381,11 +380,10 @@ export const FLEET: Aircraft[] = [
   {
     name: "DABAN",
     slug: "daban",
-    codename: "2027",
-    role: "Savaşan İHA · Amiral Gemisi",
-    desc: "2027 Savaşan İHA platformumuz. Geçmiş yılların tecrübesini daha agresif ve dayanıklı bir tasarımla birleştiren, çift motorlu ve tam otonom savaş İHA'sı. Geniş gövde hacmi sayesinde gelişmiş sensör füzyonu ve yapay zekâ algoritmalarını taşıyabiliyor.",
-    flagship: true,
-    year: "2027",
+    codename: "Geliştirme",
+    role: "Planlanan Hava Aracı",
+    desc: "DABAN, üretilmesi planlanan tam kompozit hava aracımızdır. Tasarım çalışmaları sürmektedir.",
+    year: "Planlama",
     specs: [
       { label: "Kanat Açıklığı", value: "2.6 m" },
       { label: "Kalkış Ağırlığı", value: "8 kg" },
@@ -398,87 +396,110 @@ export const FLEET: Aircraft[] = [
     ],
     features: [
       {
-        t: "Çift Motor Konfigürasyonu",
-        d: "Yüksek hızlarda ani manevra kabiliyeti ve sistem yedekliliği. Dogfight sırasında hız ve tırmanma avantajı sağlar.",
-      },
-      {
-        t: "Gelişmiş Gövde ve Geniş Hacim",
-        d: "Aerodinamik verimlilikten ödün vermeden daha karmaşık aviyonik sistemleri ve yüksek performanslı işlem birimlerini barındırır.",
-      },
-      {
-        t: "Üstün Otonomi",
-        d: "Gelişmiş sensör füzyonu ile çok daha hassas hedef takibi ve tamamen otonom görev icrası.",
+        t: "Tam Kompozit Yapı",
+        d: "Üretilmesi planlanan DABAN hava aracının gövdesinin tam kompozit olması öngörülmektedir.",
       },
     ],
   },
   {
-    name: "GÖLGE",
+    name: "GÖLGE MK5",
     slug: "golge",
     sprite: { top: 264, left: 100, width: 403, height: 219 },
-    codename: "2020 – 2025",
-    role: "Savaşan İHA · Türkiye Şampiyonu",
-    desc: "2022 TEKNOFEST Savaşan İHA yarışmasında ekibimize Türkiye Şampiyonluğu getiren platform. Ters V-kuyruk mimarisi ve yüksek manevra kabiliyetiyle it dalaşı senaryolarında rekabetçi. Proje 2025'te tamamlandı.",
-    year: "2020–2025",
+    codename: "2026",
+    role: "Savaşan İHA",
+    desc: "GÖLGE platformunun geliştirme çalışmaları devam etmektedir. Ters V-kuyruk mimarisiyle hava-hava ve hava-kara görevleri için geliştirilmektedir.",
+    year: "2026",
     specs: [
       { label: "Mimari", value: "Ters V-Kuyruk" },
-      { label: "Görev", value: "Hava-Hava Muharebe" },
+      { label: "Görev", value: "Hava-Hava ve Hava-Kara" },
       { label: "Otonomi", value: "Tam Otonom" },
-      { label: "Başarı", value: "Türkiye 1.'si" },
+    ],
+    features: [
+      {
+        t: "İki Görev Profili",
+        d: "Hava-hava muharebesinin yanı sıra hava-kara görevleri için de geliştirilmektedir.",
+      },
     ],
   },
   {
     name: "MERLIN",
     slug: "merlin",
-    codename: "2025 –",
-    role: "Sabit Kanat · Faydalı Yük",
-    desc: "Uluslararası İHA Yarışması kriterlerine göre tasarlanan Merlin, yüksek yük kapasitesini modüler mimariyle birleştirir. Kompakt taşıma kutusuna sığar ve 1 dakika 46 saniyede uçuşa hazır hale gelir.",
-    year: "2025–",
+    codename: "2025",
+    role: "TÜBİTAK Uluslararası İHA Yarışması",
+    desc: "TÜBİTAK Uluslararası İHA Yarışması kriterlerine göre tasarlanan Merlin, yüksek yük kapasitesini modüler mimariyle birleştirir. Kompakt taşıma kutusuna sığar ve 1 dakika 46 saniyede uçuşa hazır hale gelir.",
+    year: "2025",
     specs: [
       { label: "Kurulum", value: "1 dk 46 sn" },
-      { label: "Hedef Yük Oranı", value: "2.5× kendi ağırlığı" },
+      { label: "Yük Oranı", value: "2.5× kendi ağırlığı" },
       { label: "Yapı", value: "Modüler" },
       { label: "Görev", value: "Otonom Yük Bırakma" },
+    ],
+    features: [
+      {
+        t: "Modüler Tasarım",
+        d: "Taşıma kutusuna sığacak şekilde tasarlanır ve kısa sürede uçuşa hazırlanır.",
+      },
     ],
   },
   {
     name: "JAEGER",
     slug: "jaeger",
     codename: "2017",
-    role: "SAE AERO DESIGN · Dünya Şampiyonu",
-    desc: "2017'de ABD'de düzenlenen SAE Aero Design East yarışmasında Dünya Şampiyonluğu getiren, doğadan ilham alan (biyomimetik) modüler tasarım. 55 saniyelik montaj süresiyle tasarım disiplinimizin temel taşı.",
+    role: "SAE Aero Design",
+    desc: "2017 SAE Aero Design East yarışmasında kullanılan modüler hava aracı.",
     year: "2017",
     specs: [
       { label: "Gövde Ağırlığı", value: "305 g" },
       { label: "Faydalı Yük", value: "1287 g" },
-      { label: "Verimlilik", value: "3.1× boş ağırlık" },
       { label: "Montaj", value: "55 saniye" },
+    ],
+    features: [
+      {
+        t: "Biyomimetik Tasarım",
+        d: "Tasarımında doğadaki yapılardan ve hareket biçimlerinden esinlenilmiştir.",
+      },
     ],
   },
   {
-    name: "DORJE",
+    name: "DORJE MK3",
     slug: "dorje",
-    codename: "Sabit Kanat",
-    role: "Uluslararası İHA Yarışması",
-    desc: "Eski akademik danışmanımız Öğr. Gör. Dr. Emre Özbek'in tasarladığı DORJE, Uluslararası İHA Yarışması sabit kanat kategorisinde yarıştı.",
-    year: "—",
+    codename: "2025",
+    role: "TÜBİTAK Uluslararası İHA Yarışması",
+    desc: "DORJE, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirildi.",
+    year: "2025",
     specs: [
       { label: "Konfigürasyon", value: "Sabit Kanat" },
       { label: "Kategori", value: "Uluslararası İHA" },
     ],
+    features: [
+      {
+        t: "Sabit Kanat Kategorisi",
+        d: "Hava aracı, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için tasarlanmıştır.",
+      },
+    ],
   },
   {
-    name: "HYDRA",
+    name: "HYDRA MK3",
     slug: "hydra",
     sprite: { top: 561, left: 135, width: 403, height: 218 },
-    codename: "2022 – 2028",
+    codename: "2020",
     role: "Ar-Ge · Hidrojen İtki",
-    desc: "Sıfır emisyonlu ve uzun menzilli uçuş hedefiyle geliştirilen, gelişmiş PEM yakıt hücresi teknolojisiyle çalışan İHA projesi. Hidrojen itki sistemini takıma özgü aviyonikle birleştirir.",
-    year: "2022–2028",
+    desc: "Hidrojen yakıt hücresiyle çalışan ve sıfır emisyonlu uzun menzilli uçuş hedefiyle geliştirilen hava aracı.",
+    year: "2020",
     specs: [
-      { label: "İtki", value: "PEM Yakıt Hücresi" },
-      { label: "Emisyon", value: "Sıfır" },
-      { label: "Hedef", value: "Uzun Menzil" },
-      { label: "Durum", value: "Geliştirme" },
+      { label: "Gövde", value: "Kompozit" },
+      { label: "Kanat", value: "EPS Köpük" },
+      { label: "Kuyruk", value: "Huş + Balsa Kaplama" },
+      { label: "Kanat Konumu", value: "Üstten" },
+      { label: "Kuyruk Yapısı", value: "T Kuyruk" },
+      { label: "İniş Takımı", value: "Yok" },
+      { label: "Motor Konumu", value: "Önden" },
+    ],
+    features: [
+      {
+        t: "Hidrojen Yakıt Sistemi",
+        d: "Hidrojen yakıt hücresiyle çalışan hava aracı, sıfır emisyonlu uçuş ve uzun menzil hedefiyle geliştirilmektedir.",
+      },
     ],
   },
 ];
@@ -503,22 +524,22 @@ export const PROCESS_STEPS = [
   {
     n: "01",
     t: "Tasarım",
-    d: "Görev gereksinimlerinden başlayıp aerodinamik ve yapısal tasarımı CAD ortamında kuruyoruz. Her parça uçmadan önce simüle edilir.",
+    d: "Aerodinamik ve yapısal tasarım, görev gereksinimlerinden hareketle CAD ortamında oluşturulur. Her parça uçuş öncesinde simüle edilir.",
   },
   {
     n: "02",
     t: "Üretim",
-    d: "Kompozit kalıplama, CNC ve 3D baskı ile parçaları üretiyoruz. Karbon fiber gövde: hafif ve dayanıklı.",
+    d: "Parçalar kompozit kalıplama, CNC ve 3D baskı yöntemleriyle üretilir. Karbon fiber gövde hafif ve dayanıklıdır.",
   },
   {
     n: "03",
     t: "Entegrasyon",
-    d: "Aviyonik, güç sistemleri ve otonom yazılımı gövdeye entegre ediyoruz. Yer testleri ve simülasyon doğrulaması burada yapılır.",
+    d: "Aviyonik, güç sistemleri ve otonom yazılım gövdeye entegre edilir. Yer testleri ve simülasyon doğrulaması gerçekleştirilir.",
   },
   {
     n: "04",
     t: "Uçuş & Analiz",
-    d: "Sahada test uçuşları, telemetri kaydı ve analiz. Her uçuş, bir sonraki tasarımı besleyen veri üretir.",
+    d: "Sahada test uçuşları gerçekleştirilir; telemetri kaydı alınır ve analiz edilir. Uçuş verileri sonraki tasarım çalışmalarında kullanılır.",
   },
 ];
 
@@ -648,19 +669,19 @@ export const SPONSOR_REASONS = [
   },
   {
     t: "Nitelikli Yetenek Havuzuna Erişim",
-    d: "Ekip üyelerimizin tamamı İHA teknolojisi ve mühendislik alanında pratik deneyime sahiptir. Staj, part-time çalışma veya kariyer fırsatları için ideal bir insan kaynakları havuzuyuz.",
+    d: "Takım üyeleri insansız hava aracı teknolojisi ve mühendislik alanlarında uygulamalı deneyim kazanır. Staj ve kariyer fırsatları için iletişim kurulabilir.",
   },
   {
     t: "Ürün Test ve Ar-Ge İş Birliği",
-    d: "Ürünlerinizi (yapıştırıcılar, elektronik komponentler, sensörler) ekstrem uçuş koşullarında — yüksek hız, titreşim, farklı irtifalar — test eder, performans verilerini analiz eder ve teknik geri bildirim sunarız.",
+    d: "Ürünleriniz (yapıştırıcılar, elektronik bileşenler, sensörler) uçuş koşullarında test edilir; performans verileri analiz edilerek teknik geri bildirim sunulur.",
   },
   {
     t: "Kurumsal Sosyal Sorumluluk",
-    d: "Türkiye'nin geleceğine yatırım yaparken genç mühendislerin kariyerlerine doğrudan katkıda bulunur, sürdürülebilir bir eğitim ekosisteminin parçası olursunuz.",
+    d: "Sağlanan destek, genç mühendislerin kariyer gelişimine katkı sağlar ve sürdürülebilir bir eğitim ekosistemini destekler.",
   },
   {
     t: "Özel Sponsorluk Portfolyosu",
-    d: "Yıl boyunca gerçekleştirdiğimiz tüm başarılar, etkinlikler ve medya çıkışlarında markanızın katkısını vurgulayan özel raporlama. Sosyal sorumluluk raporlarınız için somut içerik ve metrikler.",
+    d: "Yıl boyunca elde edilen başarıları, etkinlikleri ve medya görünürlüğünü kapsayan; markanızın katkısını vurgulayan özel raporlama hazırlanır. Sosyal sorumluluk raporları için içerik ve ölçümler sunulur.",
   },
 ];
 
