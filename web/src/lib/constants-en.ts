@@ -301,44 +301,44 @@ export const DEPARTMENTS_EN: Record<
   yazilim: {
     name: "Software",
     short: "",
-    desc: "Autonomous flight software, computer vision and artificial intelligence.",
+    desc: "Autonomous missions, image-processing algorithms and ground-station interfaces are developed.",
     detail:
-      "Builds autonomous flight software, computer vision and AI. Guidance algorithms, target tracking and the ground control station all come out of this team.",
+      "Responsible for carrying out the aircraft's autonomous missions, including target tracking, locking and kamikaze missions, and for developing image-processing algorithms and the ground-station interface.",
   },
   tasarim: {
     name: "Design",
     short: "",
-    desc: "Overall aircraft design and component design.",
+    desc: "Aerodynamic design, 3D modelling and performance analysis are carried out.",
     detail:
-      "Owns the overall aircraft design and the design of individual components. Aerodynamic shaping, CAD modelling and simulation validation sit with this team.",
+      "Responsible for the aircraft's aerodynamic design, 3D modelling and performance analysis. It designs the technical drawings, manufacturing templates and auxiliary fixtures required for manufacturing and assembly, and prepares the relevant technical guides.",
   },
   kompozit: {
     name: "Composites",
     short: "",
-    desc: "Composite production by vacuum infusion and hand lay-up.",
+    desc: "Critical structural components are produced from composite materials, alongside related R&D.",
     detail:
-      "Produces composite parts using vacuum infusion and hand lay-up. Builds light, durable airframe parts from carbon fibre and fibreglass.",
+      "Responsible for manufacturing critical structural components of the designed aircraft, including parts of the fuselage, wing and landing gear, using materials such as carbon fibre, glass fibre and epoxy. Related R&D work helps reduce aircraft weight and improve strength.",
   },
   aviyonik: {
     name: "Avionics",
     short: "",
-    desc: "Aircraft electronics and autopilot integration.",
+    desc: "Aircraft electronics, communications and autonomous control systems are managed end to end.",
     detail:
-      "Works on aircraft electronics and autopilot integration. Sensor fusion, power distribution and the telemetry stack are built here.",
+      "Responsible for end-to-end management of the aircraft's electronic, communication and autonomous control systems. This includes integrating hardware for autonomous flight and mission mechanisms, configuring energy and power distribution systems, optimizing flight-control parameters, establishing the telemetry link between the aircraft and ground station, and installing inter-system wiring in accordance with aviation standards.",
   },
   yapisal: {
     name: "Structures",
     short: "",
-    desc: "Component manufacturing, repair and assembly.",
+    desc: "Physical aircraft production, assembly and mechanical integration are carried out.",
     detail:
-      "Handles component manufacturing, repair and assembly. Assembly processes and field maintenance belong to this team.",
+      "Responsible for the physical production, assembly and mechanical integration of designed unmanned aircraft. This includes manufacturing and assembling primary structures such as wings, fuselage and tail, and integrating the required mechanical systems. Pre-flight structural inspections and durability tests are also carried out to ensure the aircraft is safe and ready to fly.",
   },
   medya: {
-    name: "Media & Partnerships",
+    name: "Social Media & Sponsorship",
     short: "",
-    desc: "Promotion, social media and sponsor relations.",
+    desc: "Digital visibility, corporate identity and sponsorship processes are managed.",
     detail:
-      "Promotes the team on social media, runs publicity work and manages sponsorships. Corporate relations and budget management also sit with this team.",
+      "Responsible for increasing the team's visibility on digital platforms, strengthening its corporate identity and managing sponsorship processes. This includes preparing social media content, developing promotion and communication strategies, contacting potential sponsors, managing sponsorship agreements and supporting the sustainability of existing partnerships.",
   },
 };
 

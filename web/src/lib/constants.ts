@@ -302,54 +302,54 @@ export const DEPARTMENTS: Department[] = [
     num: "01",
     name: "Yazılım",
     short: "Software",
-    desc: "Otonom uçuş yazılımları, görüntü işleme ve yapay zekâ.",
+    desc: "Otonom görevler, görüntü işleme algoritmaları ve yer istasyonu arayüzü geliştirilir.",
     detail:
-      "Otonom uçuş yazılımları, görüntü işleme ve yapay zekâ üzerine çalışmalar yürütür. Güdüm algoritmaları, hedef takibi ve yer kontrol istasyonu bu ekipten çıkar.",
+      "Hava aracının hedef takip, kilitlenme ve kamikaze gibi otonom görevlerinin icra edilmesinden; görüntü işleme algoritmaları ile yer istasyonu arayüzünün geliştirilmesinden sorumludur.",
   },
   {
     key: "tasarim",
     num: "02",
     name: "Tasarım",
     short: "Design",
-    desc: "Hava araçlarının tasarımı ve bileşen tasarımları.",
+    desc: "Aerodinamik tasarım, 3B modelleme ve performans analizleri yürütülür.",
     detail:
-      "Hava araçlarının genel tasarımı ve bileşen tasarımları üzerinde çalışmalar yürütülür. Aerodinamik form, CAD modelleme ve simülasyon doğrulaması bu ekibin sorumluluğundadır.",
+      "Hava aracının aerodinamik tasarımını, 3B modellemesini ve performans analizlerini yürütür. İmalat ve montaj fazları için gerekli teknik resimleri, üretim şablonlarını ve yardımcı aparatları tasarlayarak ilgili teknik kılavuzları hazırlar.",
   },
   {
     key: "kompozit",
     num: "03",
     name: "Kompozit",
     short: "Composites",
-    desc: "Vakum infüzyon ve elle yatırma ile kompozit üretim.",
+    desc: "Kritik yapısal parçalar kompozit malzemelerle üretilir ve bu alanda Ar-Ge çalışmaları yürütülür.",
     detail:
-      "Vakum infüzyon ve elle yatırma yöntemi ile kompozit parça üretimini gerçekleştirir. Karbon fiber ve cam elyaf ile hafif, dayanıklı gövde parçaları üretir.",
+      "Tasarlanan hava aracının gövde, kanat ve iniş takımı gibi bazı kritik yapısal parçalarının karbon fiber, cam elyaf ve epoksi gibi malzemeler kullanılarak üretilmesinden ve bu kapsamda Ar-Ge çalışmaları ile hava aracına hafiflik ve dayanım kazandırılmasından sorumludur.",
   },
   {
     key: "aviyonik",
     num: "04",
     name: "Aviyonik",
     short: "Avionics",
-    desc: "Uçak elektroniği ve otopilot entegrasyonu.",
+    desc: "Elektronik, haberleşme ve otonom kontrol sistemleri uçtan uca yönetilir.",
     detail:
-      "Uçak elektroniği ve otopilot entegrasyonu alanında çalışmalar yapar. Sensör füzyonu, güç dağıtımı ve telemetri altyapısı bu ekipte kurulur.",
+      "Hava aracının elektronik, haberleşme ve otonom kontrol sistemlerinin uçtan uca yönetiminden sorumludur. Bu sorumluluklar kapsamında otonom uçuş ve görev mekanizmaları için gerekli donanımların entegrasyonu, enerji ve güç dağıtım sistemlerinin yapılandırılması, uçuş kontrol parametrelerinin optimizasyonu, hava aracı ile yer istasyonu arasındaki veri bağının (telemetri) sağlanması ve sistemler arası tüm kablaj altyapısının havacılık standartlarına uygun olarak tesis edilmesi yer alır.",
   },
   {
     key: "yapisal",
     num: "05",
     name: "Yapısal",
     short: "Structures",
-    desc: "Bileşen üretimi, onarımı ve montajı.",
+    desc: "Hava araçlarının fiziksel üretim, montaj ve mekanik entegrasyon süreçleri yürütülür.",
     detail:
-      "Bileşen üretimi, onarımı ve montajı gerçekleştirilir. Montaj süreçleri ve saha bakımı bu ekibin sorumluluğundadır.",
+      "Tasarlanan insansız hava araçlarının fiziksel üretim, montaj ve mekanik entegrasyon süreçlerinden sorumludur. Kanat, gövde ve kuyruk gibi ana yapıların üretimi ve montajı ile gerekli mekanik sistemlerin entegrasyonu gerçekleştirilir. Ayrıca uçuş öncesi yapısal kontroller ve dayanıklılık testleri yapılarak hava aracının güvenli ve uçuşa hazır olması sağlanır.",
   },
   {
     key: "medya",
     num: "06",
-    name: "Medya ve Sponsorluk",
-    short: "Media & Partnerships",
-    desc: "Tanıtım, sosyal medya ve sponsorluk ilişkileri.",
+    name: "Sosyal Medya ve Sponsorluk",
+    short: "Social Media & Sponsorship",
+    desc: "Dijital görünürlük, kurumsal kimlik ve sponsorluk süreçleri yönetilir.",
     detail:
-      "Takımı sosyal medyada tanıtır, reklam için gerekli eylemleri gerçekleştirir ve sponsorluklarla ilgilenir. Kurumsal ilişkiler ve bütçe yönetimi de bu ekipte.",
+      "Takımın dijital platformlardaki görünürlüğünü artırmak, kurumsal kimliğini güçlendirmek ve sponsorluk süreçlerini yürütmekten sorumludur. Sosyal medya içeriklerinin hazırlanması, tanıtım ve iletişim stratejilerinin geliştirilmesi, potansiyel sponsorlarla iletişime geçilmesi, sponsorluk anlaşmalarının yürütülmesi ve mevcut iş birliklerinin sürdürülebilirliğinin sağlanmasını kapsar.",
   },
 ];
 
