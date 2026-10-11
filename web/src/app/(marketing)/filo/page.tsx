@@ -7,7 +7,7 @@ import { fleetImage } from "@/lib/public-assets";
 export const metadata: Metadata = {
   title: "Filo",
   description:
-    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3 ve HYDRA MK3.",
+    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, SMARTQUAD, TULPAR, HARPY ve FOTON.",
 };
 
 export default function FiloPage() {

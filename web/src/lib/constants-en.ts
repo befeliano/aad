@@ -18,6 +18,16 @@ type FleetOverlay = Partial<
   Pick<Aircraft, "role" | "desc" | "codename" | "specs" | "features">
 >;
 
+const EMPTY_AIRCRAFT_SPECS: NonNullable<Aircraft["specs"]> = [
+  { label: "Fuselage", value: "" },
+  { label: "Wing", value: "" },
+  { label: "Tail", value: "" },
+  { label: "Wing Position", value: "" },
+  { label: "Tail Configuration", value: "" },
+  { label: "Landing Gear", value: "" },
+  { label: "Motor Position", value: "" },
+];
+
 /** slug → İngilizce künye */
 export const FLEET_EN: Record<string, FleetOverlay> = {
   daban: {
@@ -25,19 +35,38 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "Planned Aircraft",
     desc: "DABAN is our planned full-composite aircraft. Design work is ongoing.",
     specs: [
-      { label: "Wingspan", value: "2.6 m" },
-      { label: "Take-off Weight", value: "8 kg" },
-      { label: "Length", value: "1.85 m" },
-      { label: "Endurance", value: "30 min" },
-      { label: "Cruise Speed", value: "17 m/s" },
-      { label: "Motor", value: "2× T-Motor AT3520" },
-      { label: "Camera", value: "Hikrobot MV CS050" },
-      { label: "Flight Controller", value: "CUAV V6X" },
+      { label: "Fuselage", value: "Full composite" },
+      { label: "Wing", value: "" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
     ],
     features: [
       {
-        t: "Full-Composite Structure",
-        d: "The planned DABAN aircraft is expected to have a full-composite airframe.",
+        t: "Wingspan",
+        d: "Planned at 2.6 m.",
+      },
+      {
+        t: "Take-off Weight",
+        d: "Planned at 8 kg.",
+      },
+      {
+        t: "Length",
+        d: "Planned at 1.85 m.",
+      },
+      {
+        t: "Motor",
+        d: "2× T-Motor AT3520",
+      },
+      {
+        t: "Camera",
+        d: "Hikrobot MV CS050",
+      },
+      {
+        t: "Flight Control System",
+        d: "CUAV V6X",
       },
     ],
   },
@@ -47,14 +76,22 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "Combat UAV",
     desc: "Development of the GÖLGE platform is ongoing. Its inverted V-tail is designed for both air-to-air and air-to-ground missions.",
     specs: [
-      { label: "Architecture", value: "Inverted V-Tail" },
-      { label: "Mission", value: "Air-to-Air and Air-to-Ground" },
-      { label: "Autonomy", value: "Fully Autonomous" },
+      { label: "Fuselage", value: "" },
+      { label: "Wing", value: "" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "Inverted V" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
     ],
     features: [
       {
-        t: "Two Mission Profiles",
-        d: "Developed for air-to-ground missions in addition to air-to-air combat.",
+        t: "Mission Profiles",
+        d: "Developed for air-to-air and air-to-ground missions.",
+      },
+      {
+        t: "Autonomy",
+        d: "Fully autonomous mission execution is planned.",
       },
     ],
   },
@@ -63,15 +100,30 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "TÜBİTAK International UAV Competition",
     desc: "Designed to the criteria of the TÜBİTAK International UAV Competition, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
     specs: [
-      { label: "Assembly", value: "1 min 46 s" },
-      { label: "Payload Ratio", value: "2.5× its own weight" },
-      { label: "Structure", value: "Modular" },
-      { label: "Mission", value: "Autonomous Payload Drop" },
+      { label: "Fuselage", value: "" },
+      { label: "Wing", value: "" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
     ],
     features: [
       {
         t: "Modular Design",
-        d: "Designed to fit in a transport case and be prepared for flight in a short time.",
+        d: "Designed to fit in a compact transport case.",
+      },
+      {
+        t: "Setup Time",
+        d: "1 minute 46 seconds",
+      },
+      {
+        t: "Mission",
+        d: "Autonomous payload drop",
+      },
+      {
+        t: "Payload Ratio",
+        d: "2.5 times its own weight",
       },
     ],
   },
@@ -80,14 +132,30 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "SAE Aero Design",
     desc: "A modular aircraft used in the 2017 SAE Aero Design East competition.",
     specs: [
-      { label: "Airframe Weight", value: "305 g" },
-      { label: "Payload", value: "1287 g" },
-      { label: "Assembly", value: "55 seconds" },
+      { label: "Fuselage", value: "" },
+      { label: "Wing", value: "" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
     ],
     features: [
       {
         t: "Biomimetic Design",
-        d: "Its design draws inspiration from structures and forms of movement found in nature.",
+        d: "Inspired by structures and forms of movement found in nature.",
+      },
+      {
+        t: "Airframe Weight",
+        d: "305 g",
+      },
+      {
+        t: "Payload",
+        d: "1,287 g",
+      },
+      {
+        t: "Assembly Time",
+        d: "55 seconds",
       },
     ],
   },
@@ -97,8 +165,13 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "TÜBİTAK International UAV Competition",
     desc: "DORJE was developed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
     specs: [
-      { label: "Configuration", value: "Fixed Wing" },
-      { label: "Category", value: "International UAV" },
+      { label: "Fuselage", value: "" },
+      { label: "Wing", value: "Fixed wing" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
     ],
     features: [
       {
@@ -128,6 +201,15 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       },
     ],
   },
+
+  bumblebee: { specs: EMPTY_AIRCRAFT_SPECS },
+  atlas: { specs: EMPTY_AIRCRAFT_SPECS },
+  tardis: { specs: EMPTY_AIRCRAFT_SPECS },
+  balerin: { specs: EMPTY_AIRCRAFT_SPECS },
+  smartquad: { specs: EMPTY_AIRCRAFT_SPECS },
+  tulpar: { specs: EMPTY_AIRCRAFT_SPECS },
+  harpy: { specs: EMPTY_AIRCRAFT_SPECS },
+  foton: { specs: EMPTY_AIRCRAFT_SPECS },
 };
 
 /* ---------- BAŞARILAR ---------- */

@@ -363,7 +363,7 @@ export interface Aircraft {
   role: string;
   desc: string;
   year: string;
-  specs: { label: string; value: string }[];
+  specs?: { label: string; value: string }[];
   features?: { t: string; d: string }[];
   /** harpy-golge-hydra.svg içindeki kırpma kutusu (596×843 koordinat alanı) */
   sprite?: { top: number; left: number; width: number; height: number };
@@ -376,6 +376,16 @@ export const FLEET_SPRITE = {
   viewH: 843,
 };
 
+const EMPTY_AIRCRAFT_SPECS = [
+  { label: "Gövde", value: "" },
+  { label: "Kanat", value: "" },
+  { label: "Kuyruk", value: "" },
+  { label: "Kanat Konumu", value: "" },
+  { label: "Kuyruk Yapısı", value: "" },
+  { label: "İniş Takımı", value: "" },
+  { label: "Motor Konumu", value: "" },
+];
+
 export const FLEET: Aircraft[] = [
   {
     name: "DABAN",
@@ -385,19 +395,38 @@ export const FLEET: Aircraft[] = [
     desc: "DABAN, üretilmesi planlanan tam kompozit hava aracımızdır. Tasarım çalışmaları sürmektedir.",
     year: "Planlama",
     specs: [
-      { label: "Kanat Açıklığı", value: "2.6 m" },
-      { label: "Kalkış Ağırlığı", value: "8 kg" },
-      { label: "Uzunluk", value: "1.85 m" },
-      { label: "Uçuş Süresi", value: "30 dk" },
-      { label: "Seyir Sürati", value: "17 m/s" },
-      { label: "Motor", value: "2× T-Motor AT3520" },
-      { label: "Kamera", value: "Hikrobot MV CS050" },
-      { label: "Uçuş Kontrol", value: "CUAV V6X" },
+      { label: "Gövde", value: "Tam kompozit" },
+      { label: "Kanat", value: "" },
+      { label: "Kuyruk", value: "" },
+      { label: "Kanat Konumu", value: "" },
+      { label: "Kuyruk Yapısı", value: "" },
+      { label: "İniş Takımı", value: "" },
+      { label: "Motor Konumu", value: "" },
     ],
     features: [
       {
-        t: "Tam Kompozit Yapı",
-        d: "Üretilmesi planlanan DABAN hava aracının gövdesinin tam kompozit olması öngörülmektedir.",
+        t: "Kanat Açıklığı",
+        d: "2,6 m olarak planlanmaktadır.",
+      },
+      {
+        t: "Kalkış Ağırlığı",
+        d: "8 kg olarak planlanmaktadır.",
+      },
+      {
+        t: "Uzunluk",
+        d: "1,85 m olarak planlanmaktadır.",
+      },
+      {
+        t: "Motor",
+        d: "2× T-Motor AT3520",
+      },
+      {
+        t: "Kamera",
+        d: "Hikrobot MV CS050",
+      },
+      {
+        t: "Uçuş Kontrol Sistemi",
+        d: "CUAV V6X",
       },
     ],
   },
@@ -410,14 +439,22 @@ export const FLEET: Aircraft[] = [
     desc: "GÖLGE platformunun geliştirme çalışmaları devam etmektedir. Ters V-kuyruk mimarisiyle hava-hava ve hava-kara görevleri için geliştirilmektedir.",
     year: "2026",
     specs: [
-      { label: "Mimari", value: "Ters V-Kuyruk" },
-      { label: "Görev", value: "Hava-Hava ve Hava-Kara" },
-      { label: "Otonomi", value: "Tam Otonom" },
+      { label: "Gövde", value: "" },
+      { label: "Kanat", value: "" },
+      { label: "Kuyruk", value: "" },
+      { label: "Kanat Konumu", value: "" },
+      { label: "Kuyruk Yapısı", value: "Ters V" },
+      { label: "İniş Takımı", value: "" },
+      { label: "Motor Konumu", value: "" },
     ],
     features: [
       {
-        t: "İki Görev Profili",
-        d: "Hava-hava muharebesinin yanı sıra hava-kara görevleri için de geliştirilmektedir.",
+        t: "Görev Profilleri",
+        d: "Hava-hava ve hava-kara görevleri için geliştirilmektedir.",
+      },
+      {
+        t: "Otonomi",
+        d: "Tam otonom görev icrası hedeflenmektedir.",
       },
     ],
   },
@@ -429,15 +466,30 @@ export const FLEET: Aircraft[] = [
     desc: "TÜBİTAK Uluslararası İHA Yarışması kriterlerine göre tasarlanan Merlin, yüksek yük kapasitesini modüler mimariyle birleştirir. Kompakt taşıma kutusuna sığar ve 1 dakika 46 saniyede uçuşa hazır hale gelir.",
     year: "2025",
     specs: [
-      { label: "Kurulum", value: "1 dk 46 sn" },
-      { label: "Yük Oranı", value: "2.5× kendi ağırlığı" },
-      { label: "Yapı", value: "Modüler" },
-      { label: "Görev", value: "Otonom Yük Bırakma" },
+      { label: "Gövde", value: "" },
+      { label: "Kanat", value: "" },
+      { label: "Kuyruk", value: "" },
+      { label: "Kanat Konumu", value: "" },
+      { label: "Kuyruk Yapısı", value: "" },
+      { label: "İniş Takımı", value: "" },
+      { label: "Motor Konumu", value: "" },
     ],
     features: [
       {
         t: "Modüler Tasarım",
-        d: "Taşıma kutusuna sığacak şekilde tasarlanır ve kısa sürede uçuşa hazırlanır.",
+        d: "Kompakt taşıma kutusuna sığacak şekilde tasarlanmıştır.",
+      },
+      {
+        t: "Kurulum Süresi",
+        d: "1 dakika 46 saniye",
+      },
+      {
+        t: "Görev",
+        d: "Otonom yük bırakma",
+      },
+      {
+        t: "Yük Oranı",
+        d: "Kendi ağırlığının 2,5 katı",
       },
     ],
   },
@@ -449,14 +501,30 @@ export const FLEET: Aircraft[] = [
     desc: "2017 SAE Aero Design East yarışmasında kullanılan modüler hava aracı.",
     year: "2017",
     specs: [
-      { label: "Gövde Ağırlığı", value: "305 g" },
-      { label: "Faydalı Yük", value: "1287 g" },
-      { label: "Montaj", value: "55 saniye" },
+      { label: "Gövde", value: "" },
+      { label: "Kanat", value: "" },
+      { label: "Kuyruk", value: "" },
+      { label: "Kanat Konumu", value: "" },
+      { label: "Kuyruk Yapısı", value: "" },
+      { label: "İniş Takımı", value: "" },
+      { label: "Motor Konumu", value: "" },
     ],
     features: [
       {
         t: "Biyomimetik Tasarım",
-        d: "Tasarımında doğadaki yapılardan ve hareket biçimlerinden esinlenilmiştir.",
+        d: "Doğadaki yapılardan ve hareket biçimlerinden esinlenilmiştir.",
+      },
+      {
+        t: "Gövde Ağırlığı",
+        d: "305 g",
+      },
+      {
+        t: "Faydalı Yük",
+        d: "1.287 g",
+      },
+      {
+        t: "Montaj Süresi",
+        d: "55 saniye",
       },
     ],
   },
@@ -468,13 +536,18 @@ export const FLEET: Aircraft[] = [
     desc: "DORJE, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirildi.",
     year: "2025",
     specs: [
-      { label: "Konfigürasyon", value: "Sabit Kanat" },
-      { label: "Kategori", value: "Uluslararası İHA" },
+      { label: "Gövde", value: "" },
+      { label: "Kanat", value: "Sabit kanat" },
+      { label: "Kuyruk", value: "" },
+      { label: "Kanat Konumu", value: "" },
+      { label: "Kuyruk Yapısı", value: "" },
+      { label: "İniş Takımı", value: "" },
+      { label: "Motor Konumu", value: "" },
     ],
     features: [
       {
         t: "Sabit Kanat Kategorisi",
-        d: "Hava aracı, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için tasarlanmıştır.",
+        d: "TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirilmiştir.",
       },
     ],
   },
@@ -502,22 +575,82 @@ export const FLEET: Aircraft[] = [
       },
     ],
   },
+  {
+    name: "BUMBLEBEE",
+    slug: "bumblebee",
+    codename: "2015",
+    role: "",
+    desc: "",
+    year: "2015",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "ATLAS",
+    slug: "atlas",
+    codename: "2016",
+    role: "",
+    desc: "",
+    year: "2016",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "TARDİS",
+    slug: "tardis",
+    codename: "2016",
+    role: "",
+    desc: "",
+    year: "2016",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "BALERİN",
+    slug: "balerin",
+    codename: "2018",
+    role: "",
+    desc: "",
+    year: "2018",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "SMARTQUAD",
+    slug: "smartquad",
+    codename: "2018",
+    role: "",
+    desc: "",
+    year: "2018",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "TULPAR",
+    slug: "tulpar",
+    codename: "2018",
+    role: "",
+    desc: "",
+    year: "2018",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "HARPY",
+    slug: "harpy",
+    codename: "2018",
+    role: "",
+    desc: "",
+    year: "2018",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
+  {
+    name: "FOTON",
+    slug: "foton",
+    codename: "2019",
+    role: "",
+    desc: "",
+    year: "2019",
+    specs: EMPTY_AIRCRAFT_SPECS,
+  },
 ];
 
 /** HARPY (2018) sprite kutusu — arşivde, gerekirse kullanılabilir */
 export const HARPY_SPRITE = { top: 16, left: 169, width: 335, height: 206 };
-
-/** Arşiv — geçmiş yıllarda üretilen platformlar */
-export const FLEET_ARCHIVE = [
-  { name: "BUMBLEBEE", year: "2015" },
-  { name: "ATLAS", year: "2016" },
-  { name: "TARDİS", year: "2016" },
-  { name: "BALERİN", year: "2018" },
-  { name: "SMARTQUAD", year: "2018" },
-  { name: "TULPAR", year: "2018" },
-  { name: "HARPY", year: "2018" },
-  { name: "FOTON", year: "2019" },
-];
 
 /* ---------- SÜREÇ ---------- */
 export const PROCESS_STEPS = [

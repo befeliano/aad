@@ -142,7 +142,6 @@ export const S = {
       "Brief profiles of the platforms are listed below. Visit the fleet page for technical specifications, mission profiles and archived aircraft.",
     ] as M,
     tumFilo: ["Tüm filo", "Full fleet"] as M,
-    arsiv: ["Arşiv · geçmiş platformlarımız", "Archive · our past platforms"] as M,
     ihaAlt: ["insansız hava aracı", "unmanned aerial vehicle"] as M,
     specOzellik: ["Özellik", "Specification"] as M,
     specDeger: ["Değer", "Value"] as M,
@@ -249,7 +248,7 @@ export const S = {
 
   iletisim: {
     eyebrow: ["İletişim", "Contact"] as M,
-    baslik: ["Konuşalım", "Let's talk"] as M,
+    baslik: ["Bizimle iletişime geçin!", "Contact us!"] as M,
     lead: [
       "Sponsorluk, iş birliği ve diğer konular için bizimle iletişime geçebilirsiniz. Sponsorluk taleplerinde takım tanıtım dosyası paylaşılabilir.",
       "Contact us about sponsorship, collaboration or other enquiries. We can share the team information pack for sponsorship requests.",

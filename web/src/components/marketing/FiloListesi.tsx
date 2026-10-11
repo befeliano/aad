@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { FLEET_ARCHIVE } from "@/lib/constants";
 import { useFleet } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
@@ -72,67 +71,65 @@ export function FiloListesi({
 
                   {/* Künye */}
                   <div className="p-6 sm:p-8">
-                    <div className="eyebrow">{ac.role}</div>
+                    {ac.role && <div className="eyebrow">{ac.role}</div>}
                     <h2 className="display-tight mt-2 text-3xl text-ink sm:text-4xl">
                       {ac.name}
                     </h2>
-                    <p className="mt-4 text-sm leading-relaxed text-ink-2">
-                      {ac.desc}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Alt bölüm: teknik tablo ve hava aracına özgü bilgiler */}
-                {(ac.features || ac.specs) && (
-                  <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
+                    {ac.desc && (
+                      <p className="mt-4 text-sm leading-relaxed text-ink-2">
+                        {ac.desc}
+                      </p>
+                    )}
                     {ac.specs && (
-                      <div className="overflow-x-auto">
-                        <table className="w-full min-w-[280px] border-collapse text-left text-sm">
+                      <div className="mt-5">
+                        <table className="w-full border-collapse text-left text-[12.5px]">
                           <thead>
                             <tr className="border-b border-line text-ink-3">
-                              <th scope="col" className="py-3 pr-5 font-semibold">
+                              <th scope="col" className="py-1.5 pr-4 font-semibold">
                                 {t(S.filo.specOzellik)}
                               </th>
-                              <th scope="col" className="py-3 font-semibold">
+                              <th scope="col" className="py-1.5 font-semibold">
                                 {t(S.filo.specDeger)}
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             {ac.specs.map((spec) => (
-                              <tr key={spec.label} className="border-b border-line/60 last:border-0">
+                              <tr
+                                key={spec.label}
+                                className="border-b border-line/60 last:border-0"
+                              >
                                 <th
                                   scope="row"
-                                  className="py-3 pr-5 font-medium text-ink-2"
+                                  className="py-1.5 pr-4 font-medium text-ink-2"
                                 >
                                   {spec.label}
                                 </th>
-                                <td className="py-3 text-ink">{spec.value}</td>
+                                <td className="py-1.5 text-ink">{spec.value}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
                     )}
+                  </div>
+                </div>
 
-                    {ac.features && (
-                      <ul
-                        className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ${
-                          ac.specs ? "mt-8 border-t border-line/50 pt-8" : ""
-                        }`}
-                      >
-                        {ac.features.map((feature) => (
-                          <li key={feature.t}>
-                            <span className="text-[13.5px] font-bold text-ink">
-                              {feature.t}
-                            </span>
-                            <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
-                              {feature.d}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                {/* Alt bölüm: hava aracına özgü bilgiler */}
+                {ac.features && (
+                  <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
+                    <ul className="flex flex-wrap items-start justify-center gap-x-10 gap-y-6 text-center">
+                      {ac.features.map((feature) => (
+                        <li key={feature.t}>
+                          <span className="text-[13.5px] font-bold text-ink">
+                            {feature.t}
+                          </span>
+                          <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
+                            {feature.d}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </article>
@@ -141,23 +138,6 @@ export function FiloListesi({
         })}
       </div>
 
-      {/* Arşiv */}
-      <Reveal>
-        <div className="mt-10 rounded-2xl border border-line bg-bg-1 p-7">
-          <div className="eyebrow mb-4">{t(S.filo.arsiv)}</div>
-          <ul className="flex flex-wrap gap-2">
-            {FLEET_ARCHIVE.map((a) => (
-              <li
-                key={a.name}
-                className="rounded-full border border-line px-3.5 py-1.5 text-[12.5px] text-ink-2"
-              >
-                <span className="font-semibold text-ink">{a.name}</span>
-                <span className="tabular ml-1.5 text-ink-3">{a.year}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Reveal>
     </>
   );
 }
