@@ -741,6 +741,12 @@ export interface Sponsor2025 {
   name: string;
   role: string;
   logo: string | null;
+  /**
+   * Sponsorluk sayfasındaki kademe: 1 en üstte ve en büyük.
+   * Aynı kademe içindeki sıra = bu dizideki sıra. Sıralamayı Medya &
+   * Sponsorluk birimi belirler; yalnızca bu alanı ve sırayı değiştirmek yeter.
+   */
+  tier: 1 | 2 | 3;
 }
 
 /**
@@ -752,12 +758,12 @@ export const BASVURU_FORMU =
   "https://docs.google.com/forms/d/e/1FAIpQLSeoVJqII8kcXFiZfvzz4WbdpafNmuuIHxrzHpfxDQxkpkGGKw/viewform";
 
 export const SPONSORS_2025: Sponsor2025[] = [
-  { name: "ETİ", role: "Ana Sponsor", logo: "/images/sponsors/eti.png" },
-  { name: "T-Motor", role: "Ürün Sponsoru", logo: "/images/sponsors/t-motor.png" },
-  { name: "Zaxe", role: "Ürün Sponsoru", logo: "/images/sponsors/zaxe.png" },
-  { name: "TESA", role: "Destekçi", logo: "/images/sponsors/tesa.jpg" },
-  { name: "Özzaim", role: "Destekçi", logo: "/images/sponsors/ozzaim.jpg" },
-  { name: "Dekor", role: "Destekçi", logo: "/images/sponsors/dekor.webp" },
-  { name: "Selsil", role: "Destekçi", logo: "/images/sponsors/selsil.png" },
-  { name: "Gökhan İHA", role: "Destekçi", logo: "/images/sponsors/gokhan-iha.png" },
+  { name: "ETİ", role: "Ana Sponsor", logo: "/images/sponsors/eti.png", tier: 1 },
+  { name: "T-Motor", role: "Ürün Sponsoru", logo: "/images/sponsors/t-motor.png", tier: 2 },
+  { name: "Zaxe", role: "Ürün Sponsoru", logo: "/images/sponsors/zaxe.png", tier: 2 },
+  { name: "TESA", role: "Destekçi", logo: "/images/sponsors/tesa.jpg", tier: 3 },
+  { name: "Özzaim", role: "Destekçi", logo: "/images/sponsors/ozzaim.jpg", tier: 3 },
+  { name: "Dekor", role: "Destekçi", logo: "/images/sponsors/dekor.webp", tier: 3 },
+  { name: "Selsil", role: "Destekçi", logo: "/images/sponsors/selsil.png", tier: 3 },
+  { name: "Gökhan İHA", role: "Destekçi", logo: "/images/sponsors/gokhan-iha.png", tier: 3 },
 ];

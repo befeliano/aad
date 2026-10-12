@@ -20,6 +20,34 @@ import {
 } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 
+/** Sponsor kademelerinin görünümü — 1 en büyük */
+const SPONSOR_KADEME = {
+  1: {
+    izgara: "grid-cols-1",
+    bosluk: "py-12",
+    plaka: "h-32 max-w-xl",
+    logo: "max-h-24",
+    en: 420,
+    boy: 168,
+  },
+  2: {
+    izgara: "grid-cols-1 sm:grid-cols-2",
+    bosluk: "py-10",
+    plaka: "h-24",
+    logo: "max-h-16",
+    en: 260,
+    boy: 104,
+  },
+  3: {
+    izgara: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
+    bosluk: "py-7",
+    plaka: "h-14",
+    logo: "max-h-9",
+    en: 150,
+    boy: 60,
+  },
+} as const;
+
 /** /sponsorluk sayfasının tamamı — sayfa yalnızca metadata için sunucuda kalır */
 export function SponsorlukIcerik() {
   const t = useT();
@@ -212,30 +240,46 @@ export function SponsorlukIcerik() {
           title={t(S.sponsor.destekciBaslik)}
           kicker={t(S.sponsor.destekciKicker)}
         />
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
-          {sponsors.map((s) => (
-            <div
-              key={s.name}
-              className="flex flex-col items-center justify-center gap-3 bg-bg-1 px-5 py-9"
-            >
-              {s.logo ? (
-                /* Logolar çoğunlukla koyu renkli ve saydam zeminli; karanlık
-                   temada kaybolmasınlar diye beyaz bir plakaya oturuyorlar. */
-                <span className="flex h-16 w-full items-center justify-center rounded-xl bg-white px-4">
-                  <Image
-                    src={s.logo}
-                    alt={s.name}
-                    width={180}
-                    height={72}
-                    className="max-h-11 w-auto object-contain"
-                  />
-                </span>
-              ) : (
-                <span className="display text-xl text-ink-2">{s.name}</span>
-              )}
-              <span className="eyebrow !text-[9.5px]">{s.role}</span>
-            </div>
-          ))}
+        {/* Kademe kademe: ana sponsor en üstte ve en büyük, destekçiler en
+            altta ve küçük. Kademe ve sıra constants.ts'teki SPONSORS_2025'te. */}
+        <div className="mt-14 space-y-4">
+          {([1, 2, 3] as const).map((tier) => {
+            const grup = sponsors.filter((s) => s.tier === tier);
+            if (grup.length === 0) return null;
+            const kademe = SPONSOR_KADEME[tier];
+            return (
+              <div
+                key={tier}
+                className={`grid gap-px overflow-hidden rounded-2xl border border-line bg-line ${kademe.izgara}`}
+              >
+                {grup.map((s) => (
+                  <div
+                    key={s.name}
+                    className={`flex flex-col items-center justify-center gap-3 bg-bg-1 px-5 ${kademe.bosluk}`}
+                  >
+                    {s.logo ? (
+                      /* Logolar çoğunlukla koyu renkli ve saydam zeminli; karanlık
+                         temada kaybolmasınlar diye beyaz bir plakaya oturuyorlar. */
+                      <span
+                        className={`flex w-full items-center justify-center rounded-xl bg-white px-4 ${kademe.plaka}`}
+                      >
+                        <Image
+                          src={s.logo}
+                          alt={s.name}
+                          width={kademe.en}
+                          height={kademe.boy}
+                          className={`w-auto object-contain ${kademe.logo}`}
+                        />
+                      </span>
+                    ) : (
+                      <span className="display text-xl text-ink-2">{s.name}</span>
+                    )}
+                    <span className="eyebrow !text-[9.5px]">{s.role}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </section>
 
