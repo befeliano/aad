@@ -13,6 +13,8 @@ import {
   CircleCheck,
   CloudOff,
   Navigation,
+  Plane,
+  ExternalLink,
 } from "lucide-react";
 import {
   fetchForecast,
@@ -89,6 +91,21 @@ export function HavaDurumuClient() {
         title="Hava Durumu"
         desc="Uçuş sahası için 5 günlük tahmin. Rüzgâr ve yağış eşiklerine göre uçuşa uygunluk otomatik değerlendirilir."
       >
+        {/* ESTÜ Hasan Polatkan Havalimanı tarifeli uçuşları.
+            Veriyi panele ÇEKMİYORUZ: sitenin şartlarına göre uçuş bilgileri
+            Rektörlüğün yazılı izni olmadan başka yerde kullanılamaz.
+            İzin alınırsa tablo buraya taşınabilir. */}
+        <a
+          href="https://hph.eskisehir.edu.tr/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Eskişehir Hasan Polatkan Havalimanı — gelen/giden uçuşlar"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-line-2 px-4 py-2.5 text-sm font-semibold text-ink transition-all hover:border-ink-3"
+        >
+          <Plane size={15} />
+          Havalimanı uçuşları
+          <ExternalLink size={13} className="text-ink-3" />
+        </a>
         <Button variant="outline" size="md" onClick={load} disabled={loading}>
           <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
           Yenile
