@@ -9,6 +9,7 @@ import { DEPT_LABELS, ROLE_LABELS } from "@/lib/constants";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ToastProvider } from "@/components/ui/Toast";
+import { BildirimZili } from "./BildirimZili";
 
 interface NavItem {
   href: string;
@@ -26,7 +27,7 @@ export function PanelShell({
   children,
 }: {
   nav: NavGroup[];
-  user: { name: string; dept: string; isAdmin: boolean; role: string };
+  user: { id: string; name: string; dept: string; isAdmin: boolean; role: string };
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -119,6 +120,7 @@ export function PanelShell({
           </button>
 
           <div className="flex flex-1 items-center justify-end gap-2.5">
+            <BildirimZili userId={user.id} role={user.role} dept={user.dept} />
             <ThemeToggle />
             <div className="flex items-center gap-2.5 rounded-full border border-line bg-bg-1 py-1.5 pl-3 pr-1.5">
               <span className="size-2 rounded-full bg-ok" />

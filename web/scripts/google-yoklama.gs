@@ -21,7 +21,9 @@
  *
  * Mailler bu betiği kuran Google hesabından gider (günlük ~100 mail
  * sınırı var; birim sayısı kadar mail gittiği için fazlasıyla yeter).
- * Kaptanı olmayan birimlerin eksikleri betiği kuran kişiye özetlenir.
+ * Mail, kaptanın Profilim → "Bildirim e-postası" alanına yazdığı adrese
+ * gider (giriş adresine DEĞİL). Kaptanı ya da e-postası olmayan
+ * birimlerin eksikleri betiği kuran kişiye özetlenir.
  * ============================================================
  */
 
@@ -48,8 +50,9 @@ function yoklamaCalistir_(gonder) {
   var veri = eksikleriGetir_();
   var kaptanlar = veri.kaptanlar || [];
   var kaptansiz = veri.kaptansiz || [];
+  var epostasiz = veri.epostasiz || [];
 
-  if (kaptanlar.length === 0 && kaptansiz.length === 0) {
+  if (kaptanlar.length === 0 && kaptansiz.length === 0 && epostasiz.length === 0) {
     Logger.log(veri.tarih + ": eksik yoklama yok.");
     return;
   }
@@ -71,17 +74,26 @@ function yoklamaCalistir_(gonder) {
     }
   });
 
-  if (kaptansiz.length > 0) {
-    var ozet = kaptansiz
-      .map(function (b) { return "  • " + b.birimAdi + ": " + b.gunler.map(gunYaz_).join(", "); })
-      .join("\n");
+  // Kimseye mail gidemeyen eksikler betik sahibine tek bir özet olarak gider
+  var satirlar = [];
+  kaptansiz.forEach(function (b) {
+    satirlar.push("  • " + b.birimAdi + " (birim kaptanı atanmamış): " + b.gunler.map(gunYaz_).join(", "));
+  });
+  epostasiz.forEach(function (b) {
+    satirlar.push("  • " + b.birimAdi + " — " + (b.ad || "kaptan") +
+      " Profilim'e bildirim e-postası yazmamış: " + b.gunler.map(gunYaz_).join(", "));
+  });
+  if (satirlar.length > 0) {
     var ben = Session.getEffectiveUser().getEmail();
-    var konu2 = "Yoklama: birim kaptanı atanmamış birimler";
+    var konu2 = "Yoklama: hatırlatma gidemeyen birimler";
     var govde2 =
-      "Şu birimlerin kaptanı panelde tanımlı değil, bu yüzden hatırlatma kimseye gitmedi:\n\n" +
-      ozet + "\n\nÜye Yönetimi'nden birim kaptanı atayın.\n" + veri.adres;
+      "Şu birimlerin yoklaması eksik ama hatırlatma e-postası kimseye gidemedi " +
+      "(bu kaptanlar yine de paneldeki bildirim zilinde görüyor):\n\n" +
+      satirlar.join("\n") +
+      "\n\nKaptan yoksa Üye Yönetimi'nden atayın; e-posta yoksa kaptandan " +
+      "Profilim → Bildirim e-postası alanını doldurmasını isteyin.\n" + veri.adres;
     if (gonder && ben) MailApp.sendEmail(ben, konu2, govde2);
-    else Logger.log("[deneme] " + (ben || "(betik sahibi)") + " ← " + konu2 + "\n" + ozet);
+    else Logger.log("[deneme] " + (ben || "(betik sahibi)") + " ← " + konu2 + "\n" + satirlar.join("\n"));
   }
 }
 

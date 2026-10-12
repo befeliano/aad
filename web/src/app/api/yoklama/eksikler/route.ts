@@ -25,7 +25,11 @@ import {
 
    Yanıt:
      { tarih, adres, kaptanlar: [{ email, ad, birim, birimAdi, gunler }],
-       kaptansiz: [{ birim, birimAdi, gunler }] }
+       kaptansiz: [{ birim, birimAdi, gunler }],
+       epostasiz: [{ ad, birim, birimAdi, gunler }] }
+   E-posta, kaptanın Profilim'e yazdığı bildirim adresine gider
+   (notification_prefs); giriş adresi kullanılmaz, çoğu gerçek kutu değil.
+   Adresi olmayan kaptan "epostasiz"da döner; panel zilinde yine görür.
    "Eksik gün" = YOKLAMA_BASLANGIC'tan bugüne çalışma günü olup birim
    için HİÇ yoklama satırı olmayan gün (kısmen alınmış sayılır).
    Üyesi olmayan birim atlanır.
@@ -46,7 +50,7 @@ function cevap(status: number, body: Record<string, unknown>) {
 }
 
 interface Profil {
-  email: string | null;
+  id: string;
   full_name: string | null;
   username: string | null;
   role: string;
@@ -92,7 +96,7 @@ export async function GET(request: Request) {
     }
   };
 
-  const [gunR, kuralR, yoklamaR, profilR] = await Promise.all([
+  const [gunR, kuralR, yoklamaR, profilR, epostaR] = await Promise.all([
     admin
       .from("calendar_days")
       .select("day, kind")
@@ -100,7 +104,9 @@ export async function GET(request: Request) {
       .lte("day", bugun),
     admin.from("calendar_rules").select("*").eq("active", true),
     yoklamaOku(),
-    admin.from("profiles").select("email, full_name, username, role, department"),
+    admin.from("profiles").select("id, full_name, username, role, department"),
+    // Gerçek bildirim adresleri (Profilim). Tablo henüz yoksa boş sayılır.
+    admin.from("notification_prefs").select("user_id, email"),
   ]);
 
   const hata = gunR.error || kuralR.error || yoklamaR.error || profilR.error;
@@ -122,9 +128,16 @@ export async function GET(request: Request) {
     (yoklamaR.data || []).map((y) => `${y.dept}|${y.day}`)
   );
   const profiller = (profilR.data as Profil[]) || [];
+  const eposta = new Map(
+    ((epostaR.data as { user_id: string; email: string | null }[]) || [])
+      .filter((n) => n.email)
+      .map((n) => [n.user_id, n.email as string])
+  );
 
   const kaptanlar: Record<string, unknown>[] = [];
   const kaptansiz: Record<string, unknown>[] = [];
+  /** Kaptan var ama Profilim'e bildirim e-postası yazmamış */
+  const epostasiz: Record<string, unknown>[] = [];
 
   for (const birim of DEPT_KEYS) {
     const uyeSayisi = profiller.filter((p) => p.department === birim).length;
@@ -135,16 +148,22 @@ export async function GET(request: Request) {
 
     const birimAdi = DEPT_LABELS[birim] || birim;
     const kaptan = profiller.filter(
-      (p) => p.role === "captain" && p.department === birim && p.email
+      (p) => p.role === "captain" && p.department === birim
     );
     if (kaptan.length === 0) {
       kaptansiz.push({ birim, birimAdi, gunler: eksik });
       continue;
     }
     for (const k of kaptan) {
+      const ad = k.full_name?.trim() || k.username?.trim() || "";
+      const adres = eposta.get(k.id);
+      if (!adres) {
+        epostasiz.push({ ad, birim, birimAdi, gunler: eksik });
+        continue;
+      }
       kaptanlar.push({
-        email: k.email,
-        ad: k.full_name?.trim() || k.username?.trim() || "",
+        email: adres,
+        ad,
         birim,
         birimAdi,
         gunler: eksik,
@@ -158,5 +177,6 @@ export async function GET(request: Request) {
     adres: new URL("/panel/takvim", request.url).toString(),
     kaptanlar,
     kaptansiz,
+    epostasiz,
   });
 }

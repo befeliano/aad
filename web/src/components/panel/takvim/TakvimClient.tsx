@@ -156,9 +156,18 @@ export function TakvimClient({
   useEffect(() => {
     const d = new Date();
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setYil(d.getFullYear());
-    setAy(d.getMonth());
     setBugun(anahtar(d.getFullYear(), d.getMonth(), d.getDate()));
+    /* Bildirim zilinden gelindiyse (?gun=2026-10-17) o günü aç */
+    const istenen = new URLSearchParams(window.location.search).get("gun");
+    if (istenen && /^\d{4}-\d{2}-\d{2}$/.test(istenen)) {
+      const [y, a] = istenen.split("-").map(Number);
+      setYil(y);
+      setAy(a - 1);
+      setBekleyenGun(istenen);
+    } else {
+      setYil(d.getFullYear());
+      setAy(d.getMonth());
+    }
   }, []);
 
   const load = useCallback(async () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { KeyRound, Loader2, Save, UserRound } from "lucide-react";
+import { KeyRound, Loader2, Mail, Save, UserRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trimTo, LIMITS } from "@/lib/security";
 import { logAction } from "@/lib/audit";
@@ -36,6 +36,11 @@ export function ProfilAyarlari({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  /* Bildirim e-postası — giriş adresi gerçek kutu olmayabilir */
+  const [bildirimEposta, setBildirimEposta] = useState("");
+  const [bildirimTabloYok, setBildirimTabloYok] = useState(false);
+  const [bildirimKaydediliyor, setBildirimKaydediliyor] = useState(false);
+
   /* Parola değiştirme — kaptanın verdiği geçici parolayı üye kendisi değiştirir */
   const [sifre, setSifre] = useState("");
   const [sifre2, setSifre2] = useState("");
@@ -53,6 +58,14 @@ export function ProfilAyarlari({
       setDept(data.department ?? null);
       setRole(data.role ?? null);
     }
+
+    const { data: n, error: nErr } = await supabase
+      .from("notification_prefs")
+      .select("email")
+      .eq("user_id", userId)
+      .maybeSingle();
+    setBildirimTabloYok(!!nErr);
+    setBildirimEposta(n?.email ?? "");
     setLoading(false);
   }, [supabase, userId]);
 
@@ -85,6 +98,37 @@ export function ProfilAyarlari({
     toast("İsminiz güncellendi.");
     // Panel başlığı sunucudan geliyor; tazelemek için sayfayı yenile
     window.location.reload();
+  }
+
+  async function bildirimKaydet(e: React.FormEvent) {
+    e.preventDefault();
+    const temiz = bildirimEposta.trim().slice(0, 200);
+    if (temiz && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(temiz)) {
+      toast("Geçerli bir e-posta adresi yazın.", "error");
+      return;
+    }
+    setBildirimKaydediliyor(true);
+    const { error } = await supabase
+      .from("notification_prefs")
+      .upsert([{ user_id: userId, email: temiz || null }], {
+        onConflict: "user_id",
+      });
+    setBildirimKaydediliyor(false);
+    if (error) {
+      toast("Kaydedilemedi: " + error.message, "error");
+      return;
+    }
+    // Adresin kendisi loglanmaz — kişisel veri
+    void logAction(supabase, "update", "notification_prefs", userId, {
+      alan: "bildirim_eposta",
+      dolu: !!temiz,
+    });
+    setBildirimEposta(temiz);
+    toast(
+      temiz
+        ? "Bildirimler artık bu adrese gelecek."
+        : "Bildirim e-postası kaldırıldı; bildirimler yalnızca panelde görünecek."
+    );
   }
 
   async function sifreDegistir(e: React.FormEvent) {
@@ -179,6 +223,50 @@ export function ProfilAyarlari({
                 <UserRound size={13} />
                 {ROLE_LABELS[role ?? "member"] || "Üye"}
               </span>
+            </div>
+          </form>
+        )}
+      </Card>
+
+      {/* --- Bildirim e-postası --- */}
+      <Card className="mt-6 max-w-xl p-6">
+        <div className="mb-2 flex items-center gap-2">
+          <Mail size={16} className="text-ink-3" />
+          <h2 className="text-[15px] font-semibold text-ink">Bildirim e-postası</h2>
+        </div>
+        <p className="mb-5 text-[13px] leading-relaxed text-ink-2">
+          Panelden sana bir bildirim gidecekse (ör. yoklama hatırlatması) bu
+          adrese gelir. Giriş adresin gerçek bir kutu değilse buraya her gün
+          baktığın e-postanı yaz. Bu adresi yalnızca sen ve takım kaptanları
+          görür.
+        </p>
+        {bildirimTabloYok ? (
+          <p className="text-[12.5px] text-ink-3">
+            Henüz kurulmadı: Supabase SQL Editor&apos;da{" "}
+            <code>supabase/bildirim-eposta.sql</code> çalıştırılmalı.
+          </p>
+        ) : (
+          <form onSubmit={bildirimKaydet} className="space-y-5">
+            <Field label="E-posta" hint="Boş bırakırsan e-posta gitmez, bildirimler yalnızca paneldeki zilde görünür.">
+              <input
+                type="email"
+                className="field"
+                value={bildirimEposta}
+                onChange={(e) => setBildirimEposta(e.target.value)}
+                maxLength={200}
+                placeholder="ornek@gmail.com"
+                autoComplete="email"
+              />
+            </Field>
+            <div className="border-t border-line pt-5">
+              <Button type="submit" disabled={bildirimKaydediliyor || loading}>
+                {bildirimKaydediliyor ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <Save size={15} />
+                )}
+                Kaydet
+              </Button>
             </div>
           </form>
         )}

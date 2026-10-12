@@ -33,6 +33,7 @@ export default async function PanelLayout({
     <PanelShell
       nav={nav}
       user={{
+        id: session.userId,
         name: displayName,
         dept: session.dept,
         isAdmin: session.isAdmin,
