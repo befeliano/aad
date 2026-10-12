@@ -15,6 +15,10 @@ export default async function Page() {
     "Üye";
 
   return (
-    <ToplantiClient userId={session.userId} displayName={displayName} />
+    <ToplantiClient
+      userId={session.userId}
+      displayName={displayName}
+      isAdmin={session.isAdmin}
+    />
   );
 }
