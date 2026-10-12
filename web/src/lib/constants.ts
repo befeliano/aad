@@ -17,7 +17,7 @@ export const TEAM = {
   linkedinUrl: "https://linkedin.com/company/anatolia-aero-design/",
   /** Tanıtım dosyası: 2011'de kuruldu, 14 yıllık usta-çırak geleneği */
   founded: "2011",
-  memberCount: "40",
+  memberCount: "40+",
   alumniCount: "250+",
   branchCount: "12",
 };
@@ -280,9 +280,9 @@ export const ACHIEVEMENTS: Achievement[] = [
 
 export const TAKIM_ISTATISTIK = {
   kurulus: "2011",
-  uye: "40",
+  uye: "40+",
   mezun: "250+",
-  birincilik: "1",
+  birincilik: "3",
   derece: "7",
 };
 
@@ -675,124 +675,6 @@ export const PROCESS_STEPS = [
     d: "Sahada test uçuşları gerçekleştirilir; telemetri kaydı alınır ve analiz edilir. Uçuş verileri sonraki tasarım çalışmalarında kullanılır.",
   },
 ];
-
-/* ============================================================
-   SPONSORLUK — sponsorluk dosyasındaki gerçek yapı
-   First Class / Business Class / Economy Class
-   ============================================================ */
-
-export interface SponsorTier {
-  key: "first" | "business" | "economy";
-  name: string;
-  label: string;
-  threshold: string;
-  featured?: boolean;
-  /** Karşılaştırma tablosu satırları */
-  matrix: {
-    logoUcak: string;
-    sosyalMedya: string;
-    uretimGunlugu: string;
-    basiliMateryal: string;
-    logoKiyafet: string;
-    urunTest: string;
-  };
-  perks: string[];
-}
-
-export const SPONSOR_TIERS: SponsorTier[] = [
-  {
-    key: "first",
-    name: "First Class",
-    label: "Ana Sponsor",
-    threshold: "₺200.000+",
-    featured: true,
-    matrix: {
-      logoUcak: "En büyük — ~20×20 cm",
-      sosyalMedya:
-        "Sabitlenen gönderi, firmaya özel video ve diğer seviyelerdeki tüm özellikler",
-      uretimGunlugu: "Firmaya özel YouTube bölümü ve diğer özellikler",
-      basiliMateryal: "En büyük",
-      logoKiyafet: "Sırtta en büyük — ~15×15 cm",
-      urunTest:
-        "−10°C / +45°C aralığında 15+ sorti dayanıklılık raporu ve test analizlerinin paylaşımı",
-    },
-    perks: [
-      "Uçakta büyük logo yerleşimi",
-      "Ekip tişörtünün arka üstünde büyük logo",
-      "Yarışma ve sergi roll-up'larında büyük logo",
-      "Ekip üyeleriyle öncelikli görüşme hakkı",
-      "Firmanız adına bilgilendirme semineri düzenleme hakkı",
-      "Sosyal medyada logo ve firma tanıtımı (ayda en az bir paylaşım)",
-      "İsteğe özel sosyal medya paylaşımları",
-      "Özgeçmiş dosyası erişimi (tüm ekip üyelerinin CV'leri)",
-      "Ekipten kişiselleştirilmiş teşekkür mektubu",
-    ],
-  },
-  {
-    key: "business",
-    name: "Business Class",
-    label: "Çözüm Ortağı",
-    threshold: "₺100.000+",
-    matrix: {
-      logoUcak: "Orta — ~10×15 cm",
-      sosyalMedya:
-        "Çözüm ortağı gönderisi, marka paylaşımları (ayda bir), Economy Class özellikleri",
-      uretimGunlugu: "Videolarda marka bahsi",
-      basiliMateryal: "Orta",
-      logoKiyafet: "Orta boy — ~10×10 cm",
-      urunTest: "−10°C / +45°C aralığında 3 sorti test raporu",
-    },
-    perks: [
-      "Uçakta orta boy logo yerleşimi",
-      "Ekip tişörtünün arkasında orta boy logo",
-      "Yarışma ve sergi roll-up'larında orta boy logo",
-      "Firmanız adına bilgilendirme semineri düzenleme hakkı",
-      "Firmanızı tanıtan sosyal medya paylaşımları (iki ayda en az bir)",
-      "Özgeçmiş dosyası erişimi",
-      "Ekipten kişiselleştirilmiş teşekkür mektubu",
-    ],
-  },
-  {
-    key: "economy",
-    name: "Economy Class",
-    label: "Destekçi",
-    threshold: "₺20.000+",
-    matrix: {
-      logoUcak: "Küçük — ~7,5×10 cm",
-      sosyalMedya: "Destek paylaşımları, videolarda ürün yerleştirme",
-      uretimGunlugu: "Videolarda ürün yerleştirme",
-      basiliMateryal: "Liste olarak",
-      logoKiyafet: "Küçük — ~5×7,5 cm",
-      urunTest: "—",
-    },
-    perks: [
-      "Uçakta küçük logo yerleşimi",
-      "Ekip tişörtünün arkasında küçük logo",
-      "Yarışma ve sergi roll-up'larında küçük logo",
-      "Sosyal medyada logo ve firma tanıtımı (üç ayda en az bir paylaşım)",
-      "Ekipten kişiselleştirilmiş teşekkür mektubu",
-    ],
-  },
-];
-
-/** Karşılaştırma tablosu satır başlıkları */
-export const SPONSOR_MATRIX_ROWS: {
-  key: keyof SponsorTier["matrix"];
-  label: string;
-}[] = [
-  { key: "logoUcak", label: "İHA gövdesi üzerinde logo" },
-  { key: "logoKiyafet", label: "Takım kıyafetlerinde logo" },
-  { key: "sosyalMedya", label: "Sosyal medya paylaşımları" },
-  { key: "uretimGunlugu", label: '"Üretim Günlüğü" video sponsorluğu' },
-  { key: "basiliMateryal", label: "Basılı materyaller (afiş, roll-up)" },
-  { key: "urunTest", label: "Ürün test ve raporlama" },
-];
-
-export const SPONSOR_NOTE =
-  "Sponsorluk paketlerimiz sadece nakit destekle sınırlı değildir. Takımımızın " +
-  "ihtiyaç duyduğu teknik ekipman, ham madde veya hizmetlerin karşılanması " +
-  "durumunda, sağlanan desteğin piyasa değeri üzerinden ilgili sponsorluk " +
-  "kategorisindeki tüm haklar tanımlanır.";
 
 /** Neden katkı yapmalısınız — sponsorluk dosyası s.10 */
 export const SPONSOR_REASONS = [

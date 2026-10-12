@@ -103,7 +103,7 @@ export const S = {
     ] as M,
     baslik1: ["Gökyüzünü", "We design"] as M,
     baslik2: ["tasarlıyoruz", "the sky"] as M,
-    sponsorOl: ["Sponsorluk Seçenekleri", "Sponsorship Options"] as M,
+    sponsorOl: ["Sponsorluk Bilgisi", "Sponsorship Information"] as M,
     takimaKatil: ["Takıma Katıl", "Join the Team"] as M,
     filoyuKesfet: ["Filo Hakkında", "About the Fleet"] as M,
     kaydir: ["Kaydır", "Scroll"] as M,
@@ -207,10 +207,9 @@ export const S = {
     baslik1: ["Markanızı gökyüzüne", "Let's take your brand"] as M,
     baslik2: ["taşınsın", "to the sky"] as M,
     metin: [
-      "Yarışmalarda elde edilen derecelerle öne çıkan bir ekibin çalışmalarına katkıda bulunun. Sponsorluk paketleriyle markanız hava araçlarımızda, tanıtım materyallerimizde ve dijital kanallarımızda yer alır.",
-      "Support a team with a record of competition results. Our sponsorship packages feature your brand on our aircraft, promotional materials and digital channels.",
+      "Sponsorluk ve iş birliği konularını görüşmek için bizimle iletişime geçebilirsiniz.",
+      "Please contact us to discuss sponsorship and collaboration.",
     ] as M,
-    paketler: ["Sponsorluk Paketleri", "Sponsorship Packages"] as M,
     iletisim: ["İletişim", "Contact"] as M,
     sponsorOl: ["Sponsorluk Bilgisi", "Sponsorship Information"] as M,
   },
@@ -362,13 +361,6 @@ export const S = {
       "Tanıtım dosyalarında, teknik raporlarda, etkinlik standında ve üniversite etkinliklerinde destekçi olarak yer alırsınız.",
       "Your support is acknowledged in team information packs, technical reports, event stands and university events.",
     ] as M,
-    gorunurlukNot: [
-      "Hangi seviyede neyin dâhil olduğunu sayfanın altındaki karşılaştırma tablosunda görebilir, ayrıntılar için sponsorluk dosyamızı indirebilirsiniz.",
-      "You can see exactly what each tier includes in the comparison table further down the page, and download our sponsorship deck for the details.",
-    ] as M,
-
-    /* Şerit yalnızca birincilikleri gösteriyor */
-    birincilik: ["1.", "1st"] as M,
     basariSerit: [
       "Desteğiniz sonuç üreten bir takıma gidiyor",
       "Your support goes to a team that delivers results",
@@ -377,28 +369,13 @@ export const S = {
     destekciBaslik: ["Destekçilerimiz", "Our Supporters"] as M,
     destekciKicker: ["Bize güvenen markalar", "The brands that back us"] as M,
 
-    seviyeBaslik: ["Seviyeler", "Tiers"] as M,
-    seviyeKicker: [
-      "Size uygun katkı düzeyi",
-      "The level of support that fits you",
-    ] as M,
-    enUst: ["En Üst Seviye", "Top Tier"] as M,
-    nakitVeyaMalzeme: [
-      "nakit veya malzeme desteği",
-      "cash or in-kind support",
-    ] as M,
-    teklifAl: ["Teklif Al", "Request an Offer"] as M,
-
-    haklarBaslik: ["Haklar ve Avantajlar", "Rights and Benefits"] as M,
-    haklarKicker: ["Seviyelerin karşılaştırması", "Tier comparison"] as M,
-
     kapanisBaslik: [
       "Bir görüşmeyle başlayalım.",
       "Let's start with a conversation.",
     ] as M,
     kapanisMetin: [
-      "Sponsorluk dosyamızı gönderelim, ihtiyaçlarınıza göre birlikte bir iş birliği kurgulayalım.",
-      "Let us send you our sponsorship deck and shape a partnership around what you need.",
+      "Sponsorluk ve iş birliği seçeneklerini görüşmek için bizimle iletişime geçebilirsiniz.",
+      "Please contact us to discuss sponsorship and collaboration opportunities.",
     ] as M,
     dosyaIndir: [
       "Sponsorluk dosyasını indir",

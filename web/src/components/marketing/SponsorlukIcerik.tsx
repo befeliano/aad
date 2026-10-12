@@ -3,9 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Check,
   ArrowRight,
-  Minus,
   FileText,
   Plane,
   Shirt,
@@ -16,11 +14,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { ACHIEVEMENTS, TEAM, TAKIM_ISTATISTIK } from "@/lib/constants";
 import {
-  useSponsorMatrixRows,
-  useSponsorNote,
   useSponsorReasons,
   useSponsors,
-  useSponsorTiers,
   useTeamLeads,
 } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
@@ -28,10 +23,7 @@ import { S, useT } from "@/lib/i18n";
 /** /sponsorluk sayfasının tamamı — sayfa yalnızca metadata için sunucuda kalır */
 export function SponsorlukIcerik() {
   const t = useT();
-  const tiers = useSponsorTiers();
-  const matrixRows = useSponsorMatrixRows();
   const reasons = useSponsorReasons();
-  const note = useSponsorNote();
   const sponsors = useSponsors();
   const leads = useTeamLeads();
 
@@ -138,7 +130,7 @@ export function SponsorlukIcerik() {
           title={t(S.sponsor.nedenBaslik)}
           kicker={t(S.sponsor.nedenKicker)}
         />
-        <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {reasons.map((r, i) => (
             <Reveal key={r.t} delay={i * 70}>
               <article className="h-full rounded-2xl border border-line bg-bg-1 p-7">
@@ -182,9 +174,6 @@ export function SponsorlukIcerik() {
             ))}
           </div>
 
-          <p className="mt-8 max-w-2xl text-[13px] leading-relaxed text-ink-3">
-            {t(S.sponsor.gorunurlukNot)}
-          </p>
         </div>
       </section>
 
@@ -247,138 +236,6 @@ export function SponsorlukIcerik() {
               <span className="eyebrow !text-[9.5px]">{s.role}</span>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Seviyeler */}
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <SectionHeading
-          num="04"
-          title={t(S.sponsor.seviyeBaslik)}
-          kicker={t(S.sponsor.seviyeKicker)}
-        />
-
-        <div className="mt-14 grid gap-5 lg:grid-cols-3">
-          {tiers.map((tier, i) => (
-            <Reveal key={tier.key} delay={i * 80}>
-              <article
-                className={`relative flex h-full flex-col rounded-2xl border p-7 ${
-                  tier.featured
-                    ? "border-accent bg-[linear-gradient(180deg,var(--accent-soft),transparent_70%)]"
-                    : "border-line bg-bg-1"
-                }`}
-              >
-                {tier.featured && (
-                  <span className="absolute -top-3 left-7 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                    {t(S.sponsor.enUst)}
-                  </span>
-                )}
-                <div className="eyebrow !text-[10px]">{tier.label}</div>
-                <h3 className="display-tight mt-2 text-3xl text-ink">
-                  {tier.name}
-                </h3>
-                <div className="tabular mt-2 text-lg font-bold text-accent">
-                  {tier.threshold}
-                </div>
-                <p className="mt-1 text-[12.5px] text-ink-3">
-                  {t(S.sponsor.nakitVeyaMalzeme)}
-                </p>
-
-                <ul className="mt-6 flex-1 space-y-2.5 border-t border-line pt-5">
-                  {tier.perks.map((perk) => (
-                    <li
-                      key={perk}
-                      className="flex gap-2.5 text-[13.5px] text-ink-2"
-                    >
-                      <Check size={15} className="mt-0.5 shrink-0 text-accent" />
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href="/iletisim"
-                  className={`mt-7 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform hover:scale-[1.02] ${
-                    tier.featured
-                      ? "bg-accent text-white"
-                      : "border border-line-2 text-ink hover:border-ink-3"
-                  }`}
-                >
-                  {t(S.sponsor.teklifAl)}
-                  <ArrowRight size={15} />
-                </Link>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal>
-          <p className="mt-8 rounded-2xl border border-line bg-bg-1 p-6 text-[13.5px] leading-relaxed text-ink-2">
-            {note}
-          </p>
-        </Reveal>
-      </section>
-
-      {/* Karşılaştırma tablosu */}
-      <section className="border-t border-line bg-bg-1">
-        <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-          <SectionHeading
-            num="05"
-            title={t(S.sponsor.haklarBaslik)}
-            kicker={t(S.sponsor.haklarKicker)}
-          />
-          <div className="mt-14 overflow-x-auto rounded-2xl border border-line">
-            <table className="w-full min-w-[820px] border-collapse text-left">
-              <thead>
-                <tr>
-                  <th className="bg-bg-2 px-5 py-4 text-[12.5px] font-bold text-ink">
-                    {t(S.sponsor.haklarBaslik)}
-                  </th>
-                  {tiers.map((tier) => (
-                    <th
-                      key={tier.key}
-                      className={`px-5 py-4 text-center text-[13px] font-bold ${
-                        tier.featured
-                          ? "bg-accent text-white"
-                          : "bg-bg-2 text-ink"
-                      }`}
-                    >
-                      {tier.name}
-                      <span className="mt-0.5 block text-[11px] font-medium opacity-80">
-                        {tier.threshold}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {matrixRows.map((row, ri) => (
-                  <tr key={row.key} className={ri % 2 ? "bg-bg-1" : "bg-bg"}>
-                    <th className="border-t border-line px-5 py-4 align-top text-[12.5px] font-semibold text-ink">
-                      {row.label}
-                    </th>
-                    {tiers.map((tier) => {
-                      const v = tier.matrix[row.key];
-                      return (
-                        <td
-                          key={tier.key}
-                          className={`border-t border-line px-5 py-4 align-top text-[12.5px] leading-relaxed ${
-                            tier.featured ? "text-ink" : "text-ink-2"
-                          }`}
-                        >
-                          {v === "—" ? (
-                            <Minus size={15} className="text-ink-3" />
-                          ) : (
-                            v
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </section>
 

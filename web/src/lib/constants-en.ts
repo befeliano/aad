@@ -10,7 +10,7 @@
    use* kancalarını çağırın.
    ============================================================ */
 
-import type { Aircraft, Department, SponsorTier } from "./constants";
+import type { Aircraft, Department } from "./constants";
 
 /* ---------- FİLO ---------- */
 
@@ -349,92 +349,6 @@ export const PROCESS_EN: Record<string, { t: string; d: string }> = {
 };
 
 /* ---------- SPONSORLUK ---------- */
-
-type TierOverlay = Pick<SponsorTier, "label" | "matrix" | "perks">;
-
-export const SPONSOR_TIERS_EN: Record<string, TierOverlay> = {
-  first: {
-    label: "Main Sponsor",
-    matrix: {
-      logoUcak: "Largest — approx. 20×20 cm",
-      sosyalMedya:
-        "Pinned post, a video dedicated to your company, plus every benefit of the lower tiers",
-      uretimGunlugu: "A dedicated YouTube segment plus all other benefits",
-      basiliMateryal: "Largest",
-      logoKiyafet: "Largest, on the back — approx. 15×15 cm",
-      urunTest:
-        "Durability report over 15+ sorties between −10°C and +45°C, with the full test analysis shared",
-    },
-    perks: [
-      "Large logo placement on the aircraft",
-      "Large logo on the upper back of the team shirt",
-      "Large logo on competition and exhibition roll-ups",
-      "Priority access to meet team members",
-      "The right to host an information seminar on behalf of your company",
-      "Logo and company feature on social media (at least one post per month)",
-      "Social media posts on request",
-      "Access to the CV file (résumés of every team member)",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-
-  business: {
-    label: "Solution Partner",
-    matrix: {
-      logoUcak: "Medium — approx. 10×15 cm",
-      sosyalMedya:
-        "Solution-partner post, brand features (monthly), plus Economy Class benefits",
-      uretimGunlugu: "Brand mention in the videos",
-      basiliMateryal: "Medium",
-      logoKiyafet: "Medium — approx. 10×10 cm",
-      urunTest: "Test report over 3 sorties between −10°C and +45°C",
-    },
-    perks: [
-      "Medium logo placement on the aircraft",
-      "Medium logo on the back of the team shirt",
-      "Medium logo on competition and exhibition roll-ups",
-      "The right to host an information seminar on behalf of your company",
-      "Social media posts featuring your company (at least one every two months)",
-      "Access to the CV file",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-
-  economy: {
-    label: "Supporter",
-    matrix: {
-      logoUcak: "Small — approx. 7.5×10 cm",
-      sosyalMedya: "Support posts, product placement in the videos",
-      uretimGunlugu: "Product placement in the videos",
-      basiliMateryal: "Listed by name",
-      logoKiyafet: "Small — approx. 5×7.5 cm",
-      urunTest: "—",
-    },
-    perks: [
-      "Small logo placement on the aircraft",
-      "Small logo on the back of the team shirt",
-      "Small logo on competition and exhibition roll-ups",
-      "Logo and company feature on social media (at least one post per quarter)",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-};
-
-/** Karşılaştırma tablosu satır başlıkları */
-export const SPONSOR_MATRIX_ROWS_EN: Record<string, string> = {
-  logoUcak: "Logo on the UAV airframe",
-  logoKiyafet: "Logo on team apparel",
-  sosyalMedya: "Social media posts",
-  uretimGunlugu: '"Build Log" video sponsorship',
-  basiliMateryal: "Printed materials (posters, roll-ups)",
-  urunTest: "Product testing and reporting",
-};
-
-export const SPONSOR_NOTE_EN =
-  "Our sponsorship packages are not limited to cash support. Where you cover " +
-  "technical equipment, raw materials or services the team needs, every right " +
-  "in the matching sponsorship tier is granted on the basis of the market " +
-  "value of that support.";
 
 /** SPONSOR_REASONS ile aynı sırada */
 export const SPONSOR_REASONS_EN: { t: string; d: string }[] = [

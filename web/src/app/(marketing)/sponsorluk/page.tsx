@@ -4,9 +4,10 @@ import { SponsorlukIcerik } from "@/components/marketing/SponsorlukIcerik";
 export const metadata: Metadata = {
   title: "Sponsorluk",
   description:
-    "Anatolia Aero Design sponsorluk seviyeleri — First Class, Business Class ve Economy Class. Uçak gövdesinden takım kıyafetlerine marka görünürlüğü, ürün test ve raporlama imkânı.",
+    "Anatolia Aero Design sponsorluk iletişimi.",
 };
 
 export default function SponsorlukPage() {
+  // TODO: Sponsorluk katkı seçenekleri netleştiğinde bu sayfaya eklenmeli.
   return <SponsorlukIcerik />;
 }

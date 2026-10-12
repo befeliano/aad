@@ -34,7 +34,7 @@ export function SponsorCTA() {
               href="/sponsorluk"
               className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
             >
-              {t(S.cta.paketler)}
+              {t(S.cta.sponsorOl)}
               <ArrowRight
                 size={16}
                 className="transition-transform group-hover:translate-x-1"
