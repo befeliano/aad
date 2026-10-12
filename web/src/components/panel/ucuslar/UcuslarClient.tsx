@@ -23,6 +23,7 @@ import {
   Activity as ActivityIcon,
   Loader2,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtTime, toCSV, downloadFile } from "@/lib/format";
 import type { Flight } from "@/lib/types";
@@ -92,8 +93,8 @@ export function UcuslarClient({
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [q, setQ] = useKaliciFiltre("ucuslar.q", "");
+  const [tab, setTab] = useKaliciFiltre<"upcoming" | "past">("ucuslar.tab", "upcoming");
 
   const [editing, setEditing] = useState<Flight | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -109,11 +110,13 @@ export function UcuslarClient({
   /** flight_id -> yüklenmiş uçuş kaydı (.db) yolu */
   const [logPath, setLogPath] = useState<Record<string, string>>({});
   const [logFiles, setLogFiles] = useState<Record<string, LogDosyasi[]>>({});
-  const [logFiltre, setLogFiltre] = useState("");
-  const [turFiltre, setTurFiltre] = useState("");
+  const [logFiltre, setLogFiltre] = useKaliciFiltre("ucuslar.logFiltre", "");
+  const [turFiltre, setTurFiltre] = useKaliciFiltre("ucuslar.turFiltre", "");
   const [formGecmisi, setFormGecmisi] = useState<Flight | null>(null);
   /** Şu an log yüklenen uçuş */
   const [uploadingLog, setUploadingLog] = useState<string | null>(null);
+  /** İndirme bağlantısı hazırlanan dosyanın yolu */
+  const [indiriliyor, setIndiriliyor] = useState<string | null>(null);
   const logInputRef = useRef<HTMLInputElement>(null);
   const logTargetRef = useRef<Flight | null>(null);
   const [completing, setCompleting] = useState<ActiveSession | null>(null);
@@ -470,6 +473,25 @@ export function UcuslarClient({
     }
   }
 
+  /**
+   * .bin / .tlog / .log kaydını indirir. Panel bunları çözümleyemiyor;
+   * şimdilik indirip ArduPilot Log Viewer'da açılıyor. (İleride
+   * plot.ardupilot fork'u gelince doğrudan panelde açılacak.)
+   * Bucket gizli: kısa ömürlü imzalı bağlantı üretiyoruz.
+   */
+  async function logIndir(d: LogDosyasi) {
+    setIndiriliyor(d.path);
+    const { data, error } = await supabase.storage
+      .from("flight-logs")
+      .createSignedUrl(d.path, 600, { download: d.name });
+    setIndiriliyor(null);
+    if (error || !data) {
+      toast("Bağlantı alınamadı: " + (error?.message || ""), "error");
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener");
+  }
+
   function exportCSV() {
     const rows = flights.map((f) => [
       f.flight_date,
@@ -673,8 +695,11 @@ export function UcuslarClient({
                   </div>
 
                   <div className="min-w-[190px] flex-1">
+                    {/* Açıklama başlıkta, uçak adı altında; açıklama yoksa uçak başlık olur */}
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-ink">{f.aircraft}</span>
+                      <span className="font-bold text-ink">
+                        {f.mission || f.aircraft}
+                      </span>
                       <Badge tone={isPast ? "neutral" : "accent"}>
                         {fmtTime(f.flight_time)}
                       </Badge>
@@ -693,7 +718,10 @@ export function UcuslarClient({
                       ) : null}
                     </div>
                     {f.mission && (
-                      <p className="mt-1 text-sm text-ink-2">{f.mission}</p>
+                      <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-ink-2">
+                        <Plane size={13} className="text-ink-3" />
+                        {f.aircraft}
+                      </p>
                     )}
                     <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-ink-3">
                       {f.location && (
@@ -763,13 +791,32 @@ export function UcuslarClient({
                         <button
                           type="button"
                           className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-3 py-1.5 text-[12.5px] font-bold text-accent transition-colors hover:bg-accent hover:text-white"
-                          title="Bu uçuşun telemetri analizini aç"
+                          title="Bu uçuşun .db kaydının telemetri analizini aç"
                         >
                           <ActivityIcon size={14} />
-                          Analiz
+                          .db analiz
                         </button>
                       </Link>
                     )}
+                    {(logFiles[f.id] || [])
+                      .filter((d) => !/^(db|sqlite|sqlite3)$/i.test(d.ext))
+                      .map((d) => (
+                        <button
+                          key={d.path}
+                          type="button"
+                          disabled={indiriliyor === d.path}
+                          onClick={() => void logIndir(d)}
+                          title={`${d.name} — indirip ArduPilot Log Viewer'da açabilirsiniz`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-2 transition-colors hover:border-ink-3 hover:text-ink disabled:opacity-60"
+                        >
+                          {indiriliyor === d.path ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            <Download size={14} />
+                          )}
+                          .{d.ext.toUpperCase()} indir
+                        </button>
+                      ))}
                     {canManage && (
                     <button
                       type="button"

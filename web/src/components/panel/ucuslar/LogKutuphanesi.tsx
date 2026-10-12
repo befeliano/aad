@@ -121,7 +121,7 @@ export function LogKutuphanesi({
     setIndiriliyor(d.path);
     const { data, error } = await supabase.storage
       .from("flight-logs")
-      .createSignedUrl(d.path, 600);
+      .createSignedUrl(d.path, 600, { download: d.name });
     setIndiriliyor(null);
 
     if (error || !data) {
@@ -210,7 +210,7 @@ export function LogKutuphanesi({
                             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-[12.5px] font-semibold text-white transition-transform hover:scale-105"
                           >
                             <Play size={13} />
-                            Aç
+                            .db analiz
                           </button>
                         ) : (
                           <>
@@ -225,7 +225,7 @@ export function LogKutuphanesi({
                               ) : (
                                 <Download size={13} />
                               )}
-                              İndir
+                              .{d.ext.toUpperCase()} indir
                             </button>
                             <a
                               href={ARDUPILOT_VIEWER}
