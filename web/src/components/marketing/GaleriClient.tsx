@@ -13,6 +13,8 @@ interface GalleryItem {
   title: string;
   url: string;
   kind: "image" | "video";
+  /** Klasörden/dosya adından gelen yıl; bilinmiyorsa null ("Diğer") */
+  year: string | null;
 }
 
 const IMAGE_EXT = ["jpg", "jpeg", "png", "webp", "gif", "avif"];
@@ -32,10 +34,12 @@ export function GaleriClient({
   local = [],
 }: {
   /** public/images/gallery/ içindeki fotoğraflar (sunucuda okundu) */
-  local?: { src: string; alt: string }[];
+  local?: { src: string; alt: string; year: string | null }[];
 }) {
   const t = useT();
   const [items, setItems] = useState<GalleryItem[]>([]);
+  /** "" = tümü, "diger" = yılı bilinmeyenler, aksi halde yıl */
+  const [yil, setYil] = useState("");
 
   /* Yerel fotoğraflar her zaman gösterilir; panelden yüklenenler bunlara eklenir */
   const localItems: GalleryItem[] = useMemo(
@@ -45,10 +49,30 @@ export function GaleriClient({
         title: p.alt,
         url: p.src,
         kind: "image" as const,
+        year: p.year,
       })),
     [local]
   );
   const all = useMemo(() => [...localItems, ...items], [localItems, items]);
+
+  /* Yıl sekmeleri yalnızca en az bir fotoğrafın yılı belliyse çıkar */
+  const yillar = useMemo(
+    () =>
+      [...new Set(all.map((x) => x.year).filter((y): y is string => !!y))].sort(
+        (a, b) => b.localeCompare(a)
+      ),
+    [all]
+  );
+  const yilsizVar = all.some((x) => !x.year);
+  const gorunen = useMemo(
+    () =>
+      !yil
+        ? all
+        : yil === "diger"
+          ? all.filter((x) => !x.year)
+          : all.filter((x) => x.year === yil),
+    [all, yil]
+  );
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
 
@@ -101,7 +125,8 @@ export function GaleriClient({
             : a.category === "video"
               ? "video"
               : "image";
-        out.push({ id: a.id, title: a.title, url, kind });
+        // Panelden yüklenenin çekim yılı bilinmiyor (yükleme tarihi değil)
+        out.push({ id: a.id, title: a.title, url, kind, year: null });
       });
 
       setItems(out);
@@ -156,8 +181,32 @@ export function GaleriClient({
 
   return (
     <>
+      {yillar.length > 0 && (
+        <div className="mb-8 flex flex-wrap gap-2" role="tablist">
+          {[
+            { k: "", l: t(S.galeri.tumu) },
+            ...yillar.map((y) => ({ k: y, l: y })),
+            ...(yilsizVar ? [{ k: "diger", l: t(S.galeri.diger) }] : []),
+          ].map((s) => (
+            <button
+              key={s.k || "tumu"}
+              type="button"
+              role="tab"
+              aria-selected={yil === s.k}
+              onClick={() => setYil(s.k)}
+              className={`tabular rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-colors ${
+                yil === s.k
+                  ? "border-accent bg-accent text-white"
+                  : "border-line-2 text-ink-2 hover:border-ink-3 hover:text-ink"
+              }`}
+            >
+              {s.l}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
-        {all.map((it) => (
+        {gorunen.map((it) => (
           <button
             key={it.id}
             type="button"

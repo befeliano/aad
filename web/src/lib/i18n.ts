@@ -243,6 +243,8 @@ export const S = {
     ] as M,
     instagram: ["Instagram içerikleri", "Instagram posts"] as M,
     kapat: ["Kapat", "Close"] as M,
+    tumu: ["Tümü", "All"] as M,
+    diger: ["Diğer", "Other"] as M,
   },
 
   iletisim: {

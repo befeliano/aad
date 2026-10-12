@@ -102,28 +102,56 @@ export function teamPhotos(max = 6): string[] {
 /**
  * Galeri fotoğrafları — public/images/gallery/ klasöründeki tüm görseller.
  * Klasöre dosya atmak yeterli; sıralama dosya adına göre.
+ *
+ * YILA GÖRE: fotoğrafı yıl klasörüne koyun → galeride o yılın sekmesinde
+ * çıkar:  public/images/gallery/2025/teknofest-stant.jpg
+ * Ya da dosya adı yılla başlasın:  2025-teknofest-stant.jpg
+ * Yılı belli olmayanlar "Diğer"de görünür.
  */
-export function galleryPhotos(): { src: string; alt: string }[] {
+export function galleryPhotos(): { src: string; alt: string; year: string | null }[] {
   const dir = path.join(process.cwd(), "public", "images", "gallery");
-  let names: string[] = [];
+  const out: { src: string; alt: string; year: string | null }[] = [];
+  const resim = (n: string) =>
+    IMAGE_EXTS.includes(n.split(".").pop()?.toLowerCase() || "");
+  const altMetni = (n: string) =>
+    // "03-savasan-iha.jpg" -> "Savasan iha"
+    n
+      .replace(/\.[^.]+$/, "")
+      .replace(/^(\d{4}[-_])?\d*-?/, "")
+      .replace(/[-_]/g, " ")
+      .replace(/^./, (c) => c.toUpperCase()) || "Anatolia Aero Design";
+
+  let girdiler: import("node:fs").Dirent[] = [];
   try {
-    names = readdirSync(dir);
+    girdiler = readdirSync(dir, { withFileTypes: true });
   } catch {
     return [];
   }
-  return names
-    .filter((n) => IMAGE_EXTS.includes(n.split(".").pop()?.toLowerCase() || ""))
-    .sort()
-    .map((n) => ({
-      src: `/images/gallery/${n}`,
-      // "03-savasan-iha.jpg" -> "Savasan iha"
-      alt:
-        n
-          .replace(/\.[^.]+$/, "")
-          .replace(/^\d+-/, "")
-          .replace(/-/g, " ")
-          .replace(/^./, (c) => c.toUpperCase()) || "Anatolia Aero Design",
-    }));
+
+  for (const g of girdiler.sort((a, b) => a.name.localeCompare(b.name))) {
+    if (g.isDirectory() && /^(19|20)\d{2}$/.test(g.name)) {
+      let icerik: string[] = [];
+      try {
+        icerik = readdirSync(path.join(dir, g.name));
+      } catch {
+        continue;
+      }
+      for (const n of icerik.filter(resim).sort()) {
+        out.push({
+          src: `/images/gallery/${g.name}/${encodeURIComponent(n)}`,
+          alt: altMetni(n),
+          year: g.name,
+        });
+      }
+    } else if (g.isFile() && resim(g.name)) {
+      out.push({
+        src: `/images/gallery/${encodeURIComponent(g.name)}`,
+        alt: altMetni(g.name),
+        year: g.name.match(/^((?:19|20)\d{2})[-_]/)?.[1] ?? null,
+      });
+    }
+  }
+  return out;
 }
 
 /** Başarılar bölümü görseli */
