@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/Toast";
 import { Button, Card, Field, Modal } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
+import { YoklamaEksikleri, YoklamaPaneli } from "./YoklamaPaneli";
 
 const IS_DEPTS = [...DEPT_KEYS, "ortak"] as const;
 
@@ -103,9 +104,27 @@ function anahtar(y: number, a: number, g: number) {
 /** "10:00:00" -> "10:00" */
 const saat = (t: string | null) => (t ? t.slice(0, 5) : null);
 
-export function TakvimClient({ canWrite }: { canWrite: boolean }) {
+export function TakvimClient({
+  canWrite,
+  userId,
+  isAdmin,
+  role,
+  myDept,
+}: {
+  canWrite: boolean;
+  userId: string;
+  isAdmin: boolean;
+  role: string;
+  myDept: string;
+}) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
+  /** Yoklama girildikçe "eksik günler" uyarısı tazelensin */
+  const [yoklamaSurum, setYoklamaSurum] = useState(0);
+  /** Başka aydaki bir güne atlanınca o ay yüklenince seçilecek gün */
+  const [bekleyenGun, setBekleyenGun] = useState<string | null>(null);
+  /** Verisi yüklenmiş ay ("2026-9") — bekleyen seçim için */
+  const [yukluAy, setYukluAy] = useState<string | null>(null);
 
   /* Date.now() render sırasında çağrılamadığı için (react-hooks/purity)
      bugün ve açılış ayı effect'te belirleniyor. */
@@ -208,6 +227,7 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
       (u[f.flight_date] ||= []).push(f);
     }
     setUcuslar(u);
+    setYukluAy(`${yil}-${ay}`);
     setLoading(false);
   }, [supabase, yil, ay]);
 
@@ -307,6 +327,31 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
     setBas(saat(elle?.starts_at ?? e?.starts_at ?? null) ?? "");
     setBit(saat(elle?.ends_at ?? e?.ends_at ?? null) ?? "");
   }
+
+  /* Uyarıdaki bir güne tıklanınca: ayı değiştir, veri gelince günü seç */
+  function gunAtla(k: string) {
+    const [y, a] = k.split("-").map(Number);
+    if (y === yil && a - 1 === ay) {
+      sec(k);
+      return;
+    }
+    setBekleyenGun(k);
+    setYil(y);
+    setAy(a - 1);
+    setSecili(null);
+  }
+
+  useEffect(() => {
+    if (!bekleyenGun) return;
+    const [y, a] = bekleyenGun.split("-").map(Number);
+    if (yukluAy !== `${y}-${a - 1}`) return;
+    // Ayın verisi geldi: seçimi şimdi yap ki form doğru günle dolsun
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBekleyenGun(null);
+    sec(bekleyenGun);
+    // sec her render'da yeni; yalnızca veri değişince çalışmalı
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bekleyenGun, yukluAy]);
 
   async function kaydet() {
     if (!secili) return;
@@ -424,6 +469,15 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
           </button>
         </div>
       </PageHeader>
+
+      {role === "captain" && myDept && bugun && (
+        <YoklamaEksikleri
+          bugun={bugun}
+          myDept={myDept}
+          onGunSec={gunAtla}
+          surum={yoklamaSurum}
+        />
+      )}
 
       {kuralTabloYok && (
         <Card className="mb-5 border-warn/30 bg-warn/8 p-4">
@@ -649,6 +703,20 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
                   </ul>
                 )}
               </div>
+
+              {bugun && (
+                <YoklamaPaneli
+                  key={secili}
+                  gun={secili}
+                  bugun={bugun}
+                  calismaGunu={seciliEtkin?.kind === "calisma"}
+                  userId={userId}
+                  isAdmin={isAdmin}
+                  role={role}
+                  myDept={myDept}
+                  onDegisti={() => setYoklamaSurum((s) => s + 1)}
+                />
+              )}
 
               {(ucuslar[secili] || []).length > 0 && (
                 <div className="mt-4 rounded-xl border border-line bg-bg-2 p-3">

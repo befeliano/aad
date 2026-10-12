@@ -12,6 +12,10 @@ export default async function Page() {
   return (
     <TakvimClient
       canWrite={session.isAdmin || session.role === "captain"}
+      userId={session.userId}
+      isAdmin={session.isAdmin}
+      role={session.role}
+      myDept={session.dept}
     />
   );
 }
