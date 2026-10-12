@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, ScrollText, RefreshCw, Download } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDateTime, toCSV, downloadFile } from "@/lib/format";
 import type { AuditEntry } from "@/lib/types";
@@ -39,9 +40,9 @@ export function KayitlarClient() {
 
   const [rows, setRows] = useState<AuditEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [action, setAction] = useState("");
-  const [table, setTable] = useState("");
+  const [q, setQ] = useKaliciFiltre("kayitlar.q", "");
+  const [action, setAction] = useKaliciFiltre("kayitlar.action", "");
+  const [table, setTable] = useKaliciFiltre("kayitlar.table", "");
 
   const load = useCallback(async () => {
     let query = supabase

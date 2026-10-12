@@ -14,6 +14,7 @@ import {
   Search,
   Plus,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate } from "@/lib/format";
 import {
@@ -87,8 +88,8 @@ export function MedyaClient({ userId }: { userId: string }) {
   const [items, setItems] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [previews, setPreviews] = useState<Record<string, string>>({});
-  const [cat, setCat] = useState("");
-  const [q, setQ] = useState("");
+  const [cat, setCat] = useKaliciFiltre("medya.cat", "");
+  const [q, setQ] = useKaliciFiltre("medya.q", "");
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });

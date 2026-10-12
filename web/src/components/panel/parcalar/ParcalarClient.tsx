@@ -16,6 +16,7 @@ import {
   Loader2,
   Eye,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS, FLEET } from "@/lib/constants";
 import { fmtDate } from "@/lib/format";
@@ -64,9 +65,9 @@ export function ParcalarClient({
 
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState("");
-  const [onlyViewable, setOnlyViewable] = useState(false);
+  const [q, setQ] = useKaliciFiltre("parcalar.q", "");
+  const [dept, setDept] = useKaliciFiltre("parcalar.dept", "");
+  const [onlyViewable, setOnlyViewable] = useKaliciFiltre("parcalar.onlyViewable", false);
   /* null = klasör listesi görünümü, "" = Klasörsüz, "DABAN" = o klasör */
   const [openFolder, setOpenFolder] = useState<string | null>(null);
   /* "Klasör oluştur" ile girilen ad — yükleme formuna ön dolgu olarak geçer */

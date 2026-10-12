@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Search, Trash2, NotebookPen, Plane } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtDateTime, fmtTime } from "@/lib/format";
 import { reqText, trimTo, oneOf, LIMITS } from "@/lib/security";
@@ -46,8 +47,8 @@ export function NotlarClient({ userId }: { userId: string }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [type, setType] = useState("");
+  const [q, setQ] = useKaliciFiltre("notlar.q", "");
+  const [type, setType] = useKaliciFiltre("notlar.type", "");
 
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);

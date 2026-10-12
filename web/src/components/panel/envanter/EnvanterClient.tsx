@@ -24,6 +24,7 @@ import {
   CalendarClock,
   BatteryWarning,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { fmtMoney, toCSV, downloadFile, parseCSV } from "@/lib/format";
@@ -53,9 +54,9 @@ export function EnvanterClient({ userId }: { userId: string }) {
 
   const [items, setItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState("");
-  const [onlyLow, setOnlyLow] = useState(false);
+  const [q, setQ] = useKaliciFiltre("envanter.q", "");
+  const [dept, setDept] = useKaliciFiltre("envanter.dept", "");
+  const [onlyLow, setOnlyLow] = useKaliciFiltre("envanter.onlyLow", false);
   /* Departmana göre grupla — filtre zaten vardı ama gruplama, hangi
      birimin neye sahip olduğunu tek bakışta gösteriyor. */
   const [grupla, setGrupla] = useState(true);

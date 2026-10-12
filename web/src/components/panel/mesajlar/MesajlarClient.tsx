@@ -10,6 +10,7 @@ import {
   Trash2,
   TriangleAlert,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDateTime } from "@/lib/format";
 import { logAction } from "@/lib/audit";
@@ -35,8 +36,8 @@ export function MesajlarClient({ isAdmin }: { isAdmin: boolean }) {
   const [mesajlar, setMesajlar] = useState<Mesaj[]>([]);
   const [loading, setLoading] = useState(true);
   const [yok, setYok] = useState(false);
-  const [q, setQ] = useState("");
-  const [sadeceYeni, setSadeceYeni] = useState(true);
+  const [q, setQ] = useKaliciFiltre("mesajlar.q", "");
+  const [sadeceYeni, setSadeceYeni] = useKaliciFiltre("mesajlar.sadeceYeni", true);
   const [delTarget, setDelTarget] = useState<Mesaj | null>(null);
 
   const load = useCallback(async () => {

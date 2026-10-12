@@ -10,6 +10,7 @@ import {
   CircleCheck,
   History,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { fmtDateTime } from "@/lib/format";
@@ -78,9 +79,9 @@ export function ArizalarClient({
   const [kayitlar, setKayitlar] = useState<Ariza[]>([]);
   const [loading, setLoading] = useState(true);
   const [yok, setYok] = useState(false);
-  const [q, setQ] = useState("");
-  const [durumFiltre, setDurumFiltre] = useState<string>("acik");
-  const [deptFiltre, setDeptFiltre] = useState("");
+  const [q, setQ] = useKaliciFiltre("arizalar.q", "");
+  const [durumFiltre, setDurumFiltre] = useKaliciFiltre<string>("arizalar.durumFiltre", "acik");
+  const [deptFiltre, setDeptFiltre] = useKaliciFiltre("arizalar.deptFiltre", "");
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Ariza | null>(null);

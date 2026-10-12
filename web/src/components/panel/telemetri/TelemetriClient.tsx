@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Search, Trash2, Radio, Copy, Check } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { fmtDate, fmtDateTime, fmtTime } from "@/lib/format";
 import { reqText, trimTo, oneOf, LIMITS } from "@/lib/security";
@@ -37,8 +38,8 @@ export function TelemetriClient({ userId }: { userId: string }) {
   const [items, setItems] = useState<Telemetry[]>([]);
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("");
+  const [q, setQ] = useKaliciFiltre("telemetri.q", "");
+  const [cat, setCat] = useKaliciFiltre("telemetri.cat", "");
   const [copied, setCopied] = useState<string | null>(null);
 
   const [formOpen, setFormOpen] = useState(false);

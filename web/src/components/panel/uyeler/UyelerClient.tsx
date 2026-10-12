@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Trash2, Users, ShieldCheck, UserCog } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { fmtDateTime } from "@/lib/format";
@@ -25,7 +26,7 @@ export function UyelerClient({ myId }: { myId: string }) {
 
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useKaliciFiltre("uyeler.q", "");
   const [delTarget, setDelTarget] = useState<Profile | null>(null);
 
   const load = useCallback(async () => {

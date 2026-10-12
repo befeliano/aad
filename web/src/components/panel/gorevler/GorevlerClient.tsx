@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Search, Trash2, Pencil, GripVertical, UserCheck } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { reqText, trimTo, oneOf, LIMITS } from "@/lib/security";
@@ -68,13 +69,15 @@ export function GorevlerClient({
   const [tasks, setTasks] = useState<Task[]>([]);
   const [members, setMembers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState("");
-  const [onlyMine, setOnlyMine] = useState(false);
-  const [assigneeFilter, setAssigneeFilter] = useState("");
+  const [q, setQ] = useKaliciFiltre("gorevler.q", "");
+  const [dept, setDept] = useKaliciFiltre("gorevler.dept", "");
+  const [onlyMine, setOnlyMine] = useKaliciFiltre("gorevler.onlyMine", false);
+  const [assigneeFilter, setAssigneeFilter] = useKaliciFiltre("gorevler.assigneeFilter", "");
 
   const [editing, setEditing] = useState<Task | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  /** Sütundaki + ile açılınca formun "Durum"u o sütun olarak gelir */
+  const [yeniDurum, setYeniDurum] = useState<TaskStatus>("todo");
   const [saving, setSaving] = useState(false);
   const [delTarget, setDelTarget] = useState<Task | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -306,7 +309,7 @@ export function GorevlerClient({
         desc="Departman görev panosu. Kartları sürükleyerek durum değiştirin."
       >
         {gorevAcabilir && (
-        <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+        <Button onClick={() => { setEditing(null); setYeniDurum("todo"); setFormOpen(true); }}>
           <Plus size={16} />
           Görev Oluştur
         </Button>
@@ -403,8 +406,25 @@ export function GorevlerClient({
                   <h2 className="text-[13.5px] font-bold text-ink">
                     {STATUS_LABEL[s]}
                   </h2>
-                  <span className="tabular rounded-full bg-bg-3 px-2 py-0.5 text-[11.5px] font-semibold text-ink-2">
-                    {items.length}
+                  <span className="flex items-center gap-1.5">
+                    <span className="tabular rounded-full bg-bg-3 px-2 py-0.5 text-[11.5px] font-semibold text-ink-2">
+                      {items.length}
+                    </span>
+                    {gorevAcabilir && (s === "todo" || s === "doing") && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditing(null);
+                          setYeniDurum(s);
+                          setFormOpen(true);
+                        }}
+                        aria-label={`${STATUS_LABEL[s]} sütununa görev ekle`}
+                        title={`${STATUS_LABEL[s]} olarak görev ekle`}
+                        className="flex size-6 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-accent hover:text-white"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    )}
                   </span>
                 </header>
 
@@ -600,7 +620,7 @@ export function GorevlerClient({
               </select>
             </Field>
             <Field label="Durum">
-              <select name="status" defaultValue={editing?.status || "todo"} className="field">
+              <select name="status" defaultValue={editing?.status || yeniDurum} className="field">
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>{STATUS_LABEL[s]}</option>
                 ))}

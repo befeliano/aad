@@ -14,6 +14,7 @@ import {
   Wallet,
   CircleCheck,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { fmtMoney, fmtDate, toCSV, downloadFile } from "@/lib/format";
@@ -50,9 +51,9 @@ export function IhtiyaclarClient({ userId }: { userId: string }) {
 
   const [items, setItems] = useState<Need[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState("");
-  const [showDone, setShowDone] = useState(false);
+  const [q, setQ] = useKaliciFiltre("ihtiyaclar.q", "");
+  const [dept, setDept] = useKaliciFiltre("ihtiyaclar.dept", "");
+  const [showDone, setShowDone] = useKaliciFiltre("ihtiyaclar.showDone", false);
 
   const [editing, setEditing] = useState<Need | null>(null);
   const [formOpen, setFormOpen] = useState(false);

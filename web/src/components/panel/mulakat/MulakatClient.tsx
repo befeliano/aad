@@ -13,6 +13,7 @@ import {
   TriangleAlert,
   UserPlus,
 } from "lucide-react";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
 import { DURUMLAR, DURUM_META, type Mulakat } from "@/lib/interview";
@@ -62,9 +63,9 @@ export function MulakatClient({ userId }: { userId: string }) {
   const [kayitlar, setKayitlar] = useState<Satir[]>([]);
   const [loading, setLoading] = useState(true);
   const [hata, setHata] = useState<string | null>(null);
-  const [q, setQ] = useState("");
-  const [durumFiltre, setDurumFiltre] = useState("");
-  const [birimFiltre, setBirimFiltre] = useState("");
+  const [q, setQ] = useKaliciFiltre("mulakat.q", "");
+  const [durumFiltre, setDurumFiltre] = useKaliciFiltre("mulakat.durumFiltre", "");
+  const [birimFiltre, setBirimFiltre] = useKaliciFiltre("mulakat.birimFiltre", "");
 
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
