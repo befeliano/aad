@@ -302,7 +302,7 @@ export const DEPARTMENTS: Department[] = [
     num: "01",
     name: "Yazılım",
     short: "Software",
-    desc: "Otonom görevler, görüntü işleme algoritmaları ve yer istasyonu arayüzü geliştirilir.",
+    desc: "Otonom görev yazılımını, görüntü işleme algoritmalarını ve yer istasyonu arayüzünü yazar.",
     detail:
       "Hava aracının hedef takip, kilitlenme ve kamikaze gibi otonom görevlerinin icra edilmesinden; görüntü işleme algoritmaları ile yer istasyonu arayüzünün geliştirilmesinden sorumludur.",
   },
@@ -311,7 +311,7 @@ export const DEPARTMENTS: Department[] = [
     num: "02",
     name: "Tasarım",
     short: "Design",
-    desc: "Aerodinamik tasarım, 3B modelleme ve performans analizleri yürütülür.",
+    desc: "Uçağın aerodinamik tasarımını, 3B modelini ve performans analizlerini yapar.",
     detail:
       "Hava aracının aerodinamik tasarımını, 3B modellemesini ve performans analizlerini yürütür. İmalat ve montaj fazları için gerekli teknik resimleri, üretim şablonlarını ve yardımcı aparatları tasarlayarak ilgili teknik kılavuzları hazırlar.",
   },
@@ -320,7 +320,7 @@ export const DEPARTMENTS: Department[] = [
     num: "03",
     name: "Kompozit",
     short: "Composites",
-    desc: "Kritik yapısal parçalar kompozit malzemelerle üretilir ve bu alanda Ar-Ge çalışmaları yürütülür.",
+    desc: "Kritik yapısal parçaları kompozitten üretir, malzeme üzerine Ar-Ge yapar.",
     detail:
       "Tasarlanan hava aracının gövde, kanat ve iniş takımı gibi bazı kritik yapısal parçalarının karbon fiber, cam elyaf ve epoksi gibi malzemeler kullanılarak üretilmesinden ve bu kapsamda Ar-Ge çalışmaları ile hava aracına hafiflik ve dayanım kazandırılmasından sorumludur.",
   },
@@ -329,16 +329,16 @@ export const DEPARTMENTS: Department[] = [
     num: "04",
     name: "Aviyonik",
     short: "Avionics",
-    desc: "Elektronik, haberleşme ve otonom kontrol sistemleri uçtan uca yönetilir.",
+    desc: "Uçağın elektroniğini, haberleşmesini ve otonom kontrol sistemlerini kurar.",
     detail:
-      "Hava aracının elektronik, haberleşme ve otonom kontrol sistemlerinin uçtan uca yönetiminden sorumludur. Bu sorumluluklar kapsamında otonom uçuş ve görev mekanizmaları için gerekli donanımların entegrasyonu, enerji ve güç dağıtım sistemlerinin yapılandırılması, uçuş kontrol parametrelerinin optimizasyonu, hava aracı ile yer istasyonu arasındaki veri bağının (telemetri) sağlanması ve sistemler arası tüm kablaj altyapısının havacılık standartlarına uygun olarak tesis edilmesi yer alır.",
+      "Hava aracının elektronik, haberleşme ve otonom kontrol sistemlerinden sorumludur. Bu sorumluluklar kapsamında otonom uçuş ve görev mekanizmaları için gerekli donanımların entegrasyonu, enerji ve güç dağıtım sistemlerinin yapılandırılması, uçuş kontrol parametrelerinin optimizasyonu, hava aracı ile yer istasyonu arasındaki veri bağının (telemetri) sağlanması ve sistemler arası tüm kablaj altyapısının havacılık standartlarına uygun olarak tesis edilmesi yer alır.",
   },
   {
     key: "yapisal",
     num: "05",
     name: "Yapısal",
     short: "Structures",
-    desc: "Hava araçlarının fiziksel üretim, montaj ve mekanik entegrasyon süreçleri yürütülür.",
+    desc: "Uçağın üretimini, montajını ve mekanik entegrasyonunu yapar.",
     detail:
       "Tasarlanan insansız hava araçlarının fiziksel üretim, montaj ve mekanik entegrasyon süreçlerinden sorumludur. Kanat, gövde ve kuyruk gibi ana yapıların üretimi ve montajı ile gerekli mekanik sistemlerin entegrasyonu gerçekleştirilir. Ayrıca uçuş öncesi yapısal kontroller ve dayanıklılık testleri yapılarak hava aracının güvenli ve uçuşa hazır olması sağlanır.",
   },
@@ -347,7 +347,7 @@ export const DEPARTMENTS: Department[] = [
     num: "06",
     name: "Sosyal Medya ve Sponsorluk",
     short: "Social Media & Sponsorship",
-    desc: "Dijital görünürlük, kurumsal kimlik ve sponsorluk süreçleri yönetilir.",
+    desc: "Sosyal medyayı, takımın kurumsal kimliğini ve sponsor ilişkilerini yürütür.",
     detail:
       "Takımın dijital platformlardaki görünürlüğünü artırmak, kurumsal kimliğini güçlendirmek ve sponsorluk süreçlerini yürütmekten sorumludur. Sosyal medya içeriklerinin hazırlanması, tanıtım ve iletişim stratejilerinin geliştirilmesi, potansiyel sponsorlarla iletişime geçilmesi, sponsorluk anlaşmalarının yürütülmesi ve mevcut iş birliklerinin sürdürülebilirliğinin sağlanmasını kapsar.",
   },
@@ -414,7 +414,7 @@ export const FLEET: Aircraft[] = [
     slug: "daban",
     codename: "Geliştirme",
     role: "Planlanan Hava Aracı",
-    desc: "DABAN, üretilmesi planlanan tam kompozit hava aracımızdır. Tasarım çalışmaları sürmektedir.",
+    desc: "Tamamen kompozitten üreteceğimiz yeni uçağımız. Şu an tasarım aşamasında.",
     year: "Geliştirme",
     specs: aircraftSpecs({
       year: "Geliştirme",
@@ -432,7 +432,7 @@ export const FLEET: Aircraft[] = [
     sprite: { top: 264, left: 100, width: 403, height: 219 },
     codename: "2026",
     role: "Savaşan İHA",
-    desc: "GÖLGE platformunun geliştirme çalışmaları devam etmektedir. Ters V-kuyruk mimarisiyle hava-hava ve hava-kara görevleri için geliştirilmektedir.",
+    desc: "Savaşan İHA yarışması için geliştirdiğimiz ters V kuyruklu uçak. Hem hava-hava hem hava-kara görevlerinde uçacak; çalışmalar sürüyor.",
     year: "2026",
     specs: aircraftSpecs({
       year: "2026",
@@ -452,11 +452,11 @@ export const FLEET: Aircraft[] = [
       },
       {
         t: "Görev Profilleri",
-        d: "Hava-hava ve hava-kara görevleri için geliştirilmektedir.",
+        d: "Hava-hava ve hava-kara görevleri",
       },
       {
         t: "Otonomi",
-        d: "Tam otonom görev icrası hedeflenmektedir.",
+        d: "Görevin tamamını otonom uçması hedefleniyor.",
       },
     ],
   },
@@ -465,7 +465,7 @@ export const FLEET: Aircraft[] = [
     slug: "merlin",
     codename: "2025",
     role: "TÜBİTAK Uluslararası İHA Yarışması",
-    desc: "TÜBİTAK Uluslararası İHA Yarışması kriterlerine göre tasarlanan Merlin, yüksek yük kapasitesini modüler mimariyle birleştirir. Kompakt taşıma kutusuna sığar ve 1 dakika 46 saniyede uçuşa hazır hale gelir.",
+    desc: "TÜBİTAK Uluslararası İHA Yarışması için yaptığımız, kendi ağırlığının 2,5 katı yük taşıyabilen uçak. Parçalarına ayrılıp küçük bir kutuya sığıyor; kutudan çıkarıp uçuşa hazırlamak 1 dakika 46 saniye sürüyor.",
     year: "2025",
     specs: aircraftSpecs({
       year: "2025",
@@ -476,7 +476,7 @@ export const FLEET: Aircraft[] = [
     features: [
       {
         t: "Modüler Tasarım",
-        d: "Kompakt taşıma kutusuna sığacak şekilde tasarlanmıştır.",
+        d: "Parçalarına ayrılıp küçük bir taşıma kutusuna sığıyor.",
       },
       {
         t: "Kurulum Süresi",
@@ -497,7 +497,7 @@ export const FLEET: Aircraft[] = [
     slug: "jaeger",
     codename: "",
     role: "SAE Aero Design",
-    desc: "2017 SAE Aero Design East yarışmasında kullanılan modüler hava aracı.",
+    desc: "2017 SAE Aero Design East'te uçurduğumuz, parçalarına ayrılabilen yük uçağı.",
     year: "",
     specs: aircraftSpecs({
       tailConfiguration: "Standart",
@@ -515,7 +515,7 @@ export const FLEET: Aircraft[] = [
       },
       {
         t: "Biyomimetik Tasarım",
-        d: "Doğadaki yapılardan ve hareket biçimlerinden esinlenilmiştir.",
+        d: "Tasarımında doğadaki yapılardan ve canlıların hareketinden ilham aldık.",
       },
       {
         t: "Gövde Ağırlığı",
@@ -536,7 +536,7 @@ export const FLEET: Aircraft[] = [
     slug: "dorje",
     codename: "2025",
     role: "TÜBİTAK Uluslararası İHA Yarışması",
-    desc: "DORJE, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirildi.",
+    desc: "TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisinde yarışan uçağımız.",
     year: "2025",
     specs: aircraftSpecs({
       year: "2025",
@@ -547,7 +547,7 @@ export const FLEET: Aircraft[] = [
     features: [
       {
         t: "Sabit Kanat Kategorisi",
-        d: "TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirilmiştir.",
+        d: "TÜBİTAK Uluslararası İHA Yarışması için tasarlandı.",
       },
     ],
   },
@@ -557,7 +557,7 @@ export const FLEET: Aircraft[] = [
     sprite: { top: 561, left: 135, width: 403, height: 218 },
     codename: "2020",
     role: "Ar-Ge · Hidrojen İtki",
-    desc: "Hidrojen yakıt hücresiyle çalışan ve sıfır emisyonlu uzun menzilli uçuş hedefiyle geliştirilen hava aracı.",
+    desc: "Hidrojen yakıt hücresiyle uçan Ar-Ge uçağımız. Amacı, hiç emisyon üretmeden uzun mesafe uçmak.",
     year: "2020",
     specs: aircraftSpecs({
       year: "2020",
@@ -572,7 +572,7 @@ export const FLEET: Aircraft[] = [
     features: [
       {
         t: "Hidrojen Yakıt Sistemi",
-        d: "Hidrojen yakıt hücresiyle çalışan hava aracı, sıfır emisyonlu uçuş ve uzun menzil hedefiyle geliştirilmektedir.",
+        d: "Enerjisini hidrojen yakıt hücresinden alıyor; hedef sıfır emisyonla uzun menzil.",
       },
     ],
   },
@@ -693,22 +693,22 @@ export const PROCESS_STEPS = [
   {
     n: "01",
     t: "Tasarım",
-    d: "Aerodinamik ve yapısal tasarım, görev gereksinimlerinden hareketle CAD ortamında oluşturulur. Her parça uçuş öncesinde simüle edilir.",
+    d: "Görevin gereksinimlerinden yola çıkıp aerodinamik ve yapısal tasarımı CAD'de yapıyoruz. Parçaları uçmadan önce simülasyonda deniyoruz.",
   },
   {
     n: "02",
     t: "Üretim",
-    d: "Parçalar kompozit kalıplama, CNC ve 3D baskı yöntemleriyle üretilir. Karbon fiber gövde hafif ve dayanıklıdır.",
+    d: "Parçaları kompozit kalıplama, CNC ve 3D baskıyla üretiyoruz. Gövdede hafif ve sağlam olduğu için karbon fiber kullanıyoruz.",
   },
   {
     n: "03",
     t: "Entegrasyon",
-    d: "Aviyonik, güç sistemleri ve otonom yazılım gövdeye entegre edilir. Yer testleri ve simülasyon doğrulaması gerçekleştirilir.",
+    d: "Aviyoniği, güç sistemini ve otonom yazılımı gövdeye yerleştiriyoruz. Uçmadan önce yer testleri ve simülasyonla kontrol ediyoruz.",
   },
   {
     n: "04",
     t: "Uçuş & Analiz",
-    d: "Sahada test uçuşları gerçekleştirilir; telemetri kaydı alınır ve analiz edilir. Uçuş verileri sonraki tasarım çalışmalarında kullanılır.",
+    d: "Sahada test uçuşu yapıp telemetri kayıtlarını inceliyoruz. Çıkan sonuçlar bir sonraki tasarıma yön veriyor.",
   },
 ];
 
@@ -728,7 +728,7 @@ export const SPONSOR_REASONS = [
   },
   {
     t: "Kurumsal Sosyal Sorumluluk",
-    d: "Sağlanan destek, genç mühendislerin kariyer gelişimine katkı sağlar ve sürdürülebilir bir eğitim ekosistemini destekler.",
+    d: "Desteğiniz, öğrencilerin okulda göremeyecekleri uygulamalı mühendislik deneyimini kazanmasına doğrudan katkı sağlar.",
   },
   {
     t: "Özel Sponsorluk Portfolyosu",

@@ -55,7 +55,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   daban: {
     codename: "In Development",
     role: "Planned Aircraft",
-    desc: "DABAN is our planned full-composite aircraft. Design work is ongoing.",
+    desc: "Our next aircraft, to be built entirely from composites. It is currently in the design stage.",
     specs: aircraftSpecs({
       year: "In development",
       fuselage: "Composite",
@@ -70,7 +70,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   golge: {
     codename: "2026",
     role: "Combat UAV",
-    desc: "Development of the GÖLGE platform is ongoing. Its inverted V-tail is designed for both air-to-air and air-to-ground missions.",
+    desc: "Our inverted V-tail aircraft for the Combat UAV competition. It will fly both air-to-air and air-to-ground missions; work is ongoing.",
     specs: aircraftSpecs({
       year: "2026",
       fuselage: "Composite",
@@ -89,18 +89,18 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       },
       {
         t: "Mission Profiles",
-        d: "Developed for air-to-air and air-to-ground missions.",
+        d: "Air-to-air and air-to-ground missions",
       },
       {
         t: "Autonomy",
-        d: "Fully autonomous mission execution is planned.",
+        d: "The goal is to fly the whole mission autonomously.",
       },
     ],
   },
 
   merlin: {
     role: "TÜBİTAK International UAV Competition",
-    desc: "Designed to the criteria of the TÜBİTAK International UAV Competition, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
+    desc: "Built for the TÜBİTAK International UAV Competition, Merlin can carry 2.5 times its own weight. It breaks down to fit a small case, and going from case to flight-ready takes 1 minute 46 seconds.",
     specs: aircraftSpecs({
       year: "2025",
       tailConfiguration: "Standard",
@@ -110,7 +110,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     features: [
       {
         t: "Modular Design",
-        d: "Designed to fit in a compact transport case.",
+        d: "Breaks down to fit a small carry case.",
       },
       {
         t: "Setup Time",
@@ -129,7 +129,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
 
   jaeger: {
     role: "SAE Aero Design",
-    desc: "A modular aircraft used in the 2017 SAE Aero Design East competition.",
+    desc: "The cargo aircraft we flew at SAE Aero Design East 2017; it comes apart into modules.",
     specs: [
       { label: "Fuselage", value: "" },
       { label: "Wing", value: "" },
@@ -150,7 +150,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       },
       {
         t: "Biomimetic Design",
-        d: "Inspired by structures and forms of movement found in nature.",
+        d: "We took inspiration from structures in nature and the way animals move.",
       },
       {
         t: "Airframe Weight",
@@ -170,7 +170,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   dorje: {
     codename: "2025",
     role: "TÜBİTAK International UAV Competition",
-    desc: "DORJE was developed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
+    desc: "Our entry in the fixed-wing category of the TÜBİTAK International UAV Competition.",
     specs: aircraftSpecs({
       year: "2025",
       tailConfiguration: "Standard",
@@ -180,7 +180,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     features: [
       {
         t: "Fixed-Wing Category",
-        d: "The aircraft was designed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
+        d: "Designed for the TÜBİTAK International UAV Competition.",
       },
     ],
   },
@@ -188,7 +188,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   hydra: {
     role: "R&D · Hydrogen Propulsion",
     codename: "2020",
-    desc: "An aircraft developed for zero-emission flight and long range, powered by a hydrogen fuel cell.",
+    desc: "Our research aircraft that flies on a hydrogen fuel cell. The aim: long-range flight with zero emissions.",
     specs: aircraftSpecs({
       year: "2020",
       fuselage: "Composite",
@@ -202,7 +202,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     features: [
       {
         t: "Hydrogen Fuel System",
-        d: "The aircraft runs on a hydrogen fuel cell and is being developed for zero-emission, long-range flight.",
+        d: "Powered by a hydrogen fuel cell; the target is long range with zero emissions.",
       },
     ],
   },
@@ -339,42 +339,42 @@ export const DEPARTMENTS_EN: Record<
   yazilim: {
     name: "Software",
     short: "",
-    desc: "Autonomous missions, image-processing algorithms and ground-station interfaces are developed.",
+    desc: "Writes the autonomous mission software, image-processing algorithms and the ground-station interface.",
     detail:
       "Responsible for carrying out the aircraft's autonomous missions, including target tracking, locking and kamikaze missions, and for developing image-processing algorithms and the ground-station interface.",
   },
   tasarim: {
     name: "Design",
     short: "",
-    desc: "Aerodynamic design, 3D modelling and performance analysis are carried out.",
+    desc: "Does the aircraft's aerodynamic design, 3D model and performance analysis.",
     detail:
       "Responsible for the aircraft's aerodynamic design, 3D modelling and performance analysis. It designs the technical drawings, manufacturing templates and auxiliary fixtures required for manufacturing and assembly, and prepares the relevant technical guides.",
   },
   kompozit: {
     name: "Composites",
     short: "",
-    desc: "Critical structural components are produced from composite materials, alongside related R&D.",
+    desc: "Builds critical structural parts from composites and does materials R&D.",
     detail:
       "Responsible for manufacturing critical structural components of the designed aircraft, including parts of the fuselage, wing and landing gear, using materials such as carbon fibre, glass fibre and epoxy. Related R&D work helps reduce aircraft weight and improve strength.",
   },
   aviyonik: {
     name: "Avionics",
     short: "",
-    desc: "Aircraft electronics, communications and autonomous control systems are managed end to end.",
+    desc: "Builds the aircraft's electronics, communications and autonomous control systems.",
     detail:
       "Responsible for end-to-end management of the aircraft's electronic, communication and autonomous control systems. This includes integrating hardware for autonomous flight and mission mechanisms, configuring energy and power distribution systems, optimizing flight-control parameters, establishing the telemetry link between the aircraft and ground station, and installing inter-system wiring in accordance with aviation standards.",
   },
   yapisal: {
     name: "Structures",
     short: "",
-    desc: "Physical aircraft production, assembly and mechanical integration are carried out.",
+    desc: "Handles the aircraft's production, assembly and mechanical integration.",
     detail:
       "Responsible for the physical production, assembly and mechanical integration of designed unmanned aircraft. This includes manufacturing and assembling primary structures such as wings, fuselage and tail, and integrating the required mechanical systems. Pre-flight structural inspections and durability tests are also carried out to ensure the aircraft is safe and ready to fly.",
   },
   medya: {
     name: "Social Media & Sponsorship",
     short: "",
-    desc: "Digital visibility, corporate identity and sponsorship processes are managed.",
+    desc: "Runs social media, the team's visual identity and sponsor relations.",
     detail:
       "Responsible for increasing the team's visibility on digital platforms, strengthening its corporate identity and managing sponsorship processes. This includes preparing social media content, developing promotion and communication strategies, contacting potential sponsors, managing sponsorship agreements and supporting the sustainability of existing partnerships.",
   },
@@ -390,15 +390,15 @@ export const PROCESS_EN: Record<string, { t: string; d: string }> = {
   },
   "02": {
     t: "Manufacturing",
-    d: "We produce parts with composite moulding, CNC and 3D printing. A carbon-fibre airframe: light and strong.",
+    d: "We make parts with composite moulding, CNC and 3D printing, and use carbon fibre for the airframe because it is light and strong.",
   },
   "03": {
     t: "Integration",
-    d: "We integrate avionics, power systems and autonomous software into the airframe. Ground tests and simulation validation happen at this stage.",
+    d: "We fit the avionics, power system and autonomous software into the airframe, then check everything with ground tests and simulation before flying.",
   },
   "04": {
     t: "Flight & Analysis",
-    d: "Field test flights, telemetry logging and analysis. Every flight produces the data that feeds the next design.",
+    d: "We fly test flights in the field and go through the telemetry logs. What we learn shapes the next design.",
   },
 };
 
@@ -420,7 +420,7 @@ export const SPONSOR_REASONS_EN: { t: string; d: string }[] = [
   },
   {
     t: "Corporate Social Responsibility",
-    d: "This support contributes to the career development of young engineers and supports a sustainable education ecosystem.",
+    d: "Your support directly helps students gain hands-on engineering experience they would not get in class.",
   },
   {
     t: "A Dedicated Sponsorship Portfolio",

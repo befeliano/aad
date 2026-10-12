@@ -135,12 +135,12 @@ export const S = {
       "Platforms developed since 2011",
     ] as M,
     tanim1: [
-      "Filo, sabit kanatlı savaşan İHA'lardan hidrojen yakıt hücreli Ar-Ge hava aracına kadar farklı platformlardan oluşur. Aerodinamik tasarım, kompozit gövde, aviyonik entegrasyonu ve otonom uçuş yazılımı ekip bünyesinde geliştirilir.",
-      "The fleet includes a range of platforms, from fixed-wing combat UAVs to a hydrogen fuel-cell R&D aircraft. Aerodynamic design, composite airframes, avionics integration and autonomous flight software are developed by the team.",
+      "Filomuzda sabit kanatlı savaşan İHA'lardan hidrojen yakıt hücresiyle uçan Ar-Ge uçağına kadar farklı platformlar var. Aerodinamik tasarımı, kompozit gövdeyi, aviyoniği ve otonom uçuş yazılımını kendimiz geliştiriyoruz.",
+      "Our fleet ranges from fixed-wing combat UAVs to a research aircraft that flies on a hydrogen fuel cell. We develop the aerodynamics, composite airframes, avionics and autonomous flight software ourselves.",
     ] as M,
     tanim2: [
-      "Aşağıda platformların kısa künyeleri yer alır. Teknik değerler, görev profilleri ve arşivdeki hava araçları için filo sayfasını inceleyebilirsiniz.",
-      "Brief profiles of the platforms are listed below. Visit the fleet page for technical specifications, mission profiles and archived aircraft.",
+      "Aşağıda her uçağın kısa künyesi var. Teknik değerler, görev profilleri ve arşivdeki uçaklar filo sayfasında.",
+      "Below is a short profile of each aircraft. Technical specs, mission profiles and our archived aircraft are on the fleet page.",
     ] as M,
     tumFilo: ["Tüm filo", "Full fleet"] as M,
     ihaAlt: ["insansız hava aracı", "unmanned aerial vehicle"] as M,
@@ -149,8 +149,8 @@ export const S = {
     sayfaBaslik1: ["2011'den bugüne", "Everything we have built"] as M,
     sayfaBaslik2: ["geliştirilen platformlar", "since 2011"] as M,
     sayfaLead: [
-      "Her platform önceki çalışmaların mühendislik birikimi üzerine kurulur. Sabit kanatlı hava araçlarından hidrojen yakıt hücresi Ar-Ge'sine kadar tasarım, üretim ve uçuş testleri ekip bünyesinde gerçekleştirilir.",
-      "Each platform builds on the engineering work that came before it. From fixed-wing aircraft to hydrogen fuel-cell research, design, manufacturing and flight testing are carried out by the team.",
+      "Her yeni uçak, bir öncekinden öğrendiklerimizle başlıyor. Sabit kanatlı yarışma uçaklarından hidrojenle uçan Ar-Ge uçağına kadar hepsini kendimiz tasarlıyor, üretiyor ve uçuruyoruz.",
+      "Every new aircraft starts from what we learned on the last one. From fixed-wing competition aircraft to our hydrogen-powered research plane, we design, build and fly all of them ourselves.",
     ] as M,
   },
 
@@ -168,7 +168,7 @@ export const S = {
 
   ekip: {
     baslik: ["Ekip", "Team"] as M,
-    kicker: ["Altı alt ekip, tek hava aracı", "Six sub-teams, one aircraft"] as M,
+    kicker: ["Altı birimde çalışıyoruz", "We work in six units"] as M,
     aktifUye: ["Aktif Üye", "Active Members"] as M,
     brans: ["Disiplin Sayısı", "Discipline Count"] as M,
     mezun: ["Mezun Sayısı", "Alumni"] as M,
@@ -193,18 +193,18 @@ export const S = {
 
   serit: {
     kicker: ["Filomuz havada", "Our fleet in the air"] as M,
-    baslik1: ["Gökyüzü", "The sky is"] as M,
-    baslik2: ["bizim alanımız", "our domain"] as M,
+    baslik1: ["Atölyeden", "From the workshop"] as M,
+    baslik2: ["gökyüzüne", "to the sky"] as M,
     metin: [
-      "2011'den bu yana geliştirilen her platform, sonraki tasarım çalışmalarına mühendislik temeli oluşturdu. Sayfayı kaydırdıkça filodaki hava araçlarını görebilirsiniz.",
-      "Each platform developed since 2011 has informed the engineering of those that followed. Scroll down to explore the aircraft in our fleet.",
+      "2011'den bu yana yaptığımız her uçak, bir sonrakinin temelini attı. Aşağı kaydırdıkça filomuzu görebilirsiniz.",
+      "Every aircraft we have built since 2011 laid the groundwork for the next one. Scroll down to see our fleet.",
     ] as M,
   },
 
   cta: {
-    kicker: ["Birlikte daha yükseğe", "Higher, together"] as M,
-    baslik1: ["Markanızı gökyüzüne", "Let's take your brand"] as M,
-    baslik2: ["taşınsın", "to the sky"] as M,
+    kicker: ["Sponsorluk", "Sponsorship"] as M,
+    baslik1: ["Markanız", "Put your brand"] as M,
+    baslik2: ["uçağımızda uçsun", "on our aircraft"] as M,
     metin: [
       "Sponsorluk ve iş birliği konularını görüşmek için bizimle iletişime geçebilirsiniz.",
       "Please contact us to discuss sponsorship and collaboration.",
@@ -233,8 +233,8 @@ export const S = {
     eyebrow: ["Galeri", "Gallery"] as M,
     baslik: ["Sahadan kareler", "Frames from the field"] as M,
     lead: [
-      "Test uçuşları, atölye çalışmaları ve yarışma anları. Takımın hikâyesi burada.",
-      "Test flights, workshop sessions and competition moments. The team's story lives here.",
+      "Test uçuşlarından, atölyeden ve yarışmalardan fotoğraflar.",
+      "Photos from test flights, the workshop and competitions.",
     ] as M,
     bosBaslik: ["Galeri yakında dolacak", "The gallery is filling up soon"] as M,
     bosMetin: [
@@ -339,8 +339,8 @@ export const S = {
       "Where Does Your Logo Appear?",
     ] as M,
     gorunurlukKicker: [
-      "Destek karşılığında somut olarak ne aldığınız",
-      "What you concretely receive in return",
+      "Logonuzun yer aldığı yerler",
+      "Where your logo goes",
     ] as M,
     gorunurluk1t: ["Uçak gövdesinde", "On the airframe"] as M,
     gorunurluk1d: [
@@ -354,8 +354,8 @@ export const S = {
     ] as M,
     gorunurluk3t: ["Sosyal medyada", "On social media"] as M,
     gorunurluk3d: [
-      "Uçuş testleri, üretim aşamaları ve yarışma paylaşımlarında etiketlenir; sezon boyunca düzenli görünürlük sağlanır.",
-      "You are tagged across flight tests, build updates and competition posts, giving steady visibility through the season.",
+      "Uçuş testi, üretim ve yarışma paylaşımlarımızda sizi etiketliyoruz; sezon boyunca düzenli olarak görünürsünüz.",
+      "We tag you in our flight test, build and competition posts, so you stay visible all season.",
     ] as M,
     gorunurluk4t: ["Tanıtım ve raporlarda", "In decks and reports"] as M,
     gorunurluk4d: [
@@ -363,12 +363,12 @@ export const S = {
       "Your support is acknowledged in team information packs, technical reports, event stands and university events.",
     ] as M,
     basariSerit: [
-      "Desteğiniz sonuç üreten bir takıma gidiyor",
-      "Your support goes to a team that delivers results",
+      "Bugüne kadarki birinciliklerimiz",
+      "Our first-place finishes so far",
     ] as M,
 
     destekciBaslik: ["Destekçilerimiz", "Our Supporters"] as M,
-    destekciKicker: ["Bize güvenen markalar", "The brands that back us"] as M,
+    destekciKicker: ["Bu sezon bize destek olan firmalar", "The companies supporting us this season"] as M,
 
     kapanisBaslik: [
       "Bir görüşmeyle başlayalım.",
