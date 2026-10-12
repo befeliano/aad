@@ -18,15 +18,37 @@ type FleetOverlay = Partial<
   Pick<Aircraft, "role" | "desc" | "codename" | "specs" | "features">
 >;
 
-const EMPTY_AIRCRAFT_SPECS: NonNullable<Aircraft["specs"]> = [
-  { label: "Fuselage", value: "" },
-  { label: "Wing", value: "" },
-  { label: "Tail", value: "" },
-  { label: "Wing Position", value: "" },
-  { label: "Tail Configuration", value: "" },
-  { label: "Landing Gear", value: "" },
-  { label: "Motor Position", value: "" },
+type AircraftSpecKey =
+  | "year"
+  | "fuselage"
+  | "wing"
+  | "tail"
+  | "wingPosition"
+  | "tailConfiguration"
+  | "landingGear"
+  | "motorPosition"
+  | "takeoffWeight";
+
+const AIRCRAFT_SPEC_FIELDS: { key: AircraftSpecKey; label: string }[] = [
+  { key: "year", label: "Year" },
+  { key: "fuselage", label: "Fuselage" },
+  { key: "wing", label: "Wing" },
+  { key: "tail", label: "Tail" },
+  { key: "wingPosition", label: "Wing Position" },
+  { key: "tailConfiguration", label: "Tail Configuration" },
+  { key: "landingGear", label: "Landing Gear" },
+  { key: "motorPosition", label: "Motor Position" },
+  { key: "takeoffWeight", label: "Take-off Weight" },
 ];
+
+function aircraftSpecs(
+  values: Partial<Record<AircraftSpecKey, string>> = {}
+): NonNullable<Aircraft["specs"]> {
+  return AIRCRAFT_SPEC_FIELDS.map(({ key, label }) => ({
+    label,
+    value: values[key] ?? "",
+  }));
+}
 
 /** slug → İngilizce künye */
 export const FLEET_EN: Record<string, FleetOverlay> = {
@@ -34,57 +56,37 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     codename: "In Development",
     role: "Planned Aircraft",
     desc: "DABAN is our planned full-composite aircraft. Design work is ongoing.",
-    specs: [
-      { label: "Fuselage", value: "Full composite" },
-      { label: "Wing", value: "" },
-      { label: "Tail", value: "" },
-      { label: "Wing Position", value: "" },
-      { label: "Tail Configuration", value: "" },
-      { label: "Landing Gear", value: "" },
-      { label: "Motor Position", value: "" },
-    ],
-    features: [
-      {
-        t: "Wingspan",
-        d: "Planned at 2.6 m.",
-      },
-      {
-        t: "Take-off Weight",
-        d: "Planned at 8 kg.",
-      },
-      {
-        t: "Length",
-        d: "Planned at 1.85 m.",
-      },
-      {
-        t: "Motor",
-        d: "2× T-Motor AT3520",
-      },
-      {
-        t: "Camera",
-        d: "Hikrobot MV CS050",
-      },
-      {
-        t: "Flight Control System",
-        d: "CUAV V6X",
-      },
-    ],
+    specs: aircraftSpecs({
+      year: "In development",
+      fuselage: "Composite",
+      wing: "Composite",
+      tail: "Composite",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted twin motors",
+    }),
   },
 
   golge: {
     codename: "2026",
     role: "Combat UAV",
     desc: "Development of the GÖLGE platform is ongoing. Its inverted V-tail is designed for both air-to-air and air-to-ground missions.",
-    specs: [
-      { label: "Fuselage", value: "" },
-      { label: "Wing", value: "" },
-      { label: "Tail", value: "" },
-      { label: "Wing Position", value: "" },
-      { label: "Tail Configuration", value: "Inverted V" },
-      { label: "Landing Gear", value: "" },
-      { label: "Motor Position", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2026",
+      fuselage: "Composite",
+      tailConfiguration: "Inverted V-tail",
+      landingGear: "Present",
+      motorPosition: "Rear-mounted",
+    }),
     features: [
+      {
+        t: "Purpose",
+        d: "Fire detection",
+      },
+      {
+        t: "Outcome",
+        d: "Combat UAV competition aircraft",
+      },
       {
         t: "Mission Profiles",
         d: "Developed for air-to-air and air-to-ground missions.",
@@ -99,15 +101,12 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   merlin: {
     role: "TÜBİTAK International UAV Competition",
     desc: "Designed to the criteria of the TÜBİTAK International UAV Competition, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
-    specs: [
-      { label: "Fuselage", value: "" },
-      { label: "Wing", value: "" },
-      { label: "Tail", value: "" },
-      { label: "Wing Position", value: "" },
-      { label: "Tail Configuration", value: "" },
-      { label: "Landing Gear", value: "" },
-      { label: "Motor Position", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
     features: [
       {
         t: "Modular Design",
@@ -142,6 +141,14 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     ],
     features: [
       {
+        t: "Purpose",
+        d: "High payload ratio",
+      },
+      {
+        t: "Outcome",
+        d: "High payload capacity",
+      },
+      {
         t: "Biomimetic Design",
         d: "Inspired by structures and forms of movement found in nature.",
       },
@@ -164,15 +171,12 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     codename: "2025",
     role: "TÜBİTAK International UAV Competition",
     desc: "DORJE was developed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
-    specs: [
-      { label: "Fuselage", value: "" },
-      { label: "Wing", value: "Fixed wing" },
-      { label: "Tail", value: "" },
-      { label: "Wing Position", value: "" },
-      { label: "Tail Configuration", value: "" },
-      { label: "Landing Gear", value: "" },
-      { label: "Motor Position", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
     features: [
       {
         t: "Fixed-Wing Category",
@@ -185,15 +189,16 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     role: "R&D · Hydrogen Propulsion",
     codename: "2020",
     desc: "An aircraft developed for zero-emission flight and long range, powered by a hydrogen fuel cell.",
-    specs: [
-      { label: "Fuselage", value: "Composite" },
-      { label: "Wing", value: "EPS Foam" },
-      { label: "Tail", value: "Birch + Balsa Covering" },
-      { label: "Wing Position", value: "High Wing" },
-      { label: "Tail Configuration", value: "T-tail" },
-      { label: "Landing Gear", value: "None" },
-      { label: "Motor Position", value: "Nose-mounted" },
-    ],
+    specs: aircraftSpecs({
+      year: "2020",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "Birch + Balsa Covering",
+      wingPosition: "High Wing",
+      tailConfiguration: "T-tail",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
     features: [
       {
         t: "Hydrogen Fuel System",
@@ -202,14 +207,63 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     ],
   },
 
-  bumblebee: { specs: EMPTY_AIRCRAFT_SPECS },
-  atlas: { specs: EMPTY_AIRCRAFT_SPECS },
-  tardis: { specs: EMPTY_AIRCRAFT_SPECS },
-  balerin: { specs: EMPTY_AIRCRAFT_SPECS },
-  smartquad: { specs: EMPTY_AIRCRAFT_SPECS },
-  tulpar: { specs: EMPTY_AIRCRAFT_SPECS },
-  harpy: { specs: EMPTY_AIRCRAFT_SPECS },
-  foton: { specs: EMPTY_AIRCRAFT_SPECS },
+  bumblebee: {
+    specs: aircraftSpecs({
+      year: "2015",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  atlas: {
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  tardis: {
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Pi-tail",
+      landingGear: "Present",
+      motorPosition: "Rear-mounted",
+    }),
+  },
+  balerin: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  smartquad: { specs: aircraftSpecs({ year: "2018" }) },
+  tulpar: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Inverted U-tail",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  harpy: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  foton: {
+    specs: aircraftSpecs({
+      year: "2019",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
 };
 
 /* ---------- BAŞARILAR ---------- */

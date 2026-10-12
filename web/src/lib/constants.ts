@@ -376,15 +376,37 @@ export const FLEET_SPRITE = {
   viewH: 843,
 };
 
-const EMPTY_AIRCRAFT_SPECS = [
-  { label: "Gövde", value: "" },
-  { label: "Kanat", value: "" },
-  { label: "Kuyruk", value: "" },
-  { label: "Kanat Konumu", value: "" },
-  { label: "Kuyruk Yapısı", value: "" },
-  { label: "İniş Takımı", value: "" },
-  { label: "Motor Konumu", value: "" },
+type AircraftSpecKey =
+  | "year"
+  | "fuselage"
+  | "wing"
+  | "tail"
+  | "wingPosition"
+  | "tailConfiguration"
+  | "landingGear"
+  | "motorPosition"
+  | "takeoffWeight";
+
+const AIRCRAFT_SPEC_FIELDS: { key: AircraftSpecKey; label: string }[] = [
+  { key: "year", label: "Yıl" },
+  { key: "fuselage", label: "Gövde" },
+  { key: "wing", label: "Kanat" },
+  { key: "tail", label: "Kuyruk" },
+  { key: "wingPosition", label: "Kanat Konumu" },
+  { key: "tailConfiguration", label: "Kuyruk Yapısı" },
+  { key: "landingGear", label: "İniş Takımı" },
+  { key: "motorPosition", label: "Motor Konumu" },
+  { key: "takeoffWeight", label: "Kalkış Ağırlığı" },
 ];
+
+function aircraftSpecs(
+  values: Partial<Record<AircraftSpecKey, string>> = {}
+): { label: string; value: string }[] {
+  return AIRCRAFT_SPEC_FIELDS.map(({ key, label }) => ({
+    label,
+    value: values[key] ?? "",
+  }));
+}
 
 export const FLEET: Aircraft[] = [
   {
@@ -393,42 +415,16 @@ export const FLEET: Aircraft[] = [
     codename: "Geliştirme",
     role: "Planlanan Hava Aracı",
     desc: "DABAN, üretilmesi planlanan tam kompozit hava aracımızdır. Tasarım çalışmaları sürmektedir.",
-    year: "Planlama",
-    specs: [
-      { label: "Gövde", value: "Tam kompozit" },
-      { label: "Kanat", value: "" },
-      { label: "Kuyruk", value: "" },
-      { label: "Kanat Konumu", value: "" },
-      { label: "Kuyruk Yapısı", value: "" },
-      { label: "İniş Takımı", value: "" },
-      { label: "Motor Konumu", value: "" },
-    ],
-    features: [
-      {
-        t: "Kanat Açıklığı",
-        d: "2,6 m olarak planlanmaktadır.",
-      },
-      {
-        t: "Kalkış Ağırlığı",
-        d: "8 kg olarak planlanmaktadır.",
-      },
-      {
-        t: "Uzunluk",
-        d: "1,85 m olarak planlanmaktadır.",
-      },
-      {
-        t: "Motor",
-        d: "2× T-Motor AT3520",
-      },
-      {
-        t: "Kamera",
-        d: "Hikrobot MV CS050",
-      },
-      {
-        t: "Uçuş Kontrol Sistemi",
-        d: "CUAV V6X",
-      },
-    ],
+    year: "Geliştirme",
+    specs: aircraftSpecs({
+      year: "Geliştirme",
+      fuselage: "Kompozit",
+      wing: "Kompozit",
+      tail: "Kompozit",
+      tailConfiguration: "Standart",
+      landingGear: "Var",
+      motorPosition: "Önden Çift Motor",
+    }),
   },
   {
     name: "GÖLGE MK5",
@@ -438,16 +434,22 @@ export const FLEET: Aircraft[] = [
     role: "Savaşan İHA",
     desc: "GÖLGE platformunun geliştirme çalışmaları devam etmektedir. Ters V-kuyruk mimarisiyle hava-hava ve hava-kara görevleri için geliştirilmektedir.",
     year: "2026",
-    specs: [
-      { label: "Gövde", value: "" },
-      { label: "Kanat", value: "" },
-      { label: "Kuyruk", value: "" },
-      { label: "Kanat Konumu", value: "" },
-      { label: "Kuyruk Yapısı", value: "Ters V" },
-      { label: "İniş Takımı", value: "" },
-      { label: "Motor Konumu", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2026",
+      fuselage: "Kompozit",
+      tailConfiguration: "Ters V Kuyruk",
+      landingGear: "Var",
+      motorPosition: "Arkadan",
+    }),
     features: [
+      {
+        t: "Amaç",
+        d: "Yangın tespiti",
+      },
+      {
+        t: "Sonuç",
+        d: "Savaşan İHA yarışma hava aracı",
+      },
       {
         t: "Görev Profilleri",
         d: "Hava-hava ve hava-kara görevleri için geliştirilmektedir.",
@@ -465,15 +467,12 @@ export const FLEET: Aircraft[] = [
     role: "TÜBİTAK Uluslararası İHA Yarışması",
     desc: "TÜBİTAK Uluslararası İHA Yarışması kriterlerine göre tasarlanan Merlin, yüksek yük kapasitesini modüler mimariyle birleştirir. Kompakt taşıma kutusuna sığar ve 1 dakika 46 saniyede uçuşa hazır hale gelir.",
     year: "2025",
-    specs: [
-      { label: "Gövde", value: "" },
-      { label: "Kanat", value: "" },
-      { label: "Kuyruk", value: "" },
-      { label: "Kanat Konumu", value: "" },
-      { label: "Kuyruk Yapısı", value: "" },
-      { label: "İniş Takımı", value: "" },
-      { label: "Motor Konumu", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standart",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
     features: [
       {
         t: "Modüler Tasarım",
@@ -496,20 +495,24 @@ export const FLEET: Aircraft[] = [
   {
     name: "JAEGER",
     slug: "jaeger",
-    codename: "2017",
+    codename: "",
     role: "SAE Aero Design",
     desc: "2017 SAE Aero Design East yarışmasında kullanılan modüler hava aracı.",
-    year: "2017",
-    specs: [
-      { label: "Gövde", value: "" },
-      { label: "Kanat", value: "" },
-      { label: "Kuyruk", value: "" },
-      { label: "Kanat Konumu", value: "" },
-      { label: "Kuyruk Yapısı", value: "" },
-      { label: "İniş Takımı", value: "" },
-      { label: "Motor Konumu", value: "" },
-    ],
+    year: "",
+    specs: aircraftSpecs({
+      tailConfiguration: "Standart",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
     features: [
+      {
+        t: "Amaç",
+        d: "Yüksek yük taşıma oranı",
+      },
+      {
+        t: "Sonuç",
+        d: "Yüksek yük taşıma kabiliyeti",
+      },
       {
         t: "Biyomimetik Tasarım",
         d: "Doğadaki yapılardan ve hareket biçimlerinden esinlenilmiştir.",
@@ -535,15 +538,12 @@ export const FLEET: Aircraft[] = [
     role: "TÜBİTAK Uluslararası İHA Yarışması",
     desc: "DORJE, TÜBİTAK Uluslararası İHA Yarışması'nın sabit kanat kategorisi için geliştirildi.",
     year: "2025",
-    specs: [
-      { label: "Gövde", value: "" },
-      { label: "Kanat", value: "Sabit kanat" },
-      { label: "Kuyruk", value: "" },
-      { label: "Kanat Konumu", value: "" },
-      { label: "Kuyruk Yapısı", value: "" },
-      { label: "İniş Takımı", value: "" },
-      { label: "Motor Konumu", value: "" },
-    ],
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standart",
+      landingGear: "Var",
+      motorPosition: "Önden",
+    }),
     features: [
       {
         t: "Sabit Kanat Kategorisi",
@@ -559,15 +559,16 @@ export const FLEET: Aircraft[] = [
     role: "Ar-Ge · Hidrojen İtki",
     desc: "Hidrojen yakıt hücresiyle çalışan ve sıfır emisyonlu uzun menzilli uçuş hedefiyle geliştirilen hava aracı.",
     year: "2020",
-    specs: [
-      { label: "Gövde", value: "Kompozit" },
-      { label: "Kanat", value: "EPS Köpük" },
-      { label: "Kuyruk", value: "Huş + Balsa Kaplama" },
-      { label: "Kanat Konumu", value: "Üstten" },
-      { label: "Kuyruk Yapısı", value: "T Kuyruk" },
-      { label: "İniş Takımı", value: "Yok" },
-      { label: "Motor Konumu", value: "Önden" },
-    ],
+    specs: aircraftSpecs({
+      year: "2020",
+      fuselage: "Kompozit",
+      wing: "EPS Köpük",
+      tail: "Huş + Balsa Kaplama",
+      wingPosition: "Üstten",
+      tailConfiguration: "T Kuyruk",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
     features: [
       {
         t: "Hidrojen Yakıt Sistemi",
@@ -582,7 +583,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2015",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2015",
+      tailConfiguration: "Standart",
+      landingGear: "Var",
+      motorPosition: "Önden",
+    }),
   },
   {
     name: "ATLAS",
@@ -591,7 +597,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2016",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Standart",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
   },
   {
     name: "TARDİS",
@@ -600,7 +611,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2016",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Pi-Tail",
+      landingGear: "Var",
+      motorPosition: "Arkadan",
+    }),
   },
   {
     name: "BALERİN",
@@ -609,7 +625,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2018",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standart",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
   },
   {
     name: "SMARTQUAD",
@@ -618,7 +639,7 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2018",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({ year: "2018" }),
   },
   {
     name: "TULPAR",
@@ -627,7 +648,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2018",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Ters U Kuyruk",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
   },
   {
     name: "HARPY",
@@ -636,7 +662,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2018",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standart",
+      landingGear: "Var",
+      motorPosition: "Önden",
+    }),
   },
   {
     name: "FOTON",
@@ -645,7 +676,12 @@ export const FLEET: Aircraft[] = [
     role: "",
     desc: "",
     year: "2019",
-    specs: EMPTY_AIRCRAFT_SPECS,
+    specs: aircraftSpecs({
+      year: "2019",
+      tailConfiguration: "Standart",
+      landingGear: "Yok",
+      motorPosition: "Önden",
+    }),
   },
 ];
 

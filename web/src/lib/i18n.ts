@@ -145,7 +145,6 @@ export const S = {
     tumFilo: ["Tüm filo", "Full fleet"] as M,
     ihaAlt: ["insansız hava aracı", "unmanned aerial vehicle"] as M,
     specOzellik: ["Özellik", "Specification"] as M,
-    specDeger: ["Değer", "Value"] as M,
     /* /filo sayfası başlığı */
     sayfaBaslik1: ["2011'den bugüne", "Everything we have built"] as M,
     sayfaBaslik2: ["geliştirilen platformlar", "since 2011"] as M,

@@ -91,15 +91,17 @@ export function FleetSectionClient({
                       }}
                     />
                   )}
-                  <span
-                    className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
-                      img || ac.sprite
-                        ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
-                        : ""
-                    }`}
-                  >
-                    {ac.codename}
-                  </span>
+                  {ac.codename && (
+                    <span
+                      className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
+                        img || ac.sprite
+                          ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
+                          : ""
+                      }`}
+                    >
+                      {ac.codename}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">

@@ -58,15 +58,17 @@ export function FiloListesi({
                         }}
                       />
                     )}
-                    <span
-                      className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
-                        img || ac.sprite
-                          ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
-                          : ""
-                      }`}
-                    >
-                      {ac.codename}
-                    </span>
+                    {ac.codename && (
+                      <span
+                        className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
+                          img || ac.sprite
+                            ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
+                            : ""
+                        }`}
+                      >
+                        {ac.codename}
+                      </span>
+                    )}
                   </div>
 
                   {/* Künye */}
@@ -87,9 +89,6 @@ export function FiloListesi({
                             <tr className="border-b border-line text-ink-3">
                               <th scope="col" className="py-1.5 pr-4 font-semibold">
                                 {t(S.filo.specOzellik)}
-                              </th>
-                              <th scope="col" className="py-1.5 font-semibold">
-                                {t(S.filo.specDeger)}
                               </th>
                             </tr>
                           </thead>
