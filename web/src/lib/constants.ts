@@ -650,7 +650,7 @@ export const FLEET: Aircraft[] = [
     year: "2018",
     specs: aircraftSpecs({
       year: "2018",
-      tailConfiguration: "Ters U Kuyruk",
+      tailConfiguration: "Ters U Kuyruk (Pi Kuyruk)",
       landingGear: "Yok",
       motorPosition: "Önden",
     }),
