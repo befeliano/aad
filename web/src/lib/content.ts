@@ -13,6 +13,7 @@
 import { useMemo } from "react";
 import { useLang } from "./i18n";
 import {
+  ACHIEVEMENTS,
   ADVISORS,
   DEPARTMENTS,
   FLEET,
@@ -20,15 +21,18 @@ import {
   SPONSORS_2025,
   SPONSOR_REASONS,
   TEAM_LEADS,
+  type Achievement,
   type Aircraft,
   type Department,
 } from "./constants";
 import {
+  ACHIEVEMENTS_EN,
   ADVISORS_EN,
   DEPARTMENTS_EN,
   FLEET_EN,
   LEAD_ROLE_EN,
   PROCESS_EN,
+  RANK_EN,
   SPONSOR_REASONS_EN,
   SPONSOR_ROLE_EN,
 } from "./constants-en";
