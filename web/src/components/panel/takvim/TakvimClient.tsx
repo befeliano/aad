@@ -613,8 +613,9 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
                 </div>
 
                 {isTabloYok ? (
-                  <p className="text-[12px] text-ink-3">
-                    <code>supabase/takvim-isler.sql</code> çalıştırılmamış.
+                  <p className="text-[12px] leading-relaxed text-ink-3">
+                    Çok günlü işler henüz kurulmadı: Supabase SQL Editor&apos;da{" "}
+                    <code>supabase/takvim-isler.sql</code> çalıştırılmalı.
                   </p>
                 ) : gununIsleri(secili).length === 0 ? (
                   <p className="text-[12.5px] text-ink-3">
@@ -677,11 +678,13 @@ export function TakvimClient({ canWrite }: { canWrite: boolean }) {
                     </select>
                   </Field>
 
+                  {/* Bu saatler GÜNÜN çalışma saati. Birden fazla güne yayılan
+                      iş için yukarıdaki "İş ekle" kullanılır (gün seçilir, saat yok). */}
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Başlangıç">
+                    <Field label="Çalışma başlangıcı">
                       <input type="time" value={bas} onChange={(e) => setBas(e.target.value)} className="field" />
                     </Field>
-                    <Field label="Bitiş">
+                    <Field label="Çalışma bitişi">
                       <input type="time" value={bit} onChange={(e) => setBit(e.target.value)} className="field" />
                     </Field>
                   </div>
