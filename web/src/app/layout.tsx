@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · Anatolia Aero Design",
   },
   description:
-    "Eskişehir Teknik Üniversitesi Anatolia Aero Design İHA Proje Takımı. Teknofest 2022 Savaşan İHA Türkiye 1.'si, Teknofest 2018 UAV Turkey 1.'si.",
+    "Eskişehir Teknik Üniversitesi Anatolia Aero Design insansız hava aracı takımı. TEKNOFEST Savaşan İHA, TÜBİTAK Uluslararası İHA Yarışması ve SAE Aero Design dereceleri.",
   keywords: [
     "Anatolia Aero Design",
     "ESTÜ İHA",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Anatolia Aero Design — ESTÜ İHA Takımı",
     description:
-      "Teknofest şampiyonu öğrenci İHA takımı. Sponsorluk ve iş birlikleri için.",
+      "Yarışmalarda derece sahibi öğrenci insansız hava aracı takımı. Sponsorluk ve iş birlikleri için bizimle iletişime geçebilirsiniz.",
     type: "website",
     locale: "tr_TR",
     images: ["/logo.jpg"],

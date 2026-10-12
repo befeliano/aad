@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { BASVURU_FORMU, TEAM, TAKIM_ISTATISTIK } from "@/lib/constants";
+import { BASVURU_FORMU, TEAM } from "@/lib/constants";
 import { useDepartments } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
@@ -34,10 +34,25 @@ export function KatilIcerik() {
             <span className="text-accent">{t(S.katil.baslik2)}</span>
           </h1>
           <p className="mt-6 text-base leading-relaxed text-ink-2">
-            {t(S.katil.p1a)} {TAKIM_ISTATISTIK.sampiyonluk} {t(S.katil.p1b)}
+            {t(S.katil.p1)}
           </p>
+          <p className="mt-5 font-semibold text-ink">
+            {t(S.katil.basarilarBaslik)}
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-base leading-relaxed text-ink-2">
+            {[S.katil.basari1, S.katil.basari2, S.katil.basari3, S.katil.basari4].map(
+              (achievement) => (
+                <li key={t(achievement)}>
+                  <strong>{t(achievement)}</strong>
+                </li>
+              )
+            )}
+          </ul>
           <p className="mt-4 text-base leading-relaxed text-ink-2">
             {t(S.katil.p2)}
+          </p>
+          <p className="mt-4 text-base leading-relaxed text-ink-2">
+            {t(S.katil.p3)}
           </p>
         </div>
 

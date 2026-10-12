@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { FLEET_ARCHIVE } from "@/lib/constants";
 import { useFleet } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
@@ -92,30 +91,31 @@ export function FleetSectionClient({
                       }}
                     />
                   )}
-                  <span
-                    className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
-                      img || ac.sprite
-                        ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
-                        : ""
-                    }`}
-                  >
-                    {ac.codename}
-                  </span>
-                  {ac.flagship && (
-                    <span className="absolute right-4 top-3.5 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                      {t(S.filo.amiralGemisi)}
+                  {ac.codename && (
+                    <span
+                      className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
+                        img || ac.sprite
+                          ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
+                          : ""
+                      }`}
+                    >
+                      {ac.codename}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">
-                  <div className="eyebrow !text-[9.5px]">{ac.role}</div>
+                  {ac.role && (
+                    <div className="eyebrow !text-[9.5px]">{ac.role}</div>
+                  )}
                   <h3 className="display-tight mt-2 text-2xl text-ink sm:text-3xl">
                     {ac.name}
                   </h3>
-                  <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
-                    {ac.desc}
-                  </p>
+                  {ac.desc && (
+                    <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
+                      {ac.desc}
+                    </p>
+                  )}
                 </div>
               </Link>
             </Reveal>
@@ -123,23 +123,6 @@ export function FleetSectionClient({
         })}
       </div>
 
-      {/* Arşiv */}
-      <Reveal>
-        <div className="mt-10 rounded-2xl border border-line bg-bg-1 p-7">
-          <div className="eyebrow mb-4">{t(S.filo.arsiv)}</div>
-          <ul className="flex flex-wrap gap-2">
-            {FLEET_ARCHIVE.map((a) => (
-              <li
-                key={a.name}
-                className="rounded-full border border-line px-3.5 py-1.5 text-[12.5px] text-ink-2"
-              >
-                <span className="font-semibold text-ink">{a.name}</span>
-                <span className="tabular ml-1.5 text-ink-3">{a.year}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Reveal>
     </section>
   );
 }

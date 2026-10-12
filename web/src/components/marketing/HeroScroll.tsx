@@ -168,7 +168,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             </span>
           </div>
 
-          {/* Şampiyonluk rozetleri — sponsorun ilk gördüğü şey */}
+          {/* Yarışma sonuçları */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
             {[S.hero.rozet1, S.hero.rozet2, S.hero.rozet3].map((k) => {
               const b = t(k);
@@ -244,8 +244,9 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             </a>
           </div>
 
-          <div className="grid w-full max-w-lg grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-            <Stat num={TAKIM_ISTATISTIK.sampiyonluk} label={t(S.hero.sampiyonluk)} />
+          <div className="grid w-full max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-5">
+            <Stat num={TAKIM_ISTATISTIK.birincilik} label={t(S.hero.birincilik)} />
+            <Stat num={TAKIM_ISTATISTIK.derece} label={t(S.hero.derece)} />
             <Stat num={TAKIM_ISTATISTIK.uye} label={t(S.hero.uye)} />
             <Stat num={TAKIM_ISTATISTIK.mezun} label={t(S.hero.mezun)} />
             <Stat num={TAKIM_ISTATISTIK.kurulus} label={t(S.hero.kurulusYili)} />

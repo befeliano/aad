@@ -10,7 +10,7 @@
    use* kancalarını çağırın.
    ============================================================ */
 
-import type { Aircraft, Department, SponsorTier } from "./constants";
+import type { Aircraft, Department } from "./constants";
 
 /* ---------- FİLO ---------- */
 
@@ -18,90 +18,314 @@ type FleetOverlay = Partial<
   Pick<Aircraft, "role" | "desc" | "codename" | "specs" | "features">
 >;
 
+type AircraftSpecKey =
+  | "year"
+  | "fuselage"
+  | "wing"
+  | "tail"
+  | "wingPosition"
+  | "tailConfiguration"
+  | "landingGear"
+  | "motorPosition"
+  | "takeoffWeight";
+
+const AIRCRAFT_SPEC_FIELDS: { key: AircraftSpecKey; label: string }[] = [
+  { key: "year", label: "Year" },
+  { key: "fuselage", label: "Fuselage" },
+  { key: "wing", label: "Wing" },
+  { key: "tail", label: "Tail" },
+  { key: "wingPosition", label: "Wing Position" },
+  { key: "tailConfiguration", label: "Tail Configuration" },
+  { key: "landingGear", label: "Landing Gear" },
+  { key: "motorPosition", label: "Motor Position" },
+  { key: "takeoffWeight", label: "Take-off Weight" },
+];
+
+function aircraftSpecs(
+  values: Partial<Record<AircraftSpecKey, string>> = {}
+): NonNullable<Aircraft["specs"]> {
+  return AIRCRAFT_SPEC_FIELDS.map(({ key, label }) => ({
+    label,
+    value: values[key] ?? "",
+  }));
+}
+
 /** slug → İngilizce künye */
 export const FLEET_EN: Record<string, FleetOverlay> = {
   daban: {
-    role: "Combat UAV · Flagship",
-    desc: "Our 2027 Combat UAV platform. A twin-engine, fully autonomous combat UAV that folds years of competition experience into a more aggressive and more durable airframe. Its large internal volume carries advanced sensor fusion and on-board AI.",
-    specs: [
-      { label: "Wingspan", value: "2.6 m" },
-      { label: "Take-off Weight", value: "8 kg" },
-      { label: "Length", value: "1.85 m" },
-      { label: "Endurance", value: "30 min" },
-      { label: "Cruise Speed", value: "17 m/s" },
-      { label: "Motor", value: "2× T-Motor AT3520" },
-      { label: "Camera", value: "Hikrobot MV CS050" },
-      { label: "Flight Controller", value: "CUAV V6X" },
-    ],
-    features: [
-      {
-        t: "Twin-Engine Configuration",
-        d: "Instant manoeuvrability at high speed plus full system redundancy. Gives a decisive speed and climb advantage in a dogfight.",
-      },
-      {
-        t: "Advanced Airframe, Large Volume",
-        d: "Houses more complex avionics and high-performance compute units without giving up aerodynamic efficiency.",
-      },
-      {
-        t: "Superior Autonomy",
-        d: "Far more precise target tracking and fully autonomous mission execution through advanced sensor fusion.",
-      },
-    ],
+    codename: "In Development",
+    role: "Planned Aircraft",
+    desc: "DABAN is our planned full-composite aircraft. Design work is ongoing.",
+    specs: aircraftSpecs({
+      year: "In development",
+      fuselage: "Composite",
+      wing: "Composite",
+      tail: "Composite",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted twin motors",
+    }),
   },
 
   golge: {
-    role: "Combat UAV · Champion of Türkiye",
-    desc: "The platform that won our team the Turkish championship at the 2022 TEKNOFEST Combat UAV competition. Its inverted V-tail architecture and high manoeuvrability kept it competitive in dogfight scenarios. The project closed in 2025.",
-    specs: [
-      { label: "Architecture", value: "Inverted V-Tail" },
-      { label: "Mission", value: "Air-to-Air Combat" },
-      { label: "Autonomy", value: "Fully Autonomous" },
-      { label: "Result", value: "1st in Türkiye" },
+    codename: "2026",
+    role: "Combat UAV",
+    desc: "Development of the GÖLGE platform is ongoing. Its inverted V-tail is designed for both air-to-air and air-to-ground missions.",
+    specs: aircraftSpecs({
+      year: "2026",
+      fuselage: "Composite",
+      tailConfiguration: "Inverted V-tail",
+      landingGear: "Present",
+      motorPosition: "Rear-mounted",
+    }),
+    features: [
+      {
+        t: "Purpose",
+        d: "Fire detection",
+      },
+      {
+        t: "Outcome",
+        d: "Combat UAV competition aircraft",
+      },
+      {
+        t: "Mission Profiles",
+        d: "Developed for air-to-air and air-to-ground missions.",
+      },
+      {
+        t: "Autonomy",
+        d: "Fully autonomous mission execution is planned.",
+      },
     ],
   },
 
   merlin: {
-    role: "Fixed Wing · Payload",
-    desc: "Designed against International UAV Competition criteria, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
-    specs: [
-      { label: "Assembly", value: "1 min 46 s" },
-      { label: "Target Payload Ratio", value: "2.5× its own weight" },
-      { label: "Structure", value: "Modular" },
-      { label: "Mission", value: "Autonomous Payload Drop" },
+    role: "TÜBİTAK International UAV Competition",
+    desc: "Designed to the criteria of the TÜBİTAK International UAV Competition, Merlin pairs a high payload capacity with a modular architecture. It packs into a compact carry case and is flight-ready in 1 minute 46 seconds.",
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+    features: [
+      {
+        t: "Modular Design",
+        d: "Designed to fit in a compact transport case.",
+      },
+      {
+        t: "Setup Time",
+        d: "1 minute 46 seconds",
+      },
+      {
+        t: "Mission",
+        d: "Autonomous payload drop",
+      },
+      {
+        t: "Payload Ratio",
+        d: "2.5 times its own weight",
+      },
     ],
   },
 
   jaeger: {
-    role: "SAE AERO DESIGN · World Champion",
-    desc: "The biomimetic, modular design that took the World Championship at SAE Aero Design East in the USA in 2017. With a 55-second assembly time it remains the cornerstone of our design discipline.",
+    role: "SAE Aero Design",
+    desc: "A modular aircraft used in the 2017 SAE Aero Design East competition.",
     specs: [
-      { label: "Airframe Weight", value: "305 g" },
-      { label: "Payload", value: "1287 g" },
-      { label: "Efficiency", value: "3.1× empty weight" },
-      { label: "Assembly", value: "55 seconds" },
+      { label: "Fuselage", value: "" },
+      { label: "Wing", value: "" },
+      { label: "Tail", value: "" },
+      { label: "Wing Position", value: "" },
+      { label: "Tail Configuration", value: "" },
+      { label: "Landing Gear", value: "" },
+      { label: "Motor Position", value: "" },
+    ],
+    features: [
+      {
+        t: "Purpose",
+        d: "High payload ratio",
+      },
+      {
+        t: "Outcome",
+        d: "High payload capacity",
+      },
+      {
+        t: "Biomimetic Design",
+        d: "Inspired by structures and forms of movement found in nature.",
+      },
+      {
+        t: "Airframe Weight",
+        d: "305 g",
+      },
+      {
+        t: "Payload",
+        d: "1,287 g",
+      },
+      {
+        t: "Assembly Time",
+        d: "55 seconds",
+      },
     ],
   },
 
   dorje: {
-    codename: "Fixed Wing",
-    role: "International UAV Competition",
-    desc: "Designed by our former academic advisor Lect. Dr. Emre Özbek, DORJE competed in the fixed-wing category of the International UAV Competition.",
-    specs: [
-      { label: "Configuration", value: "Fixed Wing" },
-      { label: "Category", value: "International UAV" },
+    codename: "2025",
+    role: "TÜBİTAK International UAV Competition",
+    desc: "DORJE was developed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
+    specs: aircraftSpecs({
+      year: "2025",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
+    features: [
+      {
+        t: "Fixed-Wing Category",
+        d: "The aircraft was designed for the fixed-wing category of the TÜBİTAK International UAV Competition.",
+      },
     ],
   },
 
   hydra: {
     role: "R&D · Hydrogen Propulsion",
-    desc: "A UAV programme running on advanced PEM fuel-cell technology, built around zero-emission, long-endurance flight. It marries a hydrogen propulsion system with avionics developed in-house.",
-    specs: [
-      { label: "Propulsion", value: "PEM Fuel Cell" },
-      { label: "Emissions", value: "Zero" },
-      { label: "Goal", value: "Long Range" },
-      { label: "Status", value: "In Development" },
+    codename: "2020",
+    desc: "An aircraft developed for zero-emission flight and long range, powered by a hydrogen fuel cell.",
+    specs: aircraftSpecs({
+      year: "2020",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "Birch + Balsa Covering",
+      wingPosition: "High Wing",
+      tailConfiguration: "T-tail",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+    features: [
+      {
+        t: "Hydrogen Fuel System",
+        d: "The aircraft runs on a hydrogen fuel cell and is being developed for zero-emission, long-range flight.",
+      },
     ],
   },
+
+  bumblebee: {
+    specs: aircraftSpecs({
+      year: "2015",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  atlas: {
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  tardis: {
+    specs: aircraftSpecs({
+      year: "2016",
+      tailConfiguration: "Pi-tail",
+      landingGear: "Present",
+      motorPosition: "Rear-mounted",
+    }),
+  },
+  balerin: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  smartquad: { specs: aircraftSpecs({ year: "2018" }) },
+  tulpar: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Inverted U-tail",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  harpy: {
+    specs: aircraftSpecs({
+      year: "2018",
+      tailConfiguration: "Standard",
+      landingGear: "Present",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+  foton: {
+    specs: aircraftSpecs({
+      year: "2019",
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
+  },
+};
+
+/* ---------- BAŞARILAR ---------- */
+
+/** `${year}|${title}` → İngilizce başlık ve açıklama */
+export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> =
+  {
+    "2022|TEKNOFEST Savaşan İHA": {
+      title: "TEKNOFEST Combat UAV",
+      detail: "Champion of Türkiye",
+    },
+    "2018|TEKNOFEST TÜBİTAK İHA": {
+      title: "TEKNOFEST TÜBİTAK UAV",
+      detail: "First place in Türkiye",
+    },
+    "2017|SAE Aero Design East (ABD)": {
+      title: "SAE Aero Design East (USA)",
+      detail: "World Championship — with Jaeger",
+    },
+    "2022|TEKNOFEST Karma Sürü Simülasyon": {
+      title: "TEKNOFEST Mixed Swarm Simulation",
+      detail: "Third place",
+    },
+    "2021|TEKNOFEST Savaşan İHA": {
+      title: "TEKNOFEST Combat UAV",
+      detail: "Second place",
+    },
+    "2020|TEKNOFEST Sürü İHA": {
+      title: "TEKNOFEST Swarm UAV",
+      detail: "Second place",
+    },
+    "2019|TEKNOFEST TÜBİTAK İHA": {
+      title: "TEKNOFEST TÜBİTAK UAV",
+      detail: "Fifth place",
+    },
+    "2016|SAE Aero Design": {
+      title: "SAE Aero Design",
+      detail: "Third overall",
+    },
+    "2015|Future Flight Design": {
+      title: "Future Flight Design",
+      detail: "Second overall",
+    },
+    "2014|SAE Aero Design": {
+      title: "SAE Aero Design",
+      detail: "Sixth overall",
+    },
+    "2013|SAE Aero Design": {
+      title: "SAE Aero Design",
+      detail: "Eleventh place",
+    },
+  };
+
+/** "1." → "1st" — sıra ekleri dile göre değişir */
+export const RANK_EN: Record<string, string> = {
+  "1.": "1st",
+  "2.": "2nd",
+  "3.": "3rd",
+  "4.": "4th",
+  "5.": "5th",
+  "6.": "6th",
+  "11.": "11th",
 };
 
 /* ---------- DEPARTMANLAR ---------- */
@@ -115,44 +339,44 @@ export const DEPARTMENTS_EN: Record<
   yazilim: {
     name: "Software",
     short: "",
-    desc: "Autonomous flight software, computer vision and artificial intelligence.",
+    desc: "Autonomous missions, image-processing algorithms and ground-station interfaces are developed.",
     detail:
-      "Builds autonomous flight software, computer vision and AI. Guidance algorithms, target tracking and the ground control station all come out of this team.",
+      "Responsible for carrying out the aircraft's autonomous missions, including target tracking, locking and kamikaze missions, and for developing image-processing algorithms and the ground-station interface.",
   },
   tasarim: {
     name: "Design",
     short: "",
-    desc: "Overall aircraft design and component design.",
+    desc: "Aerodynamic design, 3D modelling and performance analysis are carried out.",
     detail:
-      "Owns the overall aircraft design and the design of individual components. Aerodynamic shaping, CAD modelling and simulation validation sit with this team.",
+      "Responsible for the aircraft's aerodynamic design, 3D modelling and performance analysis. It designs the technical drawings, manufacturing templates and auxiliary fixtures required for manufacturing and assembly, and prepares the relevant technical guides.",
   },
   kompozit: {
     name: "Composites",
     short: "",
-    desc: "Composite production by vacuum infusion and hand lay-up.",
+    desc: "Critical structural components are produced from composite materials, alongside related R&D.",
     detail:
-      "Produces composite parts using vacuum infusion and hand lay-up. Builds light, durable airframe parts from carbon fibre and fibreglass.",
+      "Responsible for manufacturing critical structural components of the designed aircraft, including parts of the fuselage, wing and landing gear, using materials such as carbon fibre, glass fibre and epoxy. Related R&D work helps reduce aircraft weight and improve strength.",
   },
   aviyonik: {
     name: "Avionics",
     short: "",
-    desc: "Aircraft electronics and autopilot integration.",
+    desc: "Aircraft electronics, communications and autonomous control systems are managed end to end.",
     detail:
-      "Works on aircraft electronics and autopilot integration. Sensor fusion, power distribution and the telemetry stack are built here.",
+      "Responsible for end-to-end management of the aircraft's electronic, communication and autonomous control systems. This includes integrating hardware for autonomous flight and mission mechanisms, configuring energy and power distribution systems, optimizing flight-control parameters, establishing the telemetry link between the aircraft and ground station, and installing inter-system wiring in accordance with aviation standards.",
   },
   yapisal: {
     name: "Structures",
     short: "",
-    desc: "Component manufacturing, repair and assembly.",
+    desc: "Physical aircraft production, assembly and mechanical integration are carried out.",
     detail:
-      "Handles component manufacturing, repair and assembly. Assembly processes and field maintenance belong to this team.",
+      "Responsible for the physical production, assembly and mechanical integration of designed unmanned aircraft. This includes manufacturing and assembling primary structures such as wings, fuselage and tail, and integrating the required mechanical systems. Pre-flight structural inspections and durability tests are also carried out to ensure the aircraft is safe and ready to fly.",
   },
   medya: {
-    name: "Media & Partnerships",
+    name: "Social Media & Sponsorship",
     short: "",
-    desc: "Promotion, social media and sponsor relations.",
+    desc: "Digital visibility, corporate identity and sponsorship processes are managed.",
     detail:
-      "Promotes the team on social media, runs publicity work and manages sponsorships. Corporate relations and budget management also sit with this team.",
+      "Responsible for increasing the team's visibility on digital platforms, strengthening its corporate identity and managing sponsorship processes. This includes preparing social media content, developing promotion and communication strategies, contacting potential sponsors, managing sponsorship agreements and supporting the sustainability of existing partnerships.",
   },
 };
 
@@ -180,113 +404,27 @@ export const PROCESS_EN: Record<string, { t: string; d: string }> = {
 
 /* ---------- SPONSORLUK ---------- */
 
-type TierOverlay = Pick<SponsorTier, "label" | "matrix" | "perks">;
-
-export const SPONSOR_TIERS_EN: Record<string, TierOverlay> = {
-  first: {
-    label: "Main Sponsor",
-    matrix: {
-      logoUcak: "Largest — approx. 20×20 cm",
-      sosyalMedya:
-        "Pinned post, a video dedicated to your company, plus every benefit of the lower tiers",
-      uretimGunlugu: "A dedicated YouTube segment plus all other benefits",
-      basiliMateryal: "Largest",
-      logoKiyafet: "Largest, on the back — approx. 15×15 cm",
-      urunTest:
-        "Durability report over 15+ sorties between −10°C and +45°C, with the full test analysis shared",
-    },
-    perks: [
-      "Large logo placement on the aircraft",
-      "Large logo on the upper back of the team shirt",
-      "Large logo on competition and exhibition roll-ups",
-      "Priority access to meet team members",
-      "The right to host an information seminar on behalf of your company",
-      "Logo and company feature on social media (at least one post per month)",
-      "Social media posts on request",
-      "Access to the CV file (résumés of every team member)",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-
-  business: {
-    label: "Solution Partner",
-    matrix: {
-      logoUcak: "Medium — approx. 10×15 cm",
-      sosyalMedya:
-        "Solution-partner post, brand features (monthly), plus Economy Class benefits",
-      uretimGunlugu: "Brand mention in the videos",
-      basiliMateryal: "Medium",
-      logoKiyafet: "Medium — approx. 10×10 cm",
-      urunTest: "Test report over 3 sorties between −10°C and +45°C",
-    },
-    perks: [
-      "Medium logo placement on the aircraft",
-      "Medium logo on the back of the team shirt",
-      "Medium logo on competition and exhibition roll-ups",
-      "The right to host an information seminar on behalf of your company",
-      "Social media posts featuring your company (at least one every two months)",
-      "Access to the CV file",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-
-  economy: {
-    label: "Supporter",
-    matrix: {
-      logoUcak: "Small — approx. 7.5×10 cm",
-      sosyalMedya: "Support posts, product placement in the videos",
-      uretimGunlugu: "Product placement in the videos",
-      basiliMateryal: "Listed by name",
-      logoKiyafet: "Small — approx. 5×7.5 cm",
-      urunTest: "—",
-    },
-    perks: [
-      "Small logo placement on the aircraft",
-      "Small logo on the back of the team shirt",
-      "Small logo on competition and exhibition roll-ups",
-      "Logo and company feature on social media (at least one post per quarter)",
-      "A personalised letter of thanks from the team",
-    ],
-  },
-};
-
-/** Karşılaştırma tablosu satır başlıkları */
-export const SPONSOR_MATRIX_ROWS_EN: Record<string, string> = {
-  logoUcak: "Logo on the UAV airframe",
-  logoKiyafet: "Logo on team apparel",
-  sosyalMedya: "Social media posts",
-  uretimGunlugu: '"Build Log" video sponsorship',
-  basiliMateryal: "Printed materials (posters, roll-ups)",
-  urunTest: "Product testing and reporting",
-};
-
-export const SPONSOR_NOTE_EN =
-  "Our sponsorship packages are not limited to cash support. Where you cover " +
-  "technical equipment, raw materials or services the team needs, every right " +
-  "in the matching sponsorship tier is granted on the basis of the market " +
-  "value of that support.";
-
 /** SPONSOR_REASONS ile aynı sırada */
 export const SPONSOR_REASONS_EN: { t: string; d: string }[] = [
   {
     t: "Brand Visibility and Reputation",
-    d: "Your logo appears on our aircraft, our team apparel, our social media content and our competition presentations. Your brand stands out at events such as TEKNOFEST that reach millions of people.",
+    d: "Your logo appears on the team's aircraft, apparel, social media content and competition presentations. It is also visible at events such as TEKNOFEST.",
   },
   {
     t: "Access to a Qualified Talent Pool",
-    d: "Every member of our team has hands-on experience in UAV technology and engineering. We are an ideal talent pool for internships, part-time roles and graduate hiring.",
+    d: "Team members gain practical experience in UAV technology and engineering. Internship and career opportunities can be discussed with the team.",
   },
   {
     t: "Product Testing and R&D Collaboration",
-    d: "We test your products — adhesives, electronic components, sensors — under extreme flight conditions: high speed, vibration, varying altitudes. We analyse the performance data and give you technical feedback.",
+    d: "Products such as adhesives, electronic components and sensors are tested under flight conditions. Performance data is analysed and technical feedback is provided.",
   },
   {
     t: "Corporate Social Responsibility",
-    d: "While investing in Türkiye's future you contribute directly to the careers of young engineers and become part of a sustainable education ecosystem.",
+    d: "This support contributes to the career development of young engineers and supports a sustainable education ecosystem.",
   },
   {
     t: "A Dedicated Sponsorship Portfolio",
-    d: "Bespoke reporting that highlights your contribution across every achievement, event and media appearance through the year — concrete content and metrics for your own social responsibility reports.",
+    d: "A dedicated report highlights your contribution across the year's achievements, events and media coverage, with content and metrics for social responsibility reporting.",
   },
 ];
 
@@ -301,16 +439,16 @@ export const SPONSOR_ROLE_EN: Record<string, string> = {
 
 /** Türkçe ad → İngilizce ad ve unvan */
 export const ADVISORS_EN: Record<string, { name: string; role: string }> = {
-  "Dr. Öğr. Üyesi Emre ÖZBEK": {
+  "Dr. Öğr. Üy. Emre ÖZBEK": {
     name: "Asst. Prof. Dr. Emre ÖZBEK",
     role: "Academic Advisor",
   },
-  "Ar. Gör. Mustafa AZER": {
+  "Araş. Gör. Mustafa AZER": {
     name: "Res. Asst. Mustafa AZER",
     role: "Academic Advisor",
   },
-  "Dr. İbrahim Yavuz DAL": {
-    name: "Dr. İbrahim Yavuz DAL",
+  "Öğr. Gör. Dr. İbrahim Yavuz DAL": {
+    name: "Lect. Dr. İbrahim Yavuz DAL",
     role: "Advisor Pilot",
   },
 };

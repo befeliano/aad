@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { FLEET_ARCHIVE } from "@/lib/constants";
 import { useFleet } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
@@ -30,9 +29,7 @@ export function FiloListesi({
           return (
             <Reveal key={ac.name} delay={Math.min(i, 3) * 70}>
               <article
-                className={`overflow-hidden rounded-2xl border bg-bg-1 transition-colors hover:border-line-2 ${
-                  ac.flagship ? "border-accent/40" : "border-line"
-                }`}
+                className="overflow-hidden rounded-2xl border border-line bg-bg-1 transition-colors hover:border-line-2"
               >
                 {/* ÜST BÖLÜM */}
                 <div className="grid gap-0 lg:grid-cols-[minmax(0,52%)_minmax(0,48%)]">
@@ -61,76 +58,77 @@ export function FiloListesi({
                         }}
                       />
                     )}
-                    <span
-                      className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
-                        img || ac.sprite
-                          ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
-                          : ""
-                      }`}
-                    >
-                      {ac.codename}
-                    </span>
-                    {ac.flagship && (
-                      <span className="absolute right-4 top-3.5 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                        {t(S.filo.amiralGemisi)}
+                    {ac.codename && (
+                      <span
+                        className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
+                          img || ac.sprite
+                            ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
+                            : ""
+                        }`}
+                      >
+                        {ac.codename}
                       </span>
                     )}
                   </div>
 
                   {/* Künye */}
                   <div className="p-6 sm:p-8">
-                    <div className="eyebrow">{ac.role}</div>
-                    <h2
-                      className={`display-tight mt-2 text-ink ${
-                        ac.flagship
-                          ? "text-4xl sm:text-6xl"
-                          : "text-3xl sm:text-4xl"
-                      }`}
-                    >
+                    {ac.role && <div className="eyebrow">{ac.role}</div>}
+                    <h2 className="display-tight mt-2 text-3xl text-ink sm:text-4xl">
                       {ac.name}
                     </h2>
-                    <p className="mt-4 text-sm leading-relaxed text-ink-2">
-                      {ac.desc}
-                    </p>
+                    {ac.desc && (
+                      <p className="mt-4 text-sm leading-relaxed text-ink-2">
+                        {ac.desc}
+                      </p>
+                    )}
+                    {ac.specs && (
+                      <div className="mt-5">
+                        <table className="w-full border-collapse text-left text-[12.5px]">
+                          <thead>
+                            <tr className="border-b border-line text-ink-3">
+                              <th scope="col" className="py-1.5 pr-4 font-semibold">
+                                {t(S.filo.specOzellik)}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ac.specs.map((spec) => (
+                              <tr
+                                key={spec.label}
+                                className="border-b border-line/60 last:border-0"
+                              >
+                                <th
+                                  scope="row"
+                                  className="py-1.5 pr-4 font-medium text-ink-2"
+                                >
+                                  {spec.label}
+                                </th>
+                                <td className="py-1.5 text-ink">{spec.value}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* ALT BÖLÜM: Detaylı Özellikler ve Spekler */}
-                {(ac.features || ac.specs) && (
+                {/* Alt bölüm: hava aracına özgü bilgiler */}
+                {ac.features && (
                   <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
-                    {/* Özellikler */}
-                    {ac.features && (
-                      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {ac.features.map((f) => (
-                          <li key={f.t}>
-                            <span className="text-[13.5px] font-bold text-ink">
-                              {f.t}
-                            </span>
-                            <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
-                              {f.d}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {/* Teknik Değerler (Grid yerine arka plansız, ortalanmış Flexbox) */}
-                    {ac.specs && (
-                      <dl
-                        className={`flex flex-wrap items-center justify-center gap-x-8 gap-y-6 ${
-                          ac.features ? "mt-10 border-t border-line/50 pt-8" : ""
-                        }`}
-                      >
-                        {ac.specs.map((s) => (
-                          <div key={s.label} className="flex flex-col items-center text-center">
-                            <dt className="eyebrow !text-[9.5px]">{s.label}</dt>
-                            <dd className="mt-1.5 text-[15px] font-semibold text-ink">
-                              {s.value}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    )}
+                    <ul className="flex flex-wrap items-start justify-center gap-x-10 gap-y-6 text-center">
+                      {ac.features.map((feature) => (
+                        <li key={feature.t}>
+                          <span className="text-[13.5px] font-bold text-ink">
+                            {feature.t}
+                          </span>
+                          <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-3">
+                            {feature.d}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </article>
@@ -139,23 +137,6 @@ export function FiloListesi({
         })}
       </div>
 
-      {/* Arşiv */}
-      <Reveal>
-        <div className="mt-10 rounded-2xl border border-line bg-bg-1 p-7">
-          <div className="eyebrow mb-4">{t(S.filo.arsiv)}</div>
-          <ul className="flex flex-wrap gap-2">
-            {FLEET_ARCHIVE.map((a) => (
-              <li
-                key={a.name}
-                className="rounded-full border border-line px-3.5 py-1.5 text-[12.5px] text-ink-2"
-              >
-                <span className="font-semibold text-ink">{a.name}</span>
-                <span className="tabular ml-1.5 text-ink-3">{a.year}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Reveal>
     </>
   );
 }

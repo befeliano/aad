@@ -102,79 +102,80 @@ export const S = {
       "Eskişehir Technical University",
     ] as M,
     baslik1: ["Gökyüzünü", "We design"] as M,
-    baslik2: ["tasarlıyoruz.", "the sky."] as M,
-    sponsorOl: ["Sponsor Ol", "Become a Sponsor"] as M,
+    baslik2: ["tasarlıyoruz", "the sky"] as M,
+    sponsorOl: ["Sponsorluk Bilgisi", "Sponsorship Information"] as M,
     takimaKatil: ["Takıma Katıl", "Join the Team"] as M,
-    filoyuKesfet: ["Filoyu Keşfet", "Explore the Fleet"] as M,
+    filoyuKesfet: ["Filo Hakkında", "About the Fleet"] as M,
     kaydir: ["Kaydır", "Scroll"] as M,
     gorselAlt: ["gün batımında test uçuşu", "test flight at sunset"] as M,
     medyaAlani: ["Hero görseli · medya alanı", "Hero image · media slot"] as M,
-    sampiyonluk: ["Şampiyonluk", "Championships"] as M,
+    birincilik: ["Birincilik", "First Place"] as M,
+    derece: ["Derece", "Competition Results"] as M,
     uye: ["Takım Üyesi", "Team Members"] as M,
-    mezun: ["Mezun", "Alumni"] as M,
+    mezun: ["Mezun Sayısı", "Alumni"] as M,
     kurulusYili: ["Kuruluş", "Founded"] as M,
     rozet1: [
-      "Teknofest 2022 · Türkiye 1.",
-      "Teknofest 2022 · 1st in Türkiye",
+      "TEKNOFEST Savaşan İHA · 2022 · Birincilik",
+      "TEKNOFEST Combat UAV · 2022 · First Place",
     ] as M,
     rozet2: [
-      "SAE Aero Design 2017 · Dünya 1.",
-      "SAE Aero Design 2017 · 1st Worldwide",
+      "SAE Aero Design East · 2017 · Birincilik",
+      "SAE Aero Design East · 2017 · First Place",
     ] as M,
     rozet3: [
-      "Teknofest 2018 · Türkiye 1.",
-      "Teknofest 2018 · 1st in Türkiye",
+      "TEKNOFEST TÜBİTAK Uluslararası İHA · 2018 · Birincilik",
+      "TEKNOFEST TÜBİTAK International UAV · 2018 · First Place",
     ] as M,
   },
 
   filo: {
     baslik: ["Filo", "Fleet"] as M,
     kicker: [
-      "2011'den bugüne tasarlayıp ürettiğimiz platformlar",
-      "The platforms we have designed and built since 2011",
+      "2011'den bugüne geliştirilen platformlar",
+      "Platforms developed since 2011",
     ] as M,
     tanim1: [
-      "Filomuz sabit kanat savaşan İHA'lardan hidrojen yakıt hücresi Ar-Ge platformuna kadar uzanıyor. Her uçak bir öncekinin birikimiyle tasarlandı: aerodinamik form, kompozit gövde, aviyonik entegrasyonu ve otonom uçuş yazılımının tamamı takım içinde üretiliyor.",
-      "Our fleet ranges from fixed-wing combat UAVs to a hydrogen fuel-cell R&D platform. Each aircraft builds on what the previous one taught us: aerodynamic design, composite airframes, avionics integration and autonomous flight software are all produced in-house.",
+      "Filo, sabit kanatlı savaşan İHA'lardan hidrojen yakıt hücreli Ar-Ge hava aracına kadar farklı platformlardan oluşur. Aerodinamik tasarım, kompozit gövde, aviyonik entegrasyonu ve otonom uçuş yazılımı ekip bünyesinde geliştirilir.",
+      "The fleet includes a range of platforms, from fixed-wing combat UAVs to a hydrogen fuel-cell R&D aircraft. Aerodynamic design, composite airframes, avionics integration and autonomous flight software are developed by the team.",
     ] as M,
     tanim2: [
-      "Aşağıda güncel platformların kısa künyesi var. Teknik değerler, görev profilleri ve arşivdeki uçaklar için filo sayfasına geçin.",
-      "Below is a short profile of each active platform. For technical figures, mission profiles and archived aircraft, visit the fleet page.",
+      "Aşağıda platformların kısa künyeleri yer alır. Teknik değerler, görev profilleri ve arşivdeki hava araçları için filo sayfasını inceleyebilirsiniz.",
+      "Brief profiles of the platforms are listed below. Visit the fleet page for technical specifications, mission profiles and archived aircraft.",
     ] as M,
-    tumFilo: ["Tüm filoyu incele", "Explore the full fleet"] as M,
-    arsiv: ["Arşiv · geçmiş platformlarımız", "Archive · our past platforms"] as M,
-    amiralGemisi: ["Amiral Gemisi", "Flagship"] as M,
+    tumFilo: ["Tüm filo", "Full fleet"] as M,
     ihaAlt: ["insansız hava aracı", "unmanned aerial vehicle"] as M,
+    specOzellik: ["Özellik", "Specification"] as M,
     /* /filo sayfası başlığı */
     sayfaBaslik1: ["2011'den bugüne", "Everything we have built"] as M,
-    sayfaBaslik2: ["ürettiğimiz platformlar", "since 2011"] as M,
+    sayfaBaslik2: ["geliştirilen platformlar", "since 2011"] as M,
     sayfaLead: [
-      "Her platform bir öncekinin mühendislik birikimi üzerine kuruldu. Sabit kanat gövdelerden hidrojen yakıt hücresi Ar-Ge'sine kadar tasarım, üretim ve uçuş testlerinin tamamı takım içinde yapılıyor.",
-      "Every platform is built on the engineering the last one left behind. From fixed-wing airframes to hydrogen fuel-cell research, design, manufacturing and flight testing all happen inside the team.",
+      "Her platform önceki çalışmaların mühendislik birikimi üzerine kurulur. Sabit kanatlı hava araçlarından hidrojen yakıt hücresi Ar-Ge'sine kadar tasarım, üretim ve uçuş testleri ekip bünyesinde gerçekleştirilir.",
+      "Each platform builds on the engineering work that came before it. From fixed-wing aircraft to hydrogen fuel-cell research, design, manufacturing and flight testing are carried out by the team.",
     ] as M,
   },
 
   basarilar: {
     baslik: ["Başarılar", "Achievements"] as M,
     kicker: [
-      "2013'ten bugüne ulusal ve uluslararası derecelerimiz",
-      "Our national and international results since 2013",
+      "2013'ten bugüne yarışmalarda elde edilen dereceler",
+      "Competition results since 2013",
     ] as M,
     ulusal: ["Ulusal", "National"] as M,
     uluslararasi: ["Uluslararası", "International"] as M,
-    sampiyonluk: ["Şampiyonluk", "Championship"] as M,
+    birincilik: ["Birincilik", "First Place"] as M,
+    derece: ["Derece", "Competition Results"] as M,
   },
 
   ekip: {
     baslik: ["Ekip", "Team"] as M,
-    kicker: ["Altı alt ekip, tek uçak", "Six sub-teams, one aircraft"] as M,
+    kicker: ["Altı alt ekip, tek hava aracı", "Six sub-teams, one aircraft"] as M,
     aktifUye: ["Aktif Üye", "Active Members"] as M,
-    brans: ["Mühendislik Branşı", "Engineering Disciplines"] as M,
-    mezun: ["Sektörde Mezun", "Alumni in Industry"] as M,
+    brans: ["Disiplin Sayısı", "Discipline Count"] as M,
+    mezun: ["Mezun Sayısı", "Alumni"] as M,
     kurulus: ["Kuruluş", "Founded"] as M,
     mezunNot: [
-      "Mezunlarımız bugün TUSAŞ, BAYKAR ve ASELSAN gibi sektör liderlerinde kilit roller üstleniyor.",
-      "Our alumni hold key roles at industry leaders such as TUSAŞ, BAYKAR and ASELSAN.",
+      "Mezunlarımız savunma sanayinde ve farklı sektörlerde görev almaktadır.",
+      "Our graduates work in the defense industry and across other sectors.",
     ] as M,
     danismanlar: ["Akademik danışmanlarımız", "Our academic advisors"] as M,
     fotoAlt: ["Anatolia Aero Design ekibi", "The Anatolia Aero Design team"] as M,
@@ -193,24 +194,23 @@ export const S = {
   serit: {
     kicker: ["Filomuz havada", "Our fleet in the air"] as M,
     baslik1: ["Gökyüzü", "The sky is"] as M,
-    baslik2: ["bizim alanımız.", "our domain."] as M,
+    baslik2: ["bizim alanımız", "our domain"] as M,
     metin: [
-      "2011'den bu yana tasarlayıp ürettiğimiz her platform, bir sonrakinin mühendislik temelini attı. Aşağı kaydırın — filomuz sayfa boyunca sizinle uçuyor.",
-      "Every platform we have designed and built since 2011 laid the engineering groundwork for the next. Keep scrolling — our fleet flies with you down the page.",
+      "2011'den bu yana geliştirilen her platform, sonraki tasarım çalışmalarına mühendislik temeli oluşturdu. Sayfayı kaydırdıkça filodaki hava araçlarını görebilirsiniz.",
+      "Each platform developed since 2011 has informed the engineering of those that followed. Scroll down to explore the aircraft in our fleet.",
     ] as M,
   },
 
   cta: {
     kicker: ["Birlikte daha yükseğe", "Higher, together"] as M,
     baslik1: ["Markanızı gökyüzüne", "Let's take your brand"] as M,
-    baslik2: ["taşıyalım.", "to the sky."] as M,
+    baslik2: ["taşınsın", "to the sky"] as M,
     metin: [
-      "Teknofest Türkiye birincisi bir takımın parçası olun. Sponsorluk paketlerimizle markanız uçaklarımızda, tanıtım materyallerimizde ve dijital kanallarımızda yerini alır.",
-      "Become part of a team that finished first in Türkiye at Teknofest. With our sponsorship packages your brand takes its place on our aircraft, in our promotional material and across our digital channels.",
+      "Sponsorluk ve iş birliği konularını görüşmek için bizimle iletişime geçebilirsiniz.",
+      "Please contact us to discuss sponsorship and collaboration.",
     ] as M,
-    paketler: ["Sponsorluk Paketleri", "Sponsorship Packages"] as M,
-    iletisim: ["İletişime Geç", "Get in Touch"] as M,
-    sponsorOl: ["Sponsor Ol", "Become a Sponsor"] as M,
+    iletisim: ["İletişim", "Contact"] as M,
+    sponsorOl: ["Sponsorluk Bilgisi", "Sponsorship Information"] as M,
   },
 
   footer: {
@@ -223,15 +223,15 @@ export const S = {
       "Eskişehir Technical University Unmanned Aerial Vehicle Team",
     ] as M,
     aciklama: [
-      "Eskişehir Teknik Üniversitesi insansız hava aracı tasarım, üretim ve test takımı. Teknofest Savaşan İHA ve UAV Turkey Türkiye birincisi.",
-      "The unmanned aerial vehicle design, manufacturing and test team of Eskişehir Technical University. First in Türkiye at Teknofest Combat UAV and UAV Turkey.",
+      "Eskişehir Teknik Üniversitesi insansız hava aracı tasarım, üretim ve test takımı. TEKNOFEST Savaşan İHA ve TÜBİTAK Uluslararası İHA Yarışmalarında derece sahibi.",
+      "The unmanned aerial vehicle design, manufacturing and test team of Eskişehir Technical University, with results in the TEKNOFEST Combat UAV and TÜBİTAK International UAV competitions.",
     ] as M,
     sehir: ["Eskişehir, Türkiye", "Eskişehir, Türkiye"] as M,
   },
 
   galeri: {
     eyebrow: ["Galeri", "Gallery"] as M,
-    baslik: ["Sahadan kareler.", "Frames from the field."] as M,
+    baslik: ["Sahadan kareler", "Frames from the field"] as M,
     lead: [
       "Test uçuşları, atölye çalışmaları ve yarışma anları. Takımın hikâyesi burada.",
       "Test flights, workshop sessions and competition moments. The team's story lives here.",
@@ -241,16 +241,16 @@ export const S = {
       "Takım fotoğraf ve videoları panelden yüklendiğinde burada görünecek. Şimdilik en güncel içeriklerimizi Instagram'da bulabilirsiniz.",
       "Team photos and videos will appear here as they are uploaded from the panel. For now you can find our latest content on Instagram.",
     ] as M,
-    instagram: ["Instagram'da gör", "See it on Instagram"] as M,
+    instagram: ["Instagram içerikleri", "Instagram posts"] as M,
     kapat: ["Kapat", "Close"] as M,
   },
 
   iletisim: {
     eyebrow: ["İletişim", "Contact"] as M,
-    baslik: ["Konuşalım.", "Let's talk."] as M,
+    baslik: ["Bizimle iletişime geçin!", "Contact us!"] as M,
     lead: [
-      "Sponsorluk, iş birliği ya da merak ettikleriniz için bize yazın. Sponsorluk taleplerinde takımı anlatan detaylı sunumumuzu paylaşabiliriz.",
-      "Write to us about sponsorship, collaboration or anything you are curious about. For sponsorship enquiries we can share the detailed deck that introduces the team.",
+      "Sponsorluk, iş birliği ve diğer konular için bizimle iletişime geçebilirsiniz. Sponsorluk taleplerinde takım tanıtım dosyası paylaşılabilir.",
+      "Contact us about sponsorship, collaboration or other enquiries. We can share the team information pack for sponsorship requests.",
     ] as M,
     adres: ["Adres", "Address"] as M,
     eposta: ["E-posta", "Email"] as M,
@@ -267,8 +267,8 @@ export const S = {
     gonder: ["Gönder", "Send"] as M,
     gonderiliyor: ["Gönderiliyor…", "Sending…"] as M,
     basarili: [
-      "Mesajınız iletildi. En kısa sürede dönüş yapacağız.",
-      "Your message is with us. We will get back to you shortly.",
+      "Mesajınız iletilmiştir. En kısa sürede tarafınıza dönüş sağlanacaktır.",
+      "Your message has been received. A reply will be sent as soon as possible.",
     ] as M,
     mailto1: ["Posta uygulamanız açıldı. Açılmadıysa doğrudan", "Your mail app should have opened. If it did not, you can write to"] as M,
     mailto2: ["adresine yazabilirsiniz.", "directly."] as M,
@@ -277,44 +277,56 @@ export const S = {
 
   katil: {
     eyebrow: ["Başvuru", "Application"] as M,
-    baslik1: ["Takıma", "Join"] as M,
-    baslik2: ["katıl.", "the team."] as M,
-    p1a: ["2011'den bu yana", "Since 2011 we have won"] as M,
-    p1b: [
-      "şampiyonluk kazandık ve her yıl sıfırdan bir insansız hava aracı tasarlayıp üretiyoruz. Tecrübe şart değil — öğrenmeye istekli olman yeterli. Eğitimi biz veriyoruz.",
-      "championships, and every year we design and build an unmanned aerial vehicle from scratch. Experience is not required — being willing to learn is enough. We provide the training.",
+    baslik1: ["Takımımıza", "Team"] as M,
+    baslik2: ["Katılım", "Application"] as M,
+    p1: [
+      "Anatolia Aero Design ekibi olarak 2011 yılından bu yana insansız hava araçları üzerine çalışan genç ve dinamik bir ekibiz. Daha önce çeşitli ulusal ve uluslararası yarışmalara katıldık, hem mühendislik alanında hem de takım çalışmasında önemli tecrübeler kazandık. Geliştirdiğimiz çeşitli sistemler ve insansız hava araçları ile kendimizi sürekli geliştirmeye devam ediyoruz.",
+      "Anatolia Aero Design is a young and dynamic team that has been working on unmanned aerial vehicles since 2011. We have participated in national and international competitions, gaining valuable experience in engineering and teamwork. We continue to develop ourselves through the systems and unmanned aerial vehicles we build.",
     ] as M,
+    basarilarBaslik: ["Başarılarımızdan bazıları;", "Some of our achievements:"] as M,
+    basari1: ["2015 SAE Dünya 3.'lüğü", "2015 SAE 3rd Place Worldwide"] as M,
+    basari2: ["2016 SAE Dünya 1.'liği", "2016 SAE 1st Place Worldwide"] as M,
+    basari3: [
+      "2018 TÜBİTAK Sabit Kanat Kategorisi 1.'liği",
+      "2018 TÜBİTAK Fixed-Wing Category 1st Place",
+    ] as M,
+    basari4: ["2022 Savaşan İHA 1.'liği", "2022 Combat UAV 1st Place"] as M,
     p2: [
-      "Hafta sonları ESTÜ'deki atölyemizde çalışıyoruz. Başvurunu aldıktan sonra seni mülakata davet ediyoruz.",
-      "We work at our ESTÜ workshop on weekends. Once we receive your application we will invite you to an interview.",
+      "Bu başvuru formunun asıl amacı sizlerin teknik yeterliliğini ölçmek değil; öğrenmeye olan isteğinizi, takım çalışmasına yatkınlığınızı ve problem çözme yaklaşımınızı görmektir. Bizim için en önemli kriterler, zorluklar karşısında vazgeçmemeniz ve hevesli olmanızdır. Soruları cevaplarken araştırmaktan çekinmeyiniz.",
+      "The main purpose of this application form is not to measure your technical qualifications, but to understand your willingness to learn, your approach to teamwork and problem solving. The most important criteria for us are perseverance in the face of challenges and enthusiasm. Please feel free to research the questions as you answer them.",
+    ] as M,
+    p3: [
+      "Başvurunuz incelendikten sonra, değerlendirmenin olumlu sonuçlanması durumunda mülakat süreci için sizlerle iletişime geçilecektir.",
+      "After your application is reviewed, you will be contacted about an interview if the evaluation is positive.",
     ] as M,
     formBaslik: ["Başvuru Formu", "Application Form"] as M,
     formAlt: [
-      "Formu doldurup gönder; dönüşü e-posta ile yapıyoruz.",
-      "Fill in the form and send it; we reply by email.",
+      "Formu doldurup gönderebilirsiniz; dönüş e-posta ile iletilecektir.",
+      "Please complete and submit the form. A reply will be sent by email.",
     ] as M,
-    yeniSekme: ["Yeni sekmede aç", "Open in a new tab"] as M,
+    yeniSekme: ["Yeni sekmede form", "Form in a new tab"] as M,
     yukleniyor: ["Yükleniyor…", "Loading…"] as M,
-    gorunmuyor1: ["Form görünmüyorsa", "If the form does not appear,"] as M,
+    gorunmuyor1: ["Form görüntülenmiyorsa", "If the form does not appear,"] as M,
     baglanti: ["bu bağlantıdan", "use this link"] as M,
-    gorunmuyor2: ["doğrudan açabilirsin.", "to open it directly."] as M,
+    gorunmuyor2: ["doğrudan açabilirsiniz.", "to open it directly."] as M,
   },
 
   sponsor: {
     eyebrow: ["Sponsorluk · 2026–2027", "Sponsorship · 2026–2027"] as M,
     baslik1: ["Markanız bizimle", "Let your brand"] as M,
-    baslik2: ["havalansın.", "take off with us."] as M,
+    baslik2: ["havalansın", "take off with us"] as M,
     lead: [
-      "Logonuz uçaklarımızda, takım kıyafetlerimizde ve dijital kanallarımızda yer alır. Ürünlerinizi gerçek uçuş koşullarında test eder, teknik raporunu size sunarız.",
-      "Your logo goes on our aircraft, our team apparel and our digital channels. We test your products under real flight conditions and hand you the technical report.",
+      "Logonuz hava araçlarımızda, takım kıyafetlerinde ve dijital kanallarda yer alır. Ürünleriniz gerçek uçuş koşullarında test edilir; teknik rapor hazırlanarak paylaşılır.",
+      "Your logo is featured on our aircraft, team apparel and digital channels. Your products are tested under real flight conditions, and a technical report is prepared and shared.",
     ] as M,
-    gorusmeTalep: ["Görüşme Talep Et", "Request a Meeting"] as M,
-    dosyaIste: ["Sponsorluk Dosyası İste", "Request the Sponsorship Deck"] as M,
+    gorusmeTalep: ["Görüşme Talebi", "Meeting Request"] as M,
+    dosyaIste: ["Sponsorluk Dosyası", "Sponsorship Deck"] as M,
     mailKonu: ["Sponsorluk Görüşmesi", "Sponsorship Meeting"] as M,
 
-    sampiyonluk: ["Şampiyonluk", "Championships"] as M,
+    birincilik: ["Birincilik", "First Place"] as M,
+    derece: ["Derece", "Competition Results"] as M,
     uye: ["Takım Üyesi", "Team Members"] as M,
-    mezun: ["Sektörde Mezun", "Alumni in Industry"] as M,
+    mezun: ["Mezun Sayısı", "Alumni"] as M,
     kurulus: ["Kuruluş", "Founded"] as M,
 
     nedenBaslik: ["Neden Katkı Yapmalısınız?", "Why Support Us?"] as M,
@@ -330,13 +342,13 @@ export const S = {
     ] as M,
     gorunurluk1t: ["Uçak gövdesinde", "On the airframe"] as M,
     gorunurluk1d: [
-      "Logonuz yarışmaya giden platformun gövdesinde yer alır. TEKNOFEST saha yayınlarında ve fotoğraflarda uçakla birlikte görünür.",
-      "Your logo sits on the airframe of the platform that goes to the competition, appearing alongside the aircraft in TEKNOFEST broadcasts and photographs.",
+      "Logonuz yarışmaya katılan hava aracının gövdesinde yer alır; TEKNOFEST yayınlarında ve fotoğraflarında görünür.",
+      "Your logo appears on the airframe of the aircraft entered in the competition, including in TEKNOFEST broadcasts and photographs.",
     ] as M,
     gorunurluk2t: ["Takım kıyafetlerinde", "On team apparel"] as M,
     gorunurluk2d: [
-      "Yarışma ve etkinlik tişörtlerinde logonuz basılı olur; 40 kişilik ekip sahada bunu taşır.",
-      "Your logo is printed on our competition and event shirts; a 40-person team carries it in the field.",
+      "Yarışma ve etkinlik tişörtlerinde logonuz basılı olur; 40 kişilik ekip sahada bu kıyafetleri giyer.",
+      "Your logo is printed on competition and event shirts worn by the 40-person team.",
     ] as M,
     gorunurluk3t: ["Sosyal medyada", "On social media"] as M,
     gorunurluk3d: [
@@ -345,16 +357,9 @@ export const S = {
     ] as M,
     gorunurluk4t: ["Tanıtım ve raporlarda", "In decks and reports"] as M,
     gorunurluk4d: [
-      "Tanıtım dosyası, teknik raporlar, standımız ve üniversite etkinliklerinde destekçi olarak yer alırsınız.",
-      "You appear as a supporter in our introductory deck, technical reports, exhibition stand and university events.",
+      "Tanıtım dosyalarında, teknik raporlarda, etkinlik standında ve üniversite etkinliklerinde destekçi olarak yer alırsınız.",
+      "Your support is acknowledged in team information packs, technical reports, event stands and university events.",
     ] as M,
-    gorunurlukNot: [
-      "Hangi seviyede neyin dâhil olduğunu sayfanın altındaki karşılaştırma tablosunda görebilir, ayrıntılar için sponsorluk dosyamızı indirebilirsiniz.",
-      "You can see exactly what each tier includes in the comparison table further down the page, and download our sponsorship deck for the details.",
-    ] as M,
-
-    /* Şerit yalnızca birincilikleri gösteriyor */
-    birincilik: ["1.", "1st"] as M,
     basariSerit: [
       "Desteğiniz sonuç üreten bir takıma gidiyor",
       "Your support goes to a team that delivers results",
@@ -363,28 +368,13 @@ export const S = {
     destekciBaslik: ["Destekçilerimiz", "Our Supporters"] as M,
     destekciKicker: ["Bize güvenen markalar", "The brands that back us"] as M,
 
-    seviyeBaslik: ["Seviyeler", "Tiers"] as M,
-    seviyeKicker: [
-      "Size uygun katkı düzeyi",
-      "The level of support that fits you",
-    ] as M,
-    enUst: ["En Üst Seviye", "Top Tier"] as M,
-    nakitVeyaMalzeme: [
-      "nakit veya malzeme desteği",
-      "cash or in-kind support",
-    ] as M,
-    teklifAl: ["Teklif Al", "Request an Offer"] as M,
-
-    haklarBaslik: ["Haklar ve Avantajlar", "Rights and Benefits"] as M,
-    haklarKicker: ["Seviyelerin karşılaştırması", "Tier comparison"] as M,
-
     kapanisBaslik: [
       "Bir görüşmeyle başlayalım.",
       "Let's start with a conversation.",
     ] as M,
     kapanisMetin: [
-      "Sponsorluk dosyamızı gönderelim, ihtiyaçlarınıza göre birlikte bir iş birliği kurgulayalım.",
-      "Let us send you our sponsorship deck and shape a partnership around what you need.",
+      "Sponsorluk ve iş birliği seçeneklerini görüşmek için bizimle iletişime geçebilirsiniz.",
+      "Please contact us to discuss sponsorship and collaboration opportunities.",
     ] as M,
     dosyaIndir: [
       "Sponsorluk dosyasını indir",

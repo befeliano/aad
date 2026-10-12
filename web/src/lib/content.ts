@@ -18,14 +18,10 @@ import {
   FLEET,
   PROCESS_STEPS,
   SPONSORS_2025,
-  SPONSOR_MATRIX_ROWS,
-  SPONSOR_NOTE,
   SPONSOR_REASONS,
-  SPONSOR_TIERS,
   TEAM_LEADS,
   type Aircraft,
   type Department,
-  type SponsorTier,
 } from "./constants";
 import {
   ADVISORS_EN,
@@ -33,11 +29,8 @@ import {
   FLEET_EN,
   LEAD_ROLE_EN,
   PROCESS_EN,
-  SPONSOR_MATRIX_ROWS_EN,
-  SPONSOR_NOTE_EN,
   SPONSOR_REASONS_EN,
   SPONSOR_ROLE_EN,
-  SPONSOR_TIERS_EN,
 } from "./constants-en";
 
 /* ---------- FİLO ---------- */
@@ -56,6 +49,24 @@ export function useFleet(): Aircraft[] {
         desc: ov.desc ?? ac.desc,
         specs: ov.specs ?? ac.specs,
         features: ov.features ?? ac.features,
+      };
+    });
+  }, [lang]);
+}
+
+/* ---------- BAŞARILAR ---------- */
+
+export function useAchievements(): Achievement[] {
+  const lang = useLang();
+  return useMemo(() => {
+    if (lang === "tr") return ACHIEVEMENTS;
+    return ACHIEVEMENTS.map((a) => {
+      const ov = ACHIEVEMENTS_EN[`${a.year}|${a.title[0]}`];
+      return {
+        ...a,
+        title: [a.title[0], ov?.title ?? a.title[1]] as const,
+        detail: [a.detail[0], ov?.detail ?? a.detail[1]] as const,
+        rank: RANK_EN[a.rank] ?? a.rank,
       };
     });
   }, [lang]);
@@ -89,36 +100,9 @@ export function useProcessSteps(): typeof PROCESS_STEPS {
 
 /* ---------- SPONSORLUK ---------- */
 
-export function useSponsorTiers(): SponsorTier[] {
-  const lang = useLang();
-  return useMemo(() => {
-    if (lang === "tr") return SPONSOR_TIERS;
-    return SPONSOR_TIERS.map((t) => {
-      const ov = SPONSOR_TIERS_EN[t.key];
-      return ov ? { ...t, ...ov } : t;
-    });
-  }, [lang]);
-}
-
-export function useSponsorMatrixRows(): typeof SPONSOR_MATRIX_ROWS {
-  const lang = useLang();
-  return useMemo(() => {
-    if (lang === "tr") return SPONSOR_MATRIX_ROWS;
-    return SPONSOR_MATRIX_ROWS.map((r) => ({
-      ...r,
-      label: SPONSOR_MATRIX_ROWS_EN[r.key] ?? r.label,
-    }));
-  }, [lang]);
-}
-
 export function useSponsorReasons(): typeof SPONSOR_REASONS {
   const lang = useLang();
   return lang === "tr" ? SPONSOR_REASONS : SPONSOR_REASONS_EN;
-}
-
-export function useSponsorNote(): string {
-  const lang = useLang();
-  return lang === "tr" ? SPONSOR_NOTE : SPONSOR_NOTE_EN;
 }
 
 export function useSponsors(): typeof SPONSORS_2025 {
