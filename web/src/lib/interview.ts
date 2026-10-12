@@ -12,6 +12,90 @@
    birebir aynı olmalı — "sponsorluk" = Medya & Sponsorluk.
    ============================================================ */
 
+/* ---------- Kayıt ---------- */
+
+export type Durum = "planlandi" | "yapildi" | "kabul" | "red" | "beklemede";
+
+export const DURUMLAR = [
+  "planlandi",
+  "yapildi",
+  "kabul",
+  "red",
+  "beklemede",
+] as const;
+
+export const DURUM_META: Record<
+  Durum,
+  { etiket: string; tone: "neutral" | "info" | "ok" | "bad" | "warn" }
+> = {
+  planlandi: { etiket: "Planlandı", tone: "neutral" },
+  yapildi: { etiket: "Görüşüldü", tone: "info" },
+  kabul: { etiket: "Kabul", tone: "ok" },
+  red: { etiket: "Red", tone: "bad" },
+  beklemede: { etiket: "Beklemede", tone: "warn" },
+};
+
+/** Başvuru formundaki bir soru ve cevabı (formdaki sırayla saklanır) */
+export interface FormCevap {
+  soru: string;
+  cevap: string;
+}
+
+/** public.interviews satırı — supabase/mulakat.sql + mulakat-form.sql */
+export interface Mulakat {
+  id: string;
+  first_name: string;
+  last_name: string;
+  age: number | null;
+  program: string | null;
+  email: string | null;
+  phone: string | null;
+  /** Form cevabı tanınmazsa boş kalabilir */
+  dept: string | null;
+  skills: string[];
+  answers: Record<string, string>;
+  score: number | null;
+  notes: string | null;
+  notes_version: number;
+  status: Durum;
+  source: "form" | "manuel";
+  form_data: FormCevap[];
+  submitted_at: string | null;
+  interviewed_at: string | null;
+  updated_at: string;
+  updated_by: string | null;
+  created_at: string;
+}
+
+/** Mülakat notu üst sınırı — görüşme notu uzun olabiliyor */
+export const NOT_SINIRI = 20000;
+
+/**
+ * Aynı notu iki kişi aynı anda düzenlediğinde otomatik birleştirme.
+ *
+ * Mülakatta not tutmak neredeyse hep SONA EKLEMEKTİR. İkimiz de aynı
+ * metnin (taban) sonuna yazdıysak: tabana önce onun, sonra benim
+ * eklediğimi koy. Biri metnin ortasını değiştirdiyse güvenli bir
+ * birleştirme yok — null döner, kullanıcıya sorulur.
+ */
+export function notlariBirlestir(
+  taban: string,
+  benim: string,
+  onlarin: string
+): string | null {
+  if (benim === onlarin) return benim;
+  if (benim === taban) return onlarin;
+  if (onlarin === taban) return benim;
+  if (benim.startsWith(taban) && onlarin.startsWith(taban)) {
+    const ek = benim.slice(taban.length);
+    const ayrac = onlarin.endsWith("\n") || ek.startsWith("\n") ? "" : "\n";
+    return onlarin + ayrac + ek;
+  }
+  return null;
+}
+
+/* ---------- Soru ve beceri setleri ---------- */
+
 export interface Beceri {
   key: string;
   label: string;

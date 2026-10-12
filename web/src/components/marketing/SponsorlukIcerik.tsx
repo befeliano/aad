@@ -14,9 +14,8 @@ import {
 } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
-import { TEAM, TAKIM_ISTATISTIK } from "@/lib/constants";
+import { ACHIEVEMENTS, TEAM, TAKIM_ISTATISTIK } from "@/lib/constants";
 import {
-  useAchievements,
   useSponsorMatrixRows,
   useSponsorNote,
   useSponsorReasons,
@@ -35,9 +34,11 @@ export function SponsorlukIcerik() {
   const note = useSponsorNote();
   const sponsors = useSponsors();
   const leads = useTeamLeads();
-  const achievements = useAchievements();
 
-  const topAchievements = achievements.filter((a) => a.highlight);
+  /* Şampiyonluklar. `highlight` alanı artık veride hiç set edilmiyor —
+     eskiden onunla süzülüyordu ve bu şerit sessizce boş kalıyordu.
+     Birincilikler rank ile seçiliyor. */
+  const topAchievements = ACHIEVEMENTS.filter((a) => a.rank === "1");
 
   const reach = [
     { num: TAKIM_ISTATISTIK.birincilik, label: t(S.sponsor.birincilik) },
@@ -196,14 +197,18 @@ export function SponsorlukIcerik() {
           <div className="grid gap-4 md:grid-cols-3">
             {topAchievements.map((a) => (
               <div
-                key={a.year + a.title}
+                key={a.year + a.title[0]}
                 className="rounded-2xl border border-accent/30 bg-[linear-gradient(135deg,var(--accent-soft),transparent_65%)] p-7 text-center"
               >
-                <div className="display text-5xl text-accent">{a.rank}</div>
-                <div className="mt-3 text-[15px] font-bold text-ink">
-                  {a.title}
+                <div className="display text-5xl text-accent">
+                  {t(S.sponsor.birincilik)}
                 </div>
-                <div className="mt-1 text-[12.5px] text-ink-2">{a.detail}</div>
+                <div className="mt-3 text-[15px] font-bold text-ink">
+                  {t(a.title)}
+                </div>
+                <div className="mt-1 text-[12.5px] text-ink-2">
+                  {t(a.detail)}
+                </div>
                 <div className="eyebrow mt-3 !text-[10px]">{a.year}</div>
               </div>
             ))}

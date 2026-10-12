@@ -219,23 +219,15 @@ export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> 
   {
     "2022|TEKNOFEST Savaşan İHA": {
       title: "TEKNOFEST Combat UAV",
-      detail: "1st Place",
+      detail: "Champion of Türkiye",
     },
-    "2018|TEKNOFEST TÜBİTAK Uluslararası İHA": {
-      title: "TEKNOFEST TÜBİTAK International UAV",
-      detail: "1st Place",
+    "2018|TEKNOFEST TÜBİTAK İHA": {
+      title: "TEKNOFEST TÜBİTAK UAV",
+      detail: "First place in Türkiye",
     },
-    "2026|TEKNOFEST Savaşan İHA": {
-      title: "TEKNOFEST Combat UAV",
-      detail: "Finalist",
-    },
-    "2017|SAE Aero Design East": {
-      title: "SAE Aero Design East",
-      detail: "1st Place",
-    },
-    "2026|Anduril AI Grand Prix": {
-      title: "Anduril AI Grand Prix",
-      detail: "14th Place",
+    "2017|SAE Aero Design East (ABD)": {
+      title: "SAE Aero Design East (USA)",
+      detail: "World Championship — with Jaeger",
     },
     "2022|TEKNOFEST Karma Sürü Simülasyon": {
       title: "TEKNOFEST Mixed Swarm Simulation",
@@ -243,22 +235,14 @@ export const ACHIEVEMENTS_EN: Record<string, { title: string; detail: string }> 
     },
     "2021|TEKNOFEST Savaşan İHA": {
       title: "TEKNOFEST Combat UAV",
-      detail: "Fifth place",
-    },
-    "2025|TEKNOFEST Savaşan İHA": {
-      title: "TEKNOFEST Combat UAV",
-      detail: "Finalist",
-    },
-    "2025|TEKNOFEST TÜBİTAK Uluslararası İHA": {
-      title: "TEKNOFEST TÜBİTAK International UAV",
-      detail: "Finalist",
+      detail: "Second place",
     },
     "2020|TEKNOFEST Sürü İHA": {
       title: "TEKNOFEST Swarm UAV",
       detail: "Second place",
     },
-    "2019|TEKNOFEST TÜBİTAK Uluslararası İHA": {
-      title: "TEKNOFEST TÜBİTAK International UAV",
+    "2019|TEKNOFEST TÜBİTAK İHA": {
+      title: "TEKNOFEST TÜBİTAK UAV",
       detail: "Fifth place",
     },
     "2016|SAE Aero Design": {

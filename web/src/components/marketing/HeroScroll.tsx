@@ -4,8 +4,8 @@ import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ArrowRight, Trophy } from "lucide-react";
-import { TAKIM_ISTATISTIK, TEAM } from "@/lib/constants";
+import { ArrowDown, ArrowRight, ArrowUpRight, Trophy } from "lucide-react";
+import { BASVURU_FORMU, TAKIM_ISTATISTIK, TEAM } from "@/lib/constants";
 import { TurkishFlag } from "@/components/ui/TurkishMarks";
 import { S, useT } from "@/lib/i18n";
 
@@ -230,6 +230,18 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             >
               {t(S.hero.filoyuKesfet)}
             </Link>
+            <a
+              href={BASVURU_FORMU}
+              target="_blank"
+              rel="noopener"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
+            >
+              {t(S.hero.takimaKatil)}
+              <ArrowUpRight
+                size={15}
+                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </a>
           </div>
 
           <div className="grid w-full max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-5">
