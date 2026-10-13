@@ -144,7 +144,10 @@ async function main() {
 
   /* Plan */
   console.log("\n================ PLAN ================");
-  console.log(`Mevcut hesap: ${mevcut.length}`);
+  // Supabase panelindeki adresle karşılaştırın:
+  // supabase.com/dashboard/project/<BU KOD>/...
+  console.log(`Supabase projesi: ${new URL(url).hostname.split(".")[0]}  (${url})`);
+  console.log(`Mevcut hesap: ${mevcut.length}  (Supabase → Authentication → Users'taki "Total" ile aynı olmalı)`);
   console.log(`Korunacak  : ${kalan.map((u) => u.email).join(", ") || "(yok!)"}  → rolü "sistem" (Teknik Yönetici)`);
   if (eksikKorunan.length) console.log(`  UYARI: korunan listesinde olup bulunamayan: ${eksikKorunan.join(", ")}`);
   console.log(`Silinecek  : ${silinecek.length}`);
