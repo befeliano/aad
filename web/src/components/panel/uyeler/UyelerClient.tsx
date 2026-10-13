@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Trash2, Users, ShieldCheck, UserCog } from "lucide-react";
 import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
-import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
+import { DEPT_KEYS, DEPT_LABELS, LEADERSHIP_ROLES } from "@/lib/constants";
 import { fmtDateTime } from "@/lib/format";
 import { oneOf } from "@/lib/security";
 import { logAction } from "@/lib/audit";
@@ -18,7 +18,15 @@ import {
 } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 
-const ROLES = ["member", "captain", "vice", "admin"] as const;
+const ROLES = [
+  "member",
+  "captain",
+  "vice",
+  "admin",
+  "advisor",
+  "mentor",
+  "sistem",
+] as const;
 
 export function UyelerClient({ myId }: { myId: string }) {
   const supabase = useMemo(() => createClient(), []);
@@ -71,8 +79,9 @@ export function UyelerClient({ myId }: { myId: string }) {
   const stats = useMemo(
     () => ({
       total: users.length,
-      admins: users.filter((u) => u.role === "admin" || u.role === "vice")
-        .length,
+      admins: users.filter((u) =>
+        (LEADERSHIP_ROLES as readonly string[]).includes(u.role)
+      ).length,
       unassigned: users.filter((u) => !u.department).length,
     }),
     [users]
@@ -237,6 +246,9 @@ export function UyelerClient({ myId }: { myId: string }) {
                           <option value="captain">Birim Kaptanı</option>
                           <option value="vice">Takım Kaptan Yardımcısı</option>
                           <option value="admin">Takım Kaptanı</option>
+                          <option value="advisor">Danışman Hoca</option>
+                          <option value="mentor">Danışman</option>
+                          <option value="sistem">Teknik Yönetici</option>
                         </select>
                       </td>
                       <td className="px-4 py-3 text-[12.5px] text-ink-3">

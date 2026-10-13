@@ -14,7 +14,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_LABELS } from "@/lib/constants";
 import { bugunTR } from "@/lib/takvim";
-import { eksikYoklamaGunleri } from "@/lib/yoklama";
+import { eksikYoklamaGunleri, yoklamaSorumlusuMu } from "@/lib/yoklama";
 
 /* ============================================================
    Bildirim zili — panelin sağ üstü
@@ -88,8 +88,9 @@ export function BildirimZili({
     const bugun = bugunTR();
     const out: Bildirim[] = [];
 
-    /* 1) Yoklama — yalnızca birim kaptanına */
-    if (role === "captain" && dept) {
+    /* 1) Yoklama — birimin yoklama sorumlusuna (kaptan; yoksa birime
+          kayıtlı tam yetkili) */
+    if (await yoklamaSorumlusuMu(supabase, role, dept)) {
       const eksik = await eksikYoklamaGunleri(supabase, dept, bugun);
       if (eksik.length > 0) {
         const son = eksik[eksik.length - 1];

@@ -479,9 +479,10 @@ export function TakvimClient({
         </div>
       </PageHeader>
 
-      {role === "captain" && myDept && bugun && (
+      {myDept && bugun && (
         <YoklamaEksikleri
           bugun={bugun}
+          role={role}
           myDept={myDept}
           onGunSec={gunAtla}
           surum={yoklamaSurum}

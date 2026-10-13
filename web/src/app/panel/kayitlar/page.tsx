@@ -8,10 +8,9 @@ export const metadata = { title: "İşlem Kayıtları" };
 export default async function Page() {
   const session = await getSession();
   if (!session) redirect("/giris?next=/panel/kayitlar");
-  /* Yalnızca takım kaptanı + yazılım ekibi. Kaptan yardımcısı bile
-     giremez: denetim günlüğü teknik bir araç. */
-  const yetkili =
-    session.role === "admin" || session.dept === "yazilim";
+  /* Tam yetkililer (kaptan, yardımcısı, danışmanlar) + yazılım ekibi.
+     Aynı kural RLS'te: supabase/roller-danisman.sql */
+  const yetkili = session.isAdmin || session.dept === "yazilim";
   if (!yetkili) {
     return <AccessDenied title="İşlem Kayıtları" adminOnly />;
   }

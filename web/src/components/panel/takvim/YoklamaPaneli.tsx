@@ -9,7 +9,12 @@ import {
   YOKLAMA_ETIKET,
   type YoklamaDurumu,
 } from "@/lib/takvim";
-import { eksikYoklamaGunleri } from "@/lib/yoklama";
+import {
+  YOKLAMA_ACILIS,
+  eksikYoklamaGunleri,
+  saatTR,
+  yoklamaSorumlusuMu,
+} from "@/lib/yoklama";
 import { useToast } from "@/components/ui/Toast";
 
 interface Uye {
@@ -75,6 +80,19 @@ export function YoklamaPaneli({
   const [kaydedilen, setKaydedilen] = useState<string | null>(null);
 
   const gelecek = gun > bugun;
+
+  /* Bugünün yoklaması 09:50'den önce alınamaz (RLS de aynı kuralı
+     uyguluyor: roller-danisman.sql). Saat render'da okunamadığı için
+     (react-hooks/purity) effect'te tutulup yarım dakikada bir tazeleniyor. */
+  const [simdi, setSimdi] = useState<string | null>(null);
+  useEffect(() => {
+    if (gun !== bugun) return;
+    const tazele = () => setSimdi(saatTR());
+    tazele();
+    const t = setInterval(tazele, 30_000);
+    return () => clearInterval(t);
+  }, [gun, bugun]);
+  const henuzKapali = gun === bugun && (simdi === null || simdi < YOKLAMA_ACILIS);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -203,6 +221,10 @@ export function YoklamaPaneli({
               ? "Bu gün için yoklaman henüz girilmemiş."
               : "Bu gün için yoklama yok."}
         </p>
+      ) : henuzKapali ? (
+        <p className="text-[12.5px] text-ink-3">
+          Bugünün yoklaması {YOKLAMA_ACILIS}&apos;da açılır.
+        </p>
       ) : uyeler.length === 0 ? (
         <p className="text-[12.5px] text-ink-3">
           {DEPT_LABELS[dept] || dept} biriminde kayıtlı üye yok.
@@ -266,11 +288,13 @@ export function YoklamaPaneli({
  */
 export function YoklamaEksikleri({
   bugun,
+  role,
   myDept,
   onGunSec,
   surum,
 }: {
   bugun: string;
+  role: string;
   myDept: string;
   onGunSec: (gun: string) => void;
   /** Artınca yeniden hesaplanır (yoklama girildiğinde) */
@@ -281,13 +305,17 @@ export function YoklamaEksikleri({
 
   useEffect(() => {
     let iptal = false;
-    void eksikYoklamaGunleri(supabase, myDept, bugun).then((g) => {
+    void (async () => {
+      // Yalnızca birimin yoklama sorumlusu görür (kaptan; yoksa birime
+      // kayıtlı tam yetkili)
+      if (!(await yoklamaSorumlusuMu(supabase, role, myDept))) return;
+      const g = await eksikYoklamaGunleri(supabase, myDept, bugun);
       if (!iptal) setEksik(g);
-    });
+    })();
     return () => {
       iptal = true;
     };
-  }, [supabase, bugun, myDept, surum]);
+  }, [supabase, bugun, role, myDept, surum]);
 
   if (eksik.length === 0) return null;
 

@@ -1,10 +1,52 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { LEADERSHIP_ROLES } from "@/lib/constants";
 import {
   YOKLAMA_BASLANGIC,
   calismaGunleri,
   type GunKaydi,
   type GunKurali,
 } from "@/lib/takvim";
+
+/** Yoklama bugünkü tarih için bu saatten (Türkiye) itibaren alınır */
+export const YOKLAMA_ACILIS = "09:50";
+
+/** Türkiye saatine göre "HH:MM" */
+export function saatTR(simdi = new Date()): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Istanbul",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(simdi);
+}
+
+const tamYetkili = (role: string) =>
+  (LEADERSHIP_ROLES as readonly string[]).includes(role);
+
+/**
+ * Bu kişi biriminin yoklamasından sorumlu mu?
+ *
+ * Birim kaptanı (captain) her zaman sorumlu. Birimde birim kaptanı
+ * YOKSA o birime kayıtlı tam yetkili kişi sorumlu sayılır — ör. Sosyal
+ * Medya'yı Kaptan Yardımcısı yönetiyorsa yoklama hatırlatması ona gider.
+ * Sunucudaki e-posta hatırlatması (api/yoklama/eksikler) aynı kuralı
+ * uygular.
+ */
+export async function yoklamaSorumlusuMu(
+  supabase: SupabaseClient,
+  role: string,
+  dept: string
+): Promise<boolean> {
+  if (!dept) return false;
+  if (role === "captain") return true;
+  if (!tamYetkili(role)) return false;
+  const { count } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("department", dept)
+    .eq("role", "captain");
+  return !count;
+}
 
 /**
  * Bir birimin yoklaması alınmamış çalışma günleri (eskiden yeniye).

@@ -108,18 +108,29 @@ export type DeptKey =
 export const ROLE_LABELS: Record<string, string> = {
   admin: "Takım Kaptanı",
   vice: "Takım Kaptan Yardımcısı",
+  advisor: "Danışman Hoca",
+  mentor: "Danışman",
+  sistem: "Teknik Yönetici",
   captain: "Birim Kaptanı",
   member: "Üye",
 };
 
 /**
- * Tam yetkili roller — DB'deki is_admin() ile birebir aynı küme olmalı.
+ * Tam yetkili roller — DB'deki is_admin() ile birebir aynı küme olmalı
+ * (supabase/roller-danisman.sql). Takım kaptanı, yardımcısı, danışman
+ * hocalar, danışmanlar ve kişiye ait olmayan teknik yönetici hesabı.
  *
  * DİKKAT: "captain" (birim kaptanı) BURAYA GİRMEZ. Birim kaptanı olmak
  * finans gibi kritik verilere erişim vermez; yetkileri düz üye ile aynıdır,
  * "Birim Kaptanı" yalnızca unvandır.
  */
-export const LEADERSHIP_ROLES = ["admin", "vice"] as const;
+export const LEADERSHIP_ROLES = [
+  "admin",
+  "vice",
+  "advisor",
+  "mentor",
+  "sistem",
+] as const;
 
 export const DEPT_LABELS: Record<string, string> = {
   yazilim: "Yazılım",

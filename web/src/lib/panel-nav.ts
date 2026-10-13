@@ -1,4 +1,5 @@
 /* Panel navigasyon yapısı — erişim kuralları eski RBAC ile birebir */
+import { LEADERSHIP_ROLES } from "@/lib/constants";
 
 export interface NavEntry {
   href: string;
@@ -23,6 +24,7 @@ export const PANEL_NAV: NavGroup[] = [
       { href: "/panel/gorevler", label: "Görevler", icon: "KanbanSquare" },
       { href: "/panel/ihtiyaclar", label: "İhtiyaç Tablosu", icon: "ClipboardList" },
       { href: "/panel/takvim", label: "Çalışma Takvimi", icon: "CalendarDays" },
+      { href: "/panel/yoklama", label: "Yoklama Kayıtları", icon: "ClipboardCheck" },
       { href: "/panel/toplanti", label: "Toplantı Odası", icon: "Video" },
       { href: "/panel/ayarlar/profil", label: "Profilim", icon: "UserRound" },
     ],
@@ -119,7 +121,7 @@ export const PANEL_NAV: NavGroup[] = [
         href: "/panel/kayitlar",
         label: "İşlem Kayıtları",
         icon: "ScrollText",
-        exactRoles: ["admin"],
+        exactRoles: [...LEADERSHIP_ROLES],
         allowedDepts: ["yazilim"],
       },
     ],

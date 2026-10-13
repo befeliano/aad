@@ -43,3 +43,7 @@ next-env.d.ts
 
 # CesiumJS build sirasinda node_modules'ten kopyalanir
 /public/cesium
+
+# Hesap kurulum betiğinin girdisi (üye listesi) ve çıktısı (şifreler) — asla commit edilmez
+/scripts/hesaplar/uye-listesi.json
+/scripts/hesaplar/cikti/

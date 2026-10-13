@@ -5,7 +5,14 @@
 
 /* "vice" = Başkan Yardımcısı. Yetki olarak "admin" ile eşittir;
    ayrı tutulmasının tek sebebi arayüzde doğru unvanı gösterebilmek. */
-export type Role = "admin" | "vice" | "captain" | "member";
+export type Role =
+  | "admin"
+  | "vice"
+  | "advisor"
+  | "mentor"
+  | "sistem"
+  | "captain"
+  | "member";
 export type Priority = "critical" | "high" | "medium" | "low";
 export type TaskStatus = "todo" | "doing" | "review" | "done";
 

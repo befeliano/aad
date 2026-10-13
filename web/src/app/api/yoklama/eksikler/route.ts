@@ -1,6 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
+import { DEPT_KEYS, DEPT_LABELS, LEADERSHIP_ROLES } from "@/lib/constants";
 import {
   YOKLAMA_BASLANGIC,
   bugunTR,
@@ -147,9 +147,19 @@ export async function GET(request: Request) {
     if (eksik.length === 0) continue;
 
     const birimAdi = DEPT_LABELS[birim] || birim;
-    const kaptan = profiller.filter(
+    /* Sorumlu: birim kaptanı; birimde kaptan yoksa o birime kayıtlı
+       tam yetkili kişi (ör. Sosyal Medya'yı yöneten kaptan yardımcısı).
+       Panel tarafında aynı kural: lib/yoklama.ts yoklamaSorumlusuMu */
+    let kaptan = profiller.filter(
       (p) => p.role === "captain" && p.department === birim
     );
+    if (kaptan.length === 0) {
+      kaptan = profiller.filter(
+        (p) =>
+          (LEADERSHIP_ROLES as readonly string[]).includes(p.role) &&
+          p.department === birim
+      );
+    }
     if (kaptan.length === 0) {
       kaptansiz.push({ birim, birimAdi, gunler: eksik });
       continue;
