@@ -182,7 +182,7 @@ export function CompleteFlightModal({
         <>
           {/* Süre */}
           <div className="rounded-2xl border border-line bg-bg-2 p-6 text-center">
-            <div className="eyebrow mb-2">{session.flight.aircraft} · uçuş süresi</div>
+            <div className="eyebrow mb-2">{session.flight.aircraft} · kayıt süresi</div>
             <div className="display tabular text-6xl text-ink">
               {formatElapsed(elapsed)}
             </div>

@@ -19,7 +19,7 @@ export const TEAM = {
   founded: "2011",
   memberCount: "40+",
   alumniCount: "250+",
-  branchCount: "12",
+  branchCount: "10+",
 };
 
 /** Takım yönetimi — tanıtım/sponsorluk dosyasındaki iletişim bilgileri */
