@@ -230,7 +230,10 @@ export function BildirimZili({
       </button>
 
       {acik && (
-        <div className="absolute right-0 top-11 z-50 w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-line bg-bg-1 shadow-[var(--shadow-lg)]">
+        /* Telefonda düğmeye göre konumlanınca (sağında tema ve kullanıcı
+           düğmeleri var) ekran dışına taşıyordu: dar ekranda sayfaya
+           sabitleniyor, sm ve üstünde düğmenin altında açılıyor. */
+        <div className="fixed inset-x-3 top-[68px] z-50 overflow-hidden rounded-2xl border border-line bg-bg-1 shadow-[var(--shadow-lg)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-11 sm:w-[340px]">
           <div className="border-b border-line px-4 py-3 text-[13.5px] font-bold text-ink">
             Bildirimler
           </div>

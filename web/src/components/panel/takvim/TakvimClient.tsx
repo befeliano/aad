@@ -23,6 +23,8 @@ import { useToast } from "@/components/ui/Toast";
 import { Button, Card, Field, Modal } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
+import { BIRIM_RENK, notRengi } from "@/lib/birim-renk";
+import { GunNotlari } from "./GunNotlari";
 
 const IS_DEPTS = [...DEPT_KEYS, "ortak"] as const;
 
@@ -140,13 +142,16 @@ export function TakvimClient({
   const [secili, setSecili] = useState<string | null>(null);
   const [tur, setTur] = useState<Tur>("calisma");
   const [baslik, setBaslik] = useState("");
-  const [not, setNot] = useState("");
   const [bas, setBas] = useState("");
   const [bit, setBit] = useState("");
   const [kaydediliyor, setKaydediliyor] = useState(false);
 
   const [kurallarAcik, setKurallarAcik] = useState(false);
   const [isler, setIsler] = useState<Is[]>([]);
+  /** Ay ızgarasındaki not işaretleri (gövdesiz, yalnızca renk için) */
+  const [notIsaretleri, setNotIsaretleri] = useState<
+    Record<string, { hedef: string[]; yazan_birim: string | null }[]>
+  >({});
   const [isTabloYok, setIsTabloYok] = useState(false);
   const [isFormAcik, setIsFormAcik] = useState(false);
   const [duzenlenenIs, setDuzenlenenIs] = useState<Is | null>(null);
@@ -234,6 +239,18 @@ export function TakvimClient({
       (u[f.flight_date] ||= []).push(f);
     }
     setUcuslar(u);
+
+    /* Notlar — RLS yalnızca görebildiklerimizi döndürür */
+    const { data: nt } = await supabase
+      .from("calendar_notes")
+      .select("day, hedef, yazan_birim")
+      .gte("day", ilkGun)
+      .lte("day", sonGun);
+    const nm: Record<string, { hedef: string[]; yazan_birim: string | null }[]> = {};
+    for (const x of (nt as { day: string; hedef: string[]; yazan_birim: string | null }[]) || []) {
+      (nm[x.day] ||= []).push(x);
+    }
+    setNotIsaretleri(nm);
     setYukluAy(`${yil}-${ay}`);
     setLoading(false);
   }, [supabase, yil, ay]);
@@ -250,6 +267,7 @@ export function TakvimClient({
       .on("postgres_changes", { event: "*", schema: "public", table: "calendar_days" }, () => void load())
       .on("postgres_changes", { event: "*", schema: "public", table: "calendar_rules" }, () => void load())
       .on("postgres_changes", { event: "*", schema: "public", table: "calendar_tasks" }, () => void load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "calendar_notes" }, () => void load())
       .subscribe();
     return () => {
       void supabase.removeChannel(ch);
@@ -330,7 +348,6 @@ export function TakvimClient({
     const elle = gunler[k];
     setTur(e?.kind ?? "calisma");
     setBaslik(elle?.title ?? "");
-    setNot(elle?.note ?? "");
     setBas(saat(elle?.starts_at ?? e?.starts_at ?? null) ?? "");
     setBit(saat(elle?.ends_at ?? e?.ends_at ?? null) ?? "");
   }
@@ -356,7 +373,6 @@ export function TakvimClient({
           day: secili,
           kind: tur,
           title: trimTo(baslik, LIMITS.title),
-          note: trimTo(not, LIMITS.shortText),
           starts_at: bas || null,
           ends_at: bit || null,
         },
@@ -514,7 +530,7 @@ export function TakvimClient({
             {izgara.map((h, i) => {
               if (!h.gun || !h.k) {
                 return (
-                  <div key={`bos-${i}`} className="min-h-[92px] border-b border-r border-line-2/40 bg-bg-2/40 last:border-r-0" />
+                  <div key={`bos-${i}`} className="min-h-[64px] border-b border-r border-line-2/40 bg-bg-2/40 last:border-r-0 sm:min-h-[92px]" />
                 );
               }
               const e = etkinGun(h.k);
@@ -528,7 +544,7 @@ export function TakvimClient({
                   key={h.k}
                   type="button"
                   onClick={() => sec(h.k!)}
-                  className={`min-h-[92px] border-b border-r border-line-2/40 p-2 text-left transition-colors last:border-r-0 ${
+                  className={`min-h-[64px] min-w-0 overflow-hidden border-b border-r border-line-2/40 p-1 text-left transition-colors last:border-r-0 sm:min-h-[92px] sm:p-2 ${
                     e ? TUR[e.kind].kutu : "hover:bg-bg-2/60"
                   } ${secliMi ? "ring-2 ring-inset ring-accent" : ""}`}
                 >
@@ -546,7 +562,7 @@ export function TakvimClient({
                   </span>
 
                   {e?.starts_at && (
-                    <span className="tabular mt-1 block text-[10.5px] text-ink-3">
+                    <span className="tabular mt-1 hidden text-[10.5px] text-ink-3 sm:block">
                       {saat(e.starts_at)}–{saat(e.ends_at)}
                     </span>
                   )}
@@ -561,13 +577,26 @@ export function TakvimClient({
                     </span>
                   )}
 
+                  {(notIsaretleri[h.k] || []).length > 0 && (
+                    <span className="mt-1 flex flex-wrap gap-0.5" aria-label="Notlar">
+                      {(notIsaretleri[h.k] || []).slice(0, 6).map((n, j) => (
+                        <span
+                          key={j}
+                          className="size-1.5 rounded-full"
+                          style={{ background: notRengi(n.hedef, n.yazan_birim) }}
+                        />
+                      ))}
+                    </span>
+                  )}
+
                   {gunIsler.length > 0 && (
                     <span className="mt-1 block space-y-0.5">
                       {gunIsler.slice(0, 2).map((i) => (
                         <span
                           key={i.id}
-                          title={`${i.title} - ${i.starts_on} / ${i.ends_on}`}
+                          title={`${i.title} - ${DEPT_LABELS[i.dept] || i.dept} - ${i.starts_on} / ${i.ends_on}`}
                           className={`block truncate rounded border px-1 py-0.5 text-[9.5px] font-semibold ${IS_DURUM[i.status].sinif}`}
+                          style={{ borderLeft: `3px solid ${BIRIM_RENK[i.dept] || BIRIM_RENK.ortak}` }}
                         >
                           {i.title}
                         </span>
@@ -689,6 +718,16 @@ export function TakvimClient({
                 )}
               </div>
 
+              <GunNotlari
+                key={secili}
+                gun={secili}
+                userId={userId}
+                isAdmin={isAdmin}
+                role={role}
+                myDept={myDept}
+                onDegisti={() => void load()}
+              />
+
               {/* Yoklama kendi sayfasında (/panel/yoklama/<gün>); takvimde
                   yalnızca oraya giden düğme var, o da çalışma günlerinde ve
                   yoklama alabilenlere */}
@@ -748,9 +787,6 @@ export function TakvimClient({
                     <input value={baslik} onChange={(e) => setBaslik(e.target.value)} maxLength={LIMITS.title} placeholder="örn. Kompozit kalıp çalışması" className="field" />
                   </Field>
 
-                  <Field label="Not" hint="İsteğe bağlı">
-                    <textarea value={not} onChange={(e) => setNot(e.target.value)} rows={3} maxLength={LIMITS.shortText} className="field resize-y" />
-                  </Field>
 
                   <div className="flex items-center gap-2 border-t border-line pt-4">
                     <Button onClick={kaydet} disabled={kaydediliyor}>
@@ -777,9 +813,6 @@ export function TakvimClient({
                           {saat(seciliEtkin.starts_at)}–{saat(seciliEtkin.ends_at)}
                         </div>
                       )}
-                      {seciliEtkin.note && (
-                        <p className="text-[13px] leading-relaxed text-ink-2">{seciliEtkin.note}</p>
-                      )}
                     </>
                   ) : (
                     <p className="text-[13px] text-ink-3">Bu gün için kayıt yok.</p>
@@ -804,6 +837,8 @@ export function TakvimClient({
           mevcut={duzenlenenIs}
           varsayilanGun={secili}
           yenile={load}
+          // Birim kaptanı yalnızca kendi birimine iş ekler (takvim-notlari.sql)
+          birimler={isAdmin ? [...IS_DEPTS] : myDept ? [myDept] : []}
         />
       )}
 
@@ -1000,12 +1035,15 @@ function IsFormu({
   mevcut,
   varsayilanGun,
   yenile,
+  birimler,
 }: {
   open: boolean;
   onClose: () => void;
   mevcut: Is | null;
   varsayilanGun: string | null;
   yenile: () => void;
+  /** Seçilebilecek birimler */
+  birimler: string[];
 }) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
@@ -1121,10 +1159,10 @@ function IsFormu({
           <Field label="Birim">
             <select
               name="dept"
-              defaultValue={mevcut?.dept || "ortak"}
+              defaultValue={mevcut?.dept || (birimler.includes("ortak") ? "ortak" : birimler[0])}
               className="field"
             >
-              {IS_DEPTS.map((k) => (
+              {birimler.map((k) => (
                 <option key={k} value={k}>
                   {DEPT_LABELS[k] || k}
                 </option>

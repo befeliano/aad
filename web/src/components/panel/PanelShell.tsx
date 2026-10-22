@@ -109,7 +109,7 @@ export function PanelShell({
 
       {/* Main */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-line bg-bg/80 px-5 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-line bg-bg/80 px-3 backdrop-blur-xl sm:gap-3 sm:px-5">
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -119,12 +119,14 @@ export function PanelShell({
             <Icons.Menu size={20} />
           </button>
 
-          <div className="flex flex-1 items-center justify-end gap-2.5">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2.5">
             <BildirimZili userId={user.id} role={user.role} dept={user.dept} />
             <ThemeToggle />
-            <div className="flex items-center gap-2.5 rounded-full border border-line bg-bg-1 py-1.5 pl-3 pr-1.5">
-              <span className="size-2 rounded-full bg-ok" />
-              <span className="text-sm font-medium text-ink">{user.name}</span>
+            <div className="flex min-w-0 items-center gap-2 rounded-full border border-line bg-bg-1 py-1.5 pl-3 pr-1.5 sm:gap-2.5">
+              <span className="size-2 shrink-0 rounded-full bg-ok" />
+              <span className="max-w-[90px] truncate text-sm font-medium text-ink sm:max-w-[200px]">
+                {user.name}
+              </span>
               <span className="eyebrow hidden !text-[9.5px] sm:inline">
                 {user.isAdmin || user.role === "captain"
                   ? (ROLE_LABELS[user.role] || "Üye").toLocaleUpperCase("tr")
@@ -133,7 +135,7 @@ export function PanelShell({
               <button
                 type="button"
                 onClick={signOut}
-                className="ml-1 rounded-full bg-bg-3 px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-bad/20 hover:text-bad"
+                className="ml-0.5 shrink-0 rounded-full bg-bg-3 px-2.5 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-bad/20 hover:text-bad sm:ml-1 sm:px-3"
               >
                 Çıkış
               </button>
@@ -141,7 +143,7 @@ export function PanelShell({
           </div>
         </header>
 
-        <main className="flex-1 p-5 sm:p-8">
+        <main className="min-w-0 flex-1 p-4 sm:p-8">
           <ToastProvider>{children}</ToastProvider>
         </main>
       </div>
