@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Mulakat } from "@/lib/interview";
 import { AdayClient } from "@/components/panel/mulakat/AdayClient";
 import { Card } from "@/components/ui/Kit";
+import { AccessDenied } from "@/components/panel/AccessDenied";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -46,6 +47,15 @@ export default async function Page({
 
   const session = await getSession();
   if (!session) redirect(`/giris?next=/panel/mulakat/${id}`);
+  // Tam yetkililer + birim kaptanları (mulakat-yetki.sql)
+  if (!session.isAdmin && session.role !== "captain") {
+    return (
+      <AccessDenied
+        title="Mülakatlar"
+        mesaj="Mülakatlar takım kaptanı, yardımcısı, danışmanlar ve birim kaptanlarına açıktır."
+      />
+    );
+  }
 
   const { aday, hata } = await adayGetir(id);
   if (hata) {

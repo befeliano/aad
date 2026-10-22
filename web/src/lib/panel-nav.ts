@@ -113,6 +113,8 @@ export const PANEL_NAV: NavGroup[] = [
         href: "/panel/mulakat",
         label: "Mülakatlar",
         icon: "UserPlus",
+        // Tam yetkililer + birim kaptanları (mulakat-yetki.sql)
+        exactRoles: [...LEADERSHIP_ROLES, "captain"],
       },
       {
         href: "/panel/ayarlar/checklist",
