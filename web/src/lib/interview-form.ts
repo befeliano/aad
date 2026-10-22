@@ -56,7 +56,19 @@ export function sadelestir(s: string): string {
  */
 export function kunyeAlani(soru: string): KunyeAlani | null {
   const t = sadelestir(soru).split(" ").filter(Boolean);
-  if (t.length === 0 || t.length > 5) return null;
+  if (t.length === 0) return null;
+
+  /* Başlık doğrudan alan adıyla BAŞLIYORSA uzunluğuna bakma: formda
+     "Telefon Numaranız (başında 0 olmadan 5xxxxxxxxx şeklinde)" gibi
+     açıklamalı başlıklar telefonu kaçırıyordu. */
+  const ilk = t[0];
+  if (ilk.startsWith("telefon") || ilk === "tel" || ilk === "gsm" || ilk === "cep")
+    return "telefon";
+  if (ilk.startsWith("eposta") || ilk.startsWith("mail") || (ilk === "e" && t[1] === "posta"))
+    return "eposta";
+  if (ilk.startsWith("dogum")) return "dogum";
+
+  if (t.length > 5) return null;
   if (t.some((w) => /^m[iu](s[iu]n([iu]z)?)?$/.test(w) || w.startsWith("bahse")))
     return null;
   const bas = (...on: string[]) => t.some((w) => on.some((o) => w.startsWith(o)));

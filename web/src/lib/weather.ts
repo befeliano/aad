@@ -167,6 +167,66 @@ export function hourVerdict(h: HourPoint): Verdict {
   return "uygun";
 }
 
+/* ---------- Süzgeçli uygunluk (Hava Durumu ekranı) ----------
+   Kullanıcı hangi ölçütlere bakılacağını seçer; örn. yağışı umursamayıp
+   yalnızca rüzgâra göre pencere aramak. Hiçbiri seçili değilse her saat
+   uygun sayılır. */
+export type Kriter = "ruzgar" | "hamle" | "yagis" | "gorus";
+
+export const KRITERLER: { k: Kriter; etiket: string }[] = [
+  { k: "ruzgar", etiket: "Rüzgâr" },
+  { k: "hamle", etiket: "Hamle" },
+  { k: "yagis", etiket: "Yağış" },
+  { k: "gorus", etiket: "Görüş" },
+];
+
+export function hourVerdictK(h: HourPoint, k: ReadonlySet<Kriter>): Verdict {
+  const kotu =
+    (k.has("ruzgar") && h.wind > LIMITS.windMarginal) ||
+    (k.has("hamle") && h.gust > LIMITS.gustMarginal) ||
+    (k.has("yagis") &&
+      (h.precipProb >= LIMITS.precipProbBad || h.precip > 0.5 || isPrecipCode(h.code)));
+  if (kotu) return "uygunsuz";
+  const sinirda =
+    (k.has("ruzgar") && h.wind > LIMITS.windGood) ||
+    (k.has("hamle") && h.gust > LIMITS.gustGood) ||
+    (k.has("yagis") && h.precipProb >= LIMITS.precipProbMarginal) ||
+    (k.has("gorus") && h.visibility < LIMITS.visibilityMarginal);
+  return sinirda ? "dikkatli" : "uygun";
+}
+
+/**
+ * Gündüz saatlerindeki TÜM "uygun" bloklar, saat sırasıyla.
+ * `to` bloğun son saatinin başlangıcı; bitiş için +1 saat eklenir.
+ */
+export function uygunPencereler(
+  hours: HourPoint[],
+  k: ReadonlySet<Kriter>
+): { from: string; to: string; saat: number }[] {
+  const out: { from: string; to: string; saat: number }[] = [];
+  let run: HourPoint[] = [];
+  const kapat = () => {
+    if (run.length) out.push({ from: run[0].time, to: run[run.length - 1].time, saat: run.length });
+    run = [];
+  };
+  for (const h of hours.filter((x) => x.isDay)) {
+    if (hourVerdictK(h, k) === "uygun") run.push(h);
+    else kapat();
+  }
+  kapat();
+  return out;
+}
+
+/** Günün en iyi saatine göre özet (süzgeçli) */
+export function dayVerdictK(hours: HourPoint[], k: ReadonlySet<Kriter>): Verdict {
+  const day = hours.filter((h) => h.isDay);
+  if (!day.length) return "uygunsuz";
+  return day.reduce<Verdict>((best, h) => {
+    const v = hourVerdictK(h, k);
+    return RANK[v] < RANK[best] ? v : best;
+  }, "uygunsuz");
+}
+
 const RANK: Record<Verdict, number> = { uygun: 0, dikkatli: 1, uygunsuz: 2 };
 
 /** Gün boyunca gündüz saatlerinin en iyi durumunu özetler */

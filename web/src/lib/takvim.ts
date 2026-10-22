@@ -32,14 +32,21 @@ export interface GunKurali {
  */
 export const YOKLAMA_BASLANGIC = "2026-10-12";
 
-export const YOKLAMA_DURUMLARI = ["geldi", "gec", "gelmedi"] as const;
+/* Beş durum. "Mazeretli" = hastalık ya da geçerli mazeret (haber verdi);
+   katılım oranında paydaya girmez. DB kısıtı: duzeltmeler-ekim.sql */
+export const YOKLAMA_DURUMLARI = ["geldi", "gec", "erken", "mazeretli", "gelmedi"] as const;
 export type YoklamaDurumu = (typeof YOKLAMA_DURUMLARI)[number];
 
 export const YOKLAMA_ETIKET: Record<YoklamaDurumu, string> = {
   geldi: "Geldi",
   gec: "Geç geldi",
+  erken: "Erken ayrıldı",
+  mazeretli: "Mazeretli",
   gelmedi: "Gelmedi",
 };
+
+/** Katılım oranında "geldi" sayılanlar */
+export const YOKLAMA_KATILDI: readonly YoklamaDurumu[] = ["geldi", "gec", "erken"];
 
 /** Yerel saate göre YYYY-MM-DD — toISOString() UTC'ye kaydırıp günü şaşırtır */
 export function gunAnahtari(d: Date): string {

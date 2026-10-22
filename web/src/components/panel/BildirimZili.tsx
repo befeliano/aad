@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   KanbanSquare,
   Mail,
+  Wrench,
   X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -23,8 +24,9 @@ import { eksikYoklamaGunleri, yoklamaSorumlusuMu } from "@/lib/yoklama";
    hesaplanıyor. Sorun çözülünce (yoklama alınınca, görev bitince)
    bildirim kendiliğinden kaybolur, "okundu" işaretlemeye gerek yok.
 
-   Şu an üç kaynak var:
-     1. Birim kaptanına: yoklaması alınmamış çalışma günleri
+   Şu an dört kaynak var:
+     1. Birim kaptanına: yoklaması alınmamış çalışma günleri ve
+        biriminde çözülmemiş arızalar
      2. Herkese: kendisine atanmış, son tarihi geçmiş/2 gün içinde
         olan açık görevler
      3. Herkese: Profilim'de bildirim e-postası yoksa hatırlatma
@@ -34,7 +36,7 @@ import { eksikYoklamaGunleri, yoklamaSorumlusuMu } from "@/lib/yoklama";
 
 interface Bildirim {
   id: string;
-  ikon: "yoklama" | "gorev" | "eposta";
+  ikon: "yoklama" | "gorev" | "eposta" | "ariza";
   baslik: string;
   metin: string;
   href: string;
@@ -45,6 +47,7 @@ const IKON = {
   yoklama: ClipboardCheck,
   gorev: KanbanSquare,
   eposta: Mail,
+  ariza: Wrench,
 } as const;
 
 const TON = {
@@ -107,6 +110,39 @@ export function BildirimZili({
             .map(gunYaz)
             .join(", ")}${eksik.length > 4 ? "…" : ""}`,
           href: `/panel/yoklama/${eksik[0]}`,
+        });
+      }
+    }
+
+    /* 1b) Arıza — birim kaptanına (birimde kaptan yoksa birime kayıtlı
+           tam yetkiliye): biriminde açık ya da incelenen arıza.
+           Arıza çözülünce bildirim kendiliğinden kalkar. */
+    if (dept && (await yoklamaSorumlusuMu(supabase, role, dept))) {
+      const { data: arizalar } = await supabase
+        .from("faults")
+        .select("id, title, severity, status")
+        .eq("dept", dept)
+        .neq("status", "cozuldu")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      const liste = (arizalar as { id: string; title: string; severity: string; status: string }[]) || [];
+      if (liste.length > 0) {
+        const kritik = liste.some((a) => a.severity === "kritik" || a.severity === "yuksek");
+        out.push({
+          id: "ariza",
+          ikon: "ariza",
+          ton: kritik ? "bad" : "warn",
+          baslik:
+            liste.length === 1
+              ? `Açık arıza: ${liste[0].title}`
+              : `${DEPT_LABELS[dept] || dept}: ${liste.length} açık arıza`,
+          metin:
+            liste.length === 1
+              ? liste[0].status === "inceleniyor"
+                ? "İnceleniyor"
+                : "Henüz kimse ilgilenmedi"
+              : liste.slice(0, 3).map((a) => a.title).join(", ") + (liste.length > 3 ? "…" : ""),
+          href: "/panel/arizalar",
         });
       }
     }

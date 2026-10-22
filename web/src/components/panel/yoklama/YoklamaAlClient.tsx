@@ -42,6 +42,8 @@ const uyeAdi = (u: Uye) =>
 const RENK: Record<YoklamaDurumu, string> = {
   geldi: "border-ok bg-ok text-white",
   gec: "border-warn bg-warn text-white",
+  erken: "border-info bg-info text-white",
+  mazeretli: "border-ink-3 bg-ink-3 text-white",
   gelmedi: "border-bad bg-bad text-white",
 };
 
@@ -285,9 +287,9 @@ export function YoklamaAlClient({
             </span>
             <span className="tabular text-[12.5px] text-ink-3">
               {Object.keys(durum).length}/{uyeler.length} girildi
-              {sayim.geldi ? ` · ${sayim.geldi} geldi` : ""}
-              {sayim.gec ? ` · ${sayim.gec} geç` : ""}
-              {sayim.gelmedi ? ` · ${sayim.gelmedi} gelmedi` : ""}
+              {YOKLAMA_DURUMLARI.filter((x) => sayim[x])
+                .map((x) => ` · ${sayim[x]} ${YOKLAMA_ETIKET[x].toLocaleLowerCase("tr")}`)
+                .join("")}
             </span>
           </div>
           <ul className="divide-y divide-line">
@@ -305,14 +307,14 @@ export function YoklamaAlClient({
                       <Loader2 size={13} className="shrink-0 animate-spin text-ink-3" />
                     )}
                   </span>
-                  <div className="grid grid-cols-3 gap-1.5 md:w-[300px]">
+                  <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5 md:w-[460px]">
                     {YOKLAMA_DURUMLARI.map((d) => (
                       <button
                         key={d}
                         type="button"
                         aria-pressed={secili === d}
                         onClick={() => void isaretle(u.id, d)}
-                        className={`rounded-lg border px-2 py-2 text-[13px] font-semibold transition-colors ${
+                        className={`rounded-lg border px-1.5 py-2 text-[12.5px] font-semibold leading-tight transition-colors ${
                           secili === d
                             ? RENK[d]
                             : "border-line text-ink-3 hover:border-ink-3 hover:text-ink"

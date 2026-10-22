@@ -36,6 +36,8 @@ export interface StockItem {
   qty: number;
   unit: string | null;
   price: number | null;
+  /** Fiyatın ait olduğu ay — ayın ilk günü (envanter-fiyat-tarihi.sql) */
+  price_period?: string | null;
   min_stock: number | null;
   location: string | null;
   created_by: string | null;

@@ -177,6 +177,14 @@ export function EnvanterClient({ userId }: { userId: string }) {
       toast("Malzeme adı ve departman zorunlu.", "error");
       return;
     }
+    /* Fiyatın ait olduğu ay ("2026-10" → 2026-10-01). Kolon yalnızca
+       değer varsa (ya da silinecekse) gönderilir: envanter-fiyat-tarihi.sql
+       çalıştırılmadıysa diğer kayıtlar yine kaydedilebilsin. */
+    const ay = String(fd.get("price_period") || "").trim();
+    const fiyatAyi: Record<string, string | null> = {};
+    if (/^d{4}-d{2}$/.test(ay)) fiyatAyi.price_period = `${ay}-01`;
+    else if (editing?.price_period) fiyatAyi.price_period = null;
+    Object.assign(payload, fiyatAyi);
 
     setSaving(true);
     const { error } = editing
@@ -358,6 +366,15 @@ export function EnvanterClient({ userId }: { userId: string }) {
                       </td>
                       <td className="tabular px-4 py-3 text-right text-ink-2">
                         {s.price ? `${fmtMoney(s.price)} ₺` : "—"}
+                        {s.price && s.price_period ? (
+                          <span className="block text-[11px] font-normal text-ink-3">
+                            {new Date(s.price_period + "T12:00:00").toLocaleDateString("tr-TR", {
+                              month: "short",
+                              year: "numeric",
+                            })}{" "}
+                            fiyatı
+                          </span>
+                        ) : null}
                       </td>
                       <td className="tabular px-4 py-3 text-right font-semibold text-ink">
                         {total ? `${fmtMoney(total)} ₺` : "—"}
@@ -717,16 +734,26 @@ export function EnvanterClient({ userId }: { userId: string }) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Birim fiyat (₺)">
-              <input
-                name="price"
-                type="number"
-                step="any"
-                min="0"
-                defaultValue={editing?.price ?? 0}
-                className="field"
-              />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Birim fiyat (₺)">
+                <input
+                  name="price"
+                  type="number"
+                  step="any"
+                  min="0"
+                  defaultValue={editing?.price ?? 0}
+                  className="field"
+                />
+              </Field>
+              <Field label="Fiyat tarihi" hint="Hangi ayın fiyatı">
+                <input
+                  name="price_period"
+                  type="month"
+                  defaultValue={editing?.price_period?.slice(0, 7) ?? ""}
+                  className="field"
+                />
+              </Field>
+            </div>
             <Field label="Parti / lot no" hint="Tedarikçi takibi için">
               <input
                 name="batch_no"

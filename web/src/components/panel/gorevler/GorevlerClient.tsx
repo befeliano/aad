@@ -78,6 +78,9 @@ export function GorevlerClient({
   const [formOpen, setFormOpen] = useState(false);
   /** Sütundaki + ile açılınca formun "Durum"u o sütun olarak gelir */
   const [yeniDurum, setYeniDurum] = useState<TaskStatus>("todo");
+  /* Yeni görevde çoklu seçim: her kişiye (yoksa her birime) ayrı görev */
+  const [yeniBirimler, setYeniBirimler] = useState<string[]>([]);
+  const [yeniKisiler, setYeniKisiler] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [delTarget, setDelTarget] = useState<Task | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
@@ -131,6 +134,15 @@ export function GorevlerClient({
     const names = members.map(displayNameOf).filter(Boolean);
     return [...new Set(names)].sort((a, b) => a.localeCompare(b, "tr"));
   }, [members]);
+
+  /** Yeni görevde seçilebilecek üyeler: seçili birimlerdekiler ("ortak" → herkes) */
+  const secilebilirKisiler = useMemo(() => {
+    const birimler = isAdmin ? yeniBirimler : myDept ? [myDept] : [];
+    const herkes = birimler.includes("ortak") || birimler.length === 0;
+    return members
+      .filter((m) => displayNameOf(m) && (herkes || birimler.includes(m.department || "")))
+      .sort((a, b) => displayNameOf(a).localeCompare(displayNameOf(b), "tr"));
+  }, [members, yeniBirimler, isAdmin, myDept]);
 
   /** profiles listelenemiyorsa (RLS) serbest metne düşeriz */
   const hasMemberList = memberNames.length > 0;
@@ -221,6 +233,67 @@ export function GorevlerClient({
       .filter((t) => t.status === status)
       .reduce((m, t) => Math.max(m, t.position || 0), 0);
 
+    /* Yeni görev: birden çok birim / kişi seçilebilir. Her kişiye ayrı
+       görev açılır (birimi, seçilen birimler içindeyse kişinin birimi);
+       kimse seçilmediyse her birime atanmamış bir görev açılır. */
+    if (!editing) {
+      const birimler = isAdmin ? yeniBirimler : myDept ? [myDept] : [];
+      if (birimler.length === 0) {
+        toast("En az bir birim seçin.", "error");
+        return;
+      }
+      const ortak = {
+        title,
+        description: trimTo(fd.get("description"), LIMITS.longText),
+        deadline: trimTo(fd.get("deadline"), 20),
+        priority: oneOf(fd.get("priority"), PRIORITIES, "medium"),
+        status,
+        created_by: userId,
+      };
+      const satirlar = (
+        yeniKisiler.length
+          ? yeniKisiler.map((id) => {
+              const p = members.find((m) => m.id === id);
+              const pd = p?.department || "";
+              return {
+                ...ortak,
+                dept: birimler.includes(pd) ? pd : birimler[0],
+                assignee: p ? displayNameOf(p) : null,
+                assignee_id: id as string | null,
+              };
+            })
+          : birimler.map((b) => ({
+              ...ortak,
+              dept: b,
+              assignee: null as string | null,
+              assignee_id: null as string | null,
+            }))
+      ).map((r, i) => ({ ...r, position: maxPos + 1 + i }));
+
+      setSaving(true);
+      const { data, error } = await supabase.from("tasks").insert(satirlar).select("id");
+      setSaving(false);
+      if (error) {
+        toast("Kaydedilemedi: " + error.message, "error");
+        return;
+      }
+      satirlar.forEach((r, i) => {
+        logAction(supabase, "create", "tasks", data?.[i]?.id ?? null, {
+          title: r.title,
+          dept: r.dept,
+          assignee: r.assignee,
+        });
+      });
+      toast(
+        satirlar.length === 1
+          ? "Görev oluşturuldu."
+          : `${satirlar.length} görev oluşturuldu.`
+      );
+      setFormOpen(false);
+      load();
+      return;
+    }
+
     const payload = {
       title,
       description: trimTo(fd.get("description"), LIMITS.longText),
@@ -259,6 +332,15 @@ export function GorevlerClient({
     setFormOpen(false);
     setEditing(null);
     load();
+  }
+
+  /** Yeni görev formunu aç — sütundaki + ile gelindiyse durum o sütun */
+  function yeniAc(durum: TaskStatus) {
+    setEditing(null);
+    setYeniDurum(durum);
+    setYeniBirimler(isAdmin ? (dept ? [dept] : ["ortak"]) : myDept ? [myDept] : []);
+    setYeniKisiler([]);
+    setFormOpen(true);
   }
 
   async function moveTo(taskId: string, status: TaskStatus) {
@@ -309,7 +391,7 @@ export function GorevlerClient({
         desc="Departman görev panosu. Kartları sürükleyerek durum değiştirin."
       >
         {gorevAcabilir && (
-        <Button onClick={() => { setEditing(null); setYeniDurum("todo"); setFormOpen(true); }}>
+        <Button onClick={() => yeniAc("todo")}>
           <Plus size={16} />
           Görev Oluştur
         </Button>
@@ -414,9 +496,7 @@ export function GorevlerClient({
                       <button
                         type="button"
                         onClick={() => {
-                          setEditing(null);
-                          setYeniDurum(s);
-                          setFormOpen(true);
+                          yeniAc(s);
                         }}
                         aria-label={`${STATUS_LABEL[s]} sütununa görev ekle`}
                         title={`${STATUS_LABEL[s]} olarak görev ekle`}
@@ -558,6 +638,83 @@ export function GorevlerClient({
             />
           </Field>
 
+          {!editing && (
+            <div className="space-y-3 rounded-xl border border-line bg-bg-1 p-3.5">
+              <div>
+                <div className="mb-1.5 text-[12.5px] font-semibold text-ink-2">Birimler</div>
+                {isAdmin ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {TASK_DEPTS.map((k) => {
+                      const secili = yeniBirimler.includes(k);
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          aria-pressed={secili}
+                          onClick={() =>
+                            setYeniBirimler((v) =>
+                              v.includes(k) ? v.filter((x) => x !== k) : [...v, k]
+                            )
+                          }
+                          className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold transition-colors ${
+                            secili
+                              ? "border-accent bg-accent text-white"
+                              : "border-line-2 text-ink-3 hover:border-ink-3 hover:text-ink"
+                          }`}
+                        >
+                          {DEPT_LABELS[k] || k}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-[12.5px] text-ink-3">
+                    {DEPT_LABELS[myDept] || myDept} — birim kaptanı yalnızca kendi birimine görev açar
+                  </p>
+                )}
+              </div>
+              {hasMemberList && (
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between text-[12.5px] font-semibold text-ink-2">
+                    <span>Atanacak kişiler</span>
+                    <span className="font-normal text-ink-3">{yeniKisiler.length} seçili</span>
+                  </div>
+                  <ul className="max-h-48 overflow-y-auto rounded-lg border border-line bg-bg p-1">
+                    {secilebilirKisiler.map((m) => (
+                      <li key={m.id}>
+                        <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] text-ink hover:bg-bg-2">
+                          <input
+                            type="checkbox"
+                            checked={yeniKisiler.includes(m.id)}
+                            onChange={() =>
+                              setYeniKisiler((v) =>
+                                v.includes(m.id) ? v.filter((x) => x !== m.id) : [...v, m.id]
+                              )
+                            }
+                            className="size-4 accent-[var(--accent)]"
+                          />
+                          <span className="flex-1">
+                            {displayNameOf(m)}
+                            {m.id === userId ? " (ben)" : ""}
+                          </span>
+                          {m.department && (
+                            <span className="text-[11.5px] text-ink-3">
+                              {DEPT_LABELS[m.department] || m.department}
+                            </span>
+                          )}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1.5 text-[11.5px] text-ink-3">
+                    Her kişiye ayrı bir görev açılır. Kimse seçilmezse her birime atanmamış bir görev açılır.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {editing && (
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Departman">
               <select name="dept" defaultValue={editing?.dept || "ortak"} className="field">
@@ -610,6 +767,7 @@ export function GorevlerClient({
               )}
             </Field>
           </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="Öncelik">

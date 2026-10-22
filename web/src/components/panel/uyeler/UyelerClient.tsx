@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, Trash2, Users, ShieldCheck, UserCog } from "lucide-react";
+import { Search, Trash2, Users, ShieldCheck, UserCog, Pencil } from "lucide-react";
 import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { createClient } from "@/lib/supabase/client";
 import { DEPT_KEYS, DEPT_LABELS, LEADERSHIP_ROLES } from "@/lib/constants";
 import { fmtDateTime } from "@/lib/format";
-import { oneOf } from "@/lib/security";
+import { oneOf, trimTo, LIMITS } from "@/lib/security";
 import { logAction } from "@/lib/audit";
 import type { Profile, Role } from "@/lib/types";
 import { useToast } from "@/components/ui/Toast";
@@ -86,6 +86,31 @@ export function UyelerClient({ myId }: { myId: string }) {
     }),
     [users]
   );
+
+  /** Yanlış yazılmış isimleri düzeltmek için — satırdaki kalemle */
+  const [duzenlenenAd, setDuzenlenenAd] = useState<string | null>(null);
+
+  async function adKaydet(user: Profile, ham: string) {
+    setDuzenlenenAd(null);
+    const yeni = trimTo(ham, LIMITS.name);
+    if (!yeni || yeni === (user.full_name || "")) return;
+
+    setUsers((v) => v.map((u) => (u.id === user.id ? { ...u, full_name: yeni } : u)));
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: yeni })
+      .eq("id", user.id);
+    if (error) {
+      toast("İsim güncellenemedi: " + error.message, "error");
+      load();
+      return;
+    }
+    /* Görevlerde atanan kişi adı metin olarak da duruyor; kimlikle
+       bağlı görevlerde yeni adı yaz ki "Bana atananlar" süzgeci tutsun */
+    await supabase.from("tasks").update({ assignee: yeni }).eq("assignee_id", user.id);
+    logAction(supabase, "update", "profiles", user.id, { alan: "full_name" });
+    toast("İsim güncellendi.");
+  }
 
   async function updateField(
     user: Profile,
@@ -205,14 +230,36 @@ export function UyelerClient({ myId }: { myId: string }) {
                       }`}
                     >
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-ink">
-                          {u.full_name || "(İsim yok)"}
-                          {isMe && (
-                            <span className="ml-2 text-[11.5px] font-medium text-accent">
-                              · siz
-                            </span>
-                          )}
-                        </div>
+                        {duzenlenenAd === u.id ? (
+                          <input
+                            autoFocus
+                            defaultValue={u.full_name || ""}
+                            maxLength={LIMITS.name}
+                            aria-label="Ad Soyad"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                              if (e.key === "Escape") setDuzenlenenAd(null);
+                            }}
+                            onBlur={(e) => void adKaydet(u, e.target.value)}
+                            className="field !py-1 !text-[13px]"
+                          />
+                        ) : (
+                          <div className="flex items-center gap-1.5 font-semibold text-ink">
+                            {u.full_name || "(İsim yok)"}
+                            {isMe && (
+                              <span className="text-[11.5px] font-medium text-accent">· siz</span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setDuzenlenenAd(u.id)}
+                              aria-label={`${u.full_name || "Üye"} adını düzenle`}
+                              title="Adı düzenle"
+                              className="rounded p-1 text-ink-3 transition-colors hover:bg-bg-2 hover:text-ink"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                          </div>
+                        )}
                         <div className="mt-0.5 text-[12px] text-ink-3">
                           @{u.username || "?"}
                         </div>

@@ -21,14 +21,19 @@ import {
   weatherText,
   compass,
   toKmh,
-  hourVerdict,
   VERDICT_META,
+  KRITERLER,
+  hourVerdictK,
+  dayVerdictK,
+  uygunPencereler,
+  type Kriter,
   FLIGHT_SITES,
   LIMITS,
   type DayForecast,
   type HourPoint,
 } from "@/lib/weather";
 import { Badge, Button, Card, EmptyState } from "@/components/ui/Kit";
+import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { PageHeader } from "@/components/panel/PageHeader";
 
 const DAY_NAMES = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
@@ -79,6 +84,22 @@ export function HavaDurumuClient() {
 
   const day = days[selected];
 
+  /* Uygunluk ölçütleri — kullanıcı seçer, pencereler buna göre hesaplanır */
+  const [kriterMetni, setKriterMetni] = useKaliciFiltre(
+    "hava.kriter",
+    "ruzgar,hamle,yagis,gorus"
+  );
+  const kriterler = useMemo(
+    () => new Set(kriterMetni.split(",").filter(Boolean) as Kriter[]),
+    [kriterMetni]
+  );
+  function kriterDegis(k: Kriter) {
+    const n = new Set(kriterler);
+    if (n.has(k)) n.delete(k);
+    else n.add(k);
+    setKriterMetni(KRITERLER.map((x) => x.k).filter((x) => n.has(x)).join(","));
+  }
+
   /** Seçili günün gündüz saatleri — uçuş penceresi bunlar arasından seçilir */
   const dayHours = useMemo(
     () => (day ? day.hours.filter((h) => h.isDay) : []),
@@ -111,6 +132,32 @@ export function HavaDurumuClient() {
           Yenile
         </Button>
       </PageHeader>
+
+      {/* Uygunluk ölçütleri */}
+      <div className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-bg-1 px-5 py-3">
+        <span className="mr-1 text-[12.5px] font-semibold text-ink-2">Uygunluğu neye göre hesaplayalım?</span>
+        {KRITERLER.map((x) => {
+          const secili = kriterler.has(x.k);
+          return (
+            <button
+              key={x.k}
+              type="button"
+              aria-pressed={secili}
+              onClick={() => kriterDegis(x.k)}
+              className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold transition-colors ${
+                secili
+                  ? "border-accent bg-accent text-white"
+                  : "border-line-2 text-ink-3 hover:border-ink-3 hover:text-ink"
+              }`}
+            >
+              {x.etiket}
+            </button>
+          );
+        })}
+        {kriterler.size === 0 && (
+          <span className="text-[12px] text-warn">Hiçbir ölçüt seçili değil — her saat uygun görünür.</span>
+        )}
+      </div>
 
       {/* Saha bilgisi */}
       <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-bg-1 px-5 py-4">
@@ -168,7 +215,8 @@ export function HavaDurumuClient() {
           {/* 5 günlük özet */}
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {days.map((d, i) => {
-              const meta = VERDICT_META[d.verdict];
+              const meta = VERDICT_META[dayVerdictK(d.hours, kriterler)];
+              const pencereler = uygunPencereler(d.hours, kriterler);
               const active = i === selected;
               return (
                 <button
@@ -227,12 +275,16 @@ export function HavaDurumuClient() {
                     />
                   </div>
 
-                  {d.bestWindow ? (
+                  {pencereler.length > 0 ? (
                     <div className="mt-3 flex items-start gap-1.5 rounded-lg bg-ok/10 px-2.5 py-2">
                       <CircleCheck size={13} className="mt-0.5 shrink-0 text-ok" />
                       <span className="text-[11.5px] leading-snug text-ok">
-                        Uygun pencere {hhmm(d.bestWindow.from)}–
-                        {hhmm(d.bestWindow.to)}
+                        {pencereler.length === 1 ? "Uygun pencere" : `${pencereler.length} uygun pencere`}
+                        {pencereler.map((p) => (
+                          <span key={p.from} className="tabular block font-semibold">
+                            {hhmm(p.from)}–{saatSonu(p.to)}
+                          </span>
+                        ))}
                       </span>
                     </div>
                   ) : (
@@ -270,7 +322,7 @@ export function HavaDurumuClient() {
               <div className="overflow-x-auto p-4">
                 <div className="flex gap-2">
                   {dayHours.map((h) => (
-                    <HourCard key={h.time} h={h} />
+                    <HourCard key={h.time} h={h} kriterler={kriterler} />
                   ))}
                 </div>
               </div>
@@ -329,8 +381,14 @@ function Row({
   );
 }
 
-function HourCard({ h }: { h: HourPoint }) {
-  const v = hourVerdict(h);
+/** Bir saatlik dilimin bitişi: "14:00" başlayan saat "15:00"te biter */
+function saatSonu(iso: string) {
+  const s = Number(iso.slice(11, 13)) + 1;
+  return `${String(s).padStart(2, "0")}:00`;
+}
+
+function HourCard({ h, kriterler }: { h: HourPoint; kriterler: ReadonlySet<Kriter> }) {
+  const v = hourVerdictK(h, kriterler);
   const meta = VERDICT_META[v];
   const tone =
     v === "uygun"

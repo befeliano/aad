@@ -9,6 +9,7 @@ import {
   YOKLAMA_BASLANGIC,
   YOKLAMA_DURUMLARI,
   YOKLAMA_ETIKET,
+  YOKLAMA_KATILDI,
   type YoklamaDurumu,
 } from "@/lib/takvim";
 import { downloadFile, toCSV } from "@/lib/format";
@@ -36,8 +37,18 @@ interface Profil {
 const ROZET: Record<YoklamaDurumu, string> = {
   geldi: "bg-ok/12 text-ok",
   gec: "bg-warn/14 text-warn",
+  erken: "bg-info/12 text-info",
+  mazeretli: "bg-bg-3 text-ink-2",
   gelmedi: "bg-bad/12 text-bad",
 };
+
+const SIFIR = (): Record<YoklamaDurumu, number> => ({
+  geldi: 0,
+  gec: 0,
+  erken: 0,
+  mazeretli: 0,
+  gelmedi: 0,
+});
 
 const adOf = (p?: Profil) =>
   p?.full_name?.trim() || p?.username?.trim() || p?.email?.split("@")[0] || "Silinmiş üye";
@@ -172,7 +183,7 @@ export function YoklamaKayitlariClient({
   const kisiler = useMemo(() => {
     const m = new Map<string, { id: string; dept: string; c: Record<YoklamaDurumu, number> }>();
     for (const k of filtreli) {
-      const e = m.get(k.member_id) ?? { id: k.member_id, dept: k.dept, c: { geldi: 0, gec: 0, gelmedi: 0 } };
+      const e = m.get(k.member_id) ?? { id: k.member_id, dept: k.dept, c: SIFIR() };
       e.c[k.status]++;
       e.dept = k.dept;
       m.set(k.member_id, e);
@@ -314,7 +325,7 @@ export function YoklamaKayitlariClient({
                 <Card key={gun} title={gunYaz(gun)}>
                   <div className="divide-y divide-line">
                     {birimler.map(({ dept, liste }) => {
-                      const c = { geldi: 0, gec: 0, gelmedi: 0 } as Record<YoklamaDurumu, number>;
+                      const c = SIFIR();
                       for (const k of liste) c[k.status]++;
                       return (
                         <div key={dept} className="px-5 py-4">
@@ -352,28 +363,37 @@ export function YoklamaKayitlariClient({
             </div>
           ) : (
             <Card className="overflow-x-auto">
-              <table className="w-full min-w-[520px] text-left text-[13px]">
+              <table className="w-full min-w-[720px] text-left text-[13px]">
                 <thead>
                   <tr className="border-b border-line text-[11.5px] font-semibold uppercase tracking-wide text-ink-3">
                     <th className="px-5 py-3">Üye</th>
                     <th className="px-3 py-3">Birim</th>
-                    <th className="px-3 py-3 text-right">Geldi</th>
-                    <th className="px-3 py-3 text-right">Geç</th>
-                    <th className="px-3 py-3 text-right">Gelmedi</th>
+                    {YOKLAMA_DURUMLARI.map((x) => (
+                      <th key={x} className="px-3 py-3 text-right">
+                        {YOKLAMA_ETIKET[x]}
+                      </th>
+                    ))}
                     <th className="px-5 py-3 text-right">Katılım</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
                   {kisiler.map((k) => {
-                    const toplam = k.c.geldi + k.c.gec + k.c.gelmedi;
-                    const oran = toplam ? Math.round(((k.c.geldi + k.c.gec) / toplam) * 100) : 0;
+                    /* Mazeretli günler paydaya girmez */
+                    const sayilan = YOKLAMA_DURUMLARI.filter((x) => x !== "mazeretli").reduce(
+                      (t, x) => t + k.c[x],
+                      0
+                    );
+                    const katildi = YOKLAMA_KATILDI.reduce((t, x) => t + k.c[x], 0);
+                    const oran = sayilan ? Math.round((katildi / sayilan) * 100) : 0;
                     return (
                       <tr key={k.id}>
                         <td className="px-5 py-2.5 font-semibold text-ink">{adOf(profiller[k.id])}</td>
                         <td className="px-3 py-2.5 text-ink-2">{DEPT_LABELS[k.dept] || k.dept}</td>
-                        <td className="tabular px-3 py-2.5 text-right text-ok">{k.c.geldi}</td>
-                        <td className="tabular px-3 py-2.5 text-right text-warn">{k.c.gec}</td>
-                        <td className="tabular px-3 py-2.5 text-right text-bad">{k.c.gelmedi}</td>
+                        {YOKLAMA_DURUMLARI.map((x) => (
+                          <td key={x} className="tabular px-3 py-2.5 text-right text-ink-2">
+                            {k.c[x] || "—"}
+                          </td>
+                        ))}
                         <td className="tabular px-5 py-2.5 text-right font-semibold text-ink">%{oran}</td>
                       </tr>
                     );
