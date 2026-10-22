@@ -14,6 +14,7 @@ import {
   TriangleAlert,
   ListTodo,
   Plus,
+  ClipboardCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trimTo, LIMITS } from "@/lib/security";
@@ -22,7 +23,6 @@ import { useToast } from "@/components/ui/Toast";
 import { Button, Card, Field, Modal } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { DEPT_KEYS, DEPT_LABELS } from "@/lib/constants";
-import { YoklamaEksikleri, YoklamaPaneli } from "./YoklamaPaneli";
 
 const IS_DEPTS = [...DEPT_KEYS, "ortak"] as const;
 
@@ -119,8 +119,6 @@ export function TakvimClient({
 }) {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
-  /** Yoklama girildikçe "eksik günler" uyarısı tazelensin */
-  const [yoklamaSurum, setYoklamaSurum] = useState(0);
   /** Başka aydaki bir güne atlanınca o ay yüklenince seçilecek gün */
   const [bekleyenGun, setBekleyenGun] = useState<string | null>(null);
   /** Verisi yüklenmiş ay ("2026-9") — bekleyen seçim için */
@@ -337,19 +335,6 @@ export function TakvimClient({
     setBit(saat(elle?.ends_at ?? e?.ends_at ?? null) ?? "");
   }
 
-  /* Uyarıdaki bir güne tıklanınca: ayı değiştir, veri gelince günü seç */
-  function gunAtla(k: string) {
-    const [y, a] = k.split("-").map(Number);
-    if (y === yil && a - 1 === ay) {
-      sec(k);
-      return;
-    }
-    setBekleyenGun(k);
-    setYil(y);
-    setAy(a - 1);
-    setSecili(null);
-  }
-
   useEffect(() => {
     if (!bekleyenGun) return;
     const [y, a] = bekleyenGun.split("-").map(Number);
@@ -478,16 +463,6 @@ export function TakvimClient({
           </button>
         </div>
       </PageHeader>
-
-      {myDept && bugun && (
-        <YoklamaEksikleri
-          bugun={bugun}
-          role={role}
-          myDept={myDept}
-          onGunSec={gunAtla}
-          surum={yoklamaSurum}
-        />
-      )}
 
       {kuralTabloYok && (
         <Card className="mb-5 border-warn/30 bg-warn/8 p-4">
@@ -714,19 +689,21 @@ export function TakvimClient({
                 )}
               </div>
 
-              {bugun && (
-                <YoklamaPaneli
-                  key={secili}
-                  gun={secili}
-                  bugun={bugun}
-                  calismaGunu={seciliEtkin?.kind === "calisma"}
-                  userId={userId}
-                  isAdmin={isAdmin}
-                  role={role}
-                  myDept={myDept}
-                  onDegisti={() => setYoklamaSurum((s) => s + 1)}
-                />
-              )}
+              {/* Yoklama kendi sayfasında (/panel/yoklama/<gün>); takvimde
+                  yalnızca oraya giden düğme var, o da çalışma günlerinde ve
+                  yoklama alabilenlere */}
+              {bugun &&
+                seciliEtkin?.kind === "calisma" &&
+                secili <= bugun &&
+                (isAdmin || (role === "captain" && !!myDept)) && (
+                  <Link
+                    href={`/panel/yoklama/${secili}`}
+                    className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-accent/40 bg-accent-soft px-3 py-2.5 text-[13px] font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+                  >
+                    <ClipboardCheck size={15} />
+                    Yoklamayı düzenle
+                  </Link>
+                )}
 
               {(ucuslar[secili] || []).length > 0 && (
                 <div className="mt-4 rounded-xl border border-line bg-bg-2 p-3">

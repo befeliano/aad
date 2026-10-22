@@ -15,12 +15,15 @@ import { downloadFile, toCSV } from "@/lib/format";
 import { useKaliciFiltre } from "@/lib/useKaliciFiltre";
 import { Card, EmptyState } from "@/components/ui/Kit";
 import { PageHeader } from "@/components/panel/PageHeader";
+import { YoklamaEksikleri } from "./YoklamaAlClient";
 
 interface Kayit {
   day: string;
   member_id: string;
   dept: string;
   status: YoklamaDurumu;
+  /** yoklama-not.sql çalıştırılmadıysa gelmez */
+  note?: string | null;
 }
 
 interface Profil {
@@ -54,8 +57,23 @@ const gunYaz = (k: string) =>
  * kaptanı kendi birimini, üye yalnızca kendi kayıtlarını görür. Bu ekran
  * gelen ne varsa onu gösterir; ayrı bir yetki kontrolü yapmaz.
  */
-export function YoklamaKayitlariClient() {
+export function YoklamaKayitlariClient({
+  role,
+  myDept,
+  isAdmin,
+}: {
+  role: string;
+  myDept: string;
+  isAdmin: boolean;
+}) {
   const supabase = useMemo(() => createClient(), []);
+  /* Bugün render'da okunamıyor (react-hooks/purity) */
+  const [bugun, setBugun] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBugun(new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date()));
+  }, []);
+  const alabilir = isAdmin || (role === "captain" && !!myDept);
 
   const [kayitlar, setKayitlar] = useState<Kayit[]>([]);
   const [profiller, setProfiller] = useState<Record<string, Profil>>({});
@@ -69,19 +87,30 @@ export function YoklamaKayitlariClient() {
   const load = useCallback(async () => {
     /* Sezon boyunca satır sayısı 1000'i (PostgREST sınırı) aşar */
     const tum: Kayit[] = [];
+    // note kolonu yoksa (yoklama-not.sql çalıştırılmadıysa) notsuz dene
+    let kolonlar = "day, member_id, dept, status, note";
     for (let i = 0; ; i += 1000) {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("attendance")
-        .select("day, member_id, dept, status")
+        .select(kolonlar)
         .gte("day", YOKLAMA_BASLANGIC)
         .order("day", { ascending: false })
         .range(i, i + 999);
+      if (error && kolonlar.includes("note")) {
+        kolonlar = "day, member_id, dept, status";
+        ({ data, error } = await supabase
+          .from("attendance")
+          .select(kolonlar)
+          .gte("day", YOKLAMA_BASLANGIC)
+          .order("day", { ascending: false })
+          .range(i, i + 999));
+      }
       if (error) {
         setTabloYok(true);
         setLoading(false);
         return;
       }
-      tum.push(...((data as Kayit[]) || []));
+      tum.push(...((data as unknown as Kayit[]) || []));
       if (!data || data.length < 1000) break;
     }
     const { data: p } = await supabase
@@ -157,12 +186,13 @@ export function YoklamaKayitlariClient() {
 
   function csvIndir() {
     const csv = toCSV(
-      ["Tarih", "Birim", "Ad Soyad", "Durum"],
+      ["Tarih", "Birim", "Ad Soyad", "Durum", "Not"],
       filtreli.map((k) => [
         k.day,
         DEPT_LABELS[k.dept] || k.dept,
         adOf(profiller[k.member_id]),
         YOKLAMA_ETIKET[k.status],
+        k.note ?? "",
       ])
     );
     downloadFile(csv, `yoklama-${new Date().toISOString().slice(0, 10)}.csv`, "text/csv;charset=utf-8");
@@ -172,8 +202,17 @@ export function YoklamaKayitlariClient() {
     <>
       <PageHeader
         title="Yoklama Kayıtları"
-        desc="Birim kaptanlarının çalışma günlerinde aldığı yoklamalar. Yoklama, Çalışma Takvimi'nde güne tıklanarak 09:50'den itibaren alınır."
+        desc="Birim kaptanlarının çalışma günlerinde aldığı yoklamalar. Yoklama 09:50'den itibaren alınır; Çalışma Takvimi'nde güne tıklayıp &quot;Yoklamayı düzenle&quot;ye basın."
       >
+        {alabilir && bugun && (
+          <Link
+            href={`/panel/yoklama/${bugun}`}
+            className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
+          >
+            <ClipboardCheck size={15} />
+            Bugünün yoklaması
+          </Link>
+        )}
         <button
           type="button"
           onClick={csvIndir}
@@ -184,6 +223,10 @@ export function YoklamaKayitlariClient() {
           CSV indir
         </button>
       </PageHeader>
+
+      {bugun && myDept && (
+        <YoklamaEksikleri bugun={bugun} role={role} myDept={myDept} />
+      )}
 
       {tabloYok ? (
         <Card className="p-6">
@@ -289,11 +332,14 @@ export function YoklamaKayitlariClient() {
                             {liste.map((k) => (
                               <span
                                 key={k.member_id}
-                                title={YOKLAMA_ETIKET[k.status]}
+                                title={`${YOKLAMA_ETIKET[k.status]}${k.note ? " — " + k.note : ""}`}
                                 className={`rounded-full px-2.5 py-1 text-[12px] font-semibold ${ROZET[k.status]}`}
                               >
                                 {adOf(profiller[k.member_id])}
                                 {k.status !== "geldi" && ` · ${YOKLAMA_ETIKET[k.status].toLocaleLowerCase("tr")}`}
+                                {k.note && (
+                                  <span className="font-normal opacity-80"> ({k.note})</span>
+                                )}
                               </span>
                             ))}
                           </div>

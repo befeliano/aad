@@ -12,5 +12,11 @@ export const metadata = { title: "Yoklama Kayıtları" };
 export default async function Page() {
   const session = await getSession();
   if (!session) redirect("/giris?next=/panel/yoklama");
-  return <YoklamaKayitlariClient />;
+  return (
+    <YoklamaKayitlariClient
+      role={session.role}
+      myDept={session.dept}
+      isAdmin={session.isAdmin}
+    />
+  );
 }

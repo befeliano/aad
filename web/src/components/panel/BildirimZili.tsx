@@ -106,7 +106,7 @@ export function BildirimZili({
             .slice(-4)
             .map(gunYaz)
             .join(", ")}${eksik.length > 4 ? "…" : ""}`,
-          href: `/panel/takvim?gun=${eksik[0]}`,
+          href: `/panel/yoklama/${eksik[0]}`,
         });
       }
     }
