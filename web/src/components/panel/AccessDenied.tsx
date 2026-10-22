@@ -11,10 +11,13 @@ export function AccessDenied({
   title,
   allowed,
   adminOnly = false,
+  mesaj,
 }: {
   title: string;
   allowed?: string[];
   adminOnly?: boolean;
+  /** Hazır metinler uymuyorsa doğrudan açıklama */
+  mesaj?: string;
 }) {
   return (
     <>
@@ -25,7 +28,9 @@ export function AccessDenied({
           Bu bölüme erişiminiz yok
         </h2>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-2">
-          {adminOnly ? (
+          {mesaj ? (
+            mesaj
+          ) : adminOnly ? (
             <>Bu sayfa yalnızca takım kaptanına (admin) açıktır.</>
           ) : (
             <>

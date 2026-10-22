@@ -1,5 +1,5 @@
 /* Panel navigasyon yapısı — erişim kuralları eski RBAC ile birebir */
-import { LEADERSHIP_ROLES } from "@/lib/constants";
+import { LEADERSHIP_ROLES, ROL_ATAYABILEN } from "@/lib/constants";
 
 export interface NavEntry {
   href: string;
@@ -103,7 +103,12 @@ export const PANEL_NAV: NavGroup[] = [
   {
     title: "Yönetim",
     items: [
-      { href: "/panel/uyeler", label: "Üye Yönetimi", icon: "Users", adminOnly: true },
+      {
+        href: "/panel/uyeler",
+        label: "Üye Yönetimi",
+        icon: "Users",
+        exactRoles: [...ROL_ATAYABILEN],
+      },
       {
         href: "/panel/mulakat",
         label: "Mülakatlar",
@@ -113,16 +118,15 @@ export const PANEL_NAV: NavGroup[] = [
         href: "/panel/ayarlar/checklist",
         label: "Kontrol Listesi",
         icon: "ListChecks",
-        adminOnly: true,
+        // Tam yetkililer + birim kaptanları
+        exactRoles: [...LEADERSHIP_ROLES, "captain"],
       },
       {
-        // Yalnızca takım kaptanı ve yazılım ekibi — kaptan yardımcısı dâhil
-        // değil. Denetim günlüğü teknik bir araç, yönetsel değil.
+        // Yalnızca tam yetkililer (kaptan, yardımcısı, danışmanlar)
         href: "/panel/kayitlar",
         label: "İşlem Kayıtları",
         icon: "ScrollText",
         exactRoles: [...LEADERSHIP_ROLES],
-        allowedDepts: ["yazilim"],
       },
     ],
   },

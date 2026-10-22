@@ -8,9 +8,15 @@ export const metadata = { title: "Kontrol Listesi Ayarları" };
 export default async function Page() {
   const session = await getSession();
   if (!session) redirect("/giris?next=/panel/ayarlar/checklist");
-  // Şablonu yalnızca kaptan düzenler (RLS de aynı kuralı uyguluyor)
-  if (!session.isAdmin) {
-    return <AccessDenied title="Kontrol Listesi Ayarları" adminOnly />;
+  // Şablonu tam yetkililer ve birim kaptanları düzenler
+  // (RLS de aynı kuralı uyguluyor: yetki-duzeltmeleri-3.sql)
+  if (!session.isAdmin && session.role !== "captain") {
+    return (
+      <AccessDenied
+        title="Kontrol Listesi Ayarları"
+        mesaj="Bu sayfa takım kaptanı, yardımcısı, danışmanlar ve birim kaptanlarına açıktır."
+      />
+    );
   }
   return <ChecklistAyarlari />;
 }

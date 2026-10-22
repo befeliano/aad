@@ -34,30 +34,67 @@ const TABLE_LABELS: Record<string, string> = {
   profiles: "Üyeler",
 };
 
+/** Sayfa başına kayıt — tümünü tek seferde çekmiyoruz */
+const SAYFA = 50;
+/** CSV için üst sınır (filtreye uyan en yeni N kayıt) */
+const CSV_SINIRI = 5000;
+
+/** PostgREST or() sözdizimini bozabilecek karakterleri at */
+const aramaTemizle = (s: string) => s.replace(/[,()*%]/g, " ").trim().slice(0, 60);
+
 export function KayitlarClient() {
   const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
 
   const [rows, setRows] = useState<AuditEntry[]>([]);
+  const [toplam, setToplam] = useState(0);
+  const [sayfa, setSayfa] = useState(0);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useKaliciFiltre("kayitlar.q", "");
   const [action, setAction] = useKaliciFiltre("kayitlar.action", "");
   const [table, setTable] = useKaliciFiltre("kayitlar.table", "");
+  /* Arama her tuşta sorgu atmasın: yazmayı bırakınca */
+  const [arama, setArama] = useState(() => aramaTemizle(q));
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setArama(aramaTemizle(q));
+      setSayfa(0);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  /** Filtreleri uygulanmış sorgu — hem sayfa hem CSV aynı süzgeci kullanır */
+  const sorgu = useCallback(
+    (sayac: boolean) => {
+      let s = supabase
+        .from("audit_log")
+        .select("*", sayac ? { count: "exact" } : undefined)
+        .order("created_at", { ascending: false });
+      if (action) s = s.eq("action", action);
+      if (table) s = s.eq("table_name", table);
+      if (arama) {
+        s = s.or(
+          `user_name.ilike.*${arama}*,user_dept.ilike.*${arama}*,table_name.ilike.*${arama}*`
+        );
+      }
+      return s;
+    },
+    [supabase, action, table, arama]
+  );
 
   const load = useCallback(async () => {
-    let query = supabase
-      .from("audit_log")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(300);
-    if (action) query = query.eq("action", action);
-    if (table) query = query.eq("table_name", table);
-
-    const { data, error } = await query;
+    setLoading(true);
+    const { data, error, count } = await sorgu(true).range(
+      sayfa * SAYFA,
+      sayfa * SAYFA + SAYFA - 1
+    );
     if (error) toast("Kayıtlar yüklenemedi: " + error.message, "error");
-    else setRows((data as AuditEntry[]) || []);
+    else {
+      setRows((data as AuditEntry[]) || []);
+      setToplam(count ?? 0);
+    }
     setLoading(false);
-  }, [supabase, toast, action, table]);
+  }, [sorgu, sayfa, toast]);
 
   useEffect(() => {
     /* load() asenkrondur: setState ancak ağ yanıtı geldikten sonra çalışır. */
@@ -68,28 +105,33 @@ export function KayitlarClient() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "audit_log" },
-        () => load()
+        // Yalnızca ilk sayfadayken: geride gezerken sayfa kaymasın
+        () => {
+          if (sayfa === 0) void load();
+        }
       )
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
     };
-  }, [supabase, load]);
+  }, [supabase, load, sayfa]);
 
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLocaleLowerCase("tr");
-    if (!needle) return rows;
-    return rows.filter((r) =>
-      `${r.user_name || ""} ${r.user_dept || ""} ${r.table_name || ""} ${JSON.stringify(
-        r.details || {}
-      )}`
-        .toLocaleLowerCase("tr")
-        .includes(needle)
-    );
-  }, [rows, q]);
+  const filtered = rows;
+  const sayfaSayisi = Math.max(1, Math.ceil(toplam / SAYFA));
 
-  function exportCSV() {
-    const data = filtered.map((r) => [
+  async function exportCSV() {
+    /* Filtreye uyan kayıtları 1000'lik parçalarla topla (PostgREST sınırı) */
+    const hepsi: AuditEntry[] = [];
+    for (let i = 0; i < CSV_SINIRI; i += 1000) {
+      const { data, error } = await sorgu(false).range(i, i + 999);
+      if (error) {
+        toast("Dışa aktarılamadı: " + error.message, "error");
+        return;
+      }
+      hepsi.push(...((data as AuditEntry[]) || []));
+      if (!data || data.length < 1000) break;
+    }
+    const data = hepsi.map((r) => [
       fmtDateTime(r.created_at),
       r.user_name || "?",
       r.user_dept || "",
@@ -130,13 +172,16 @@ export function KayitlarClient() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Kullanıcı veya detay ara…"
+              placeholder="Kullanıcı, birim veya modül ara…"
               className="field !pl-9"
             />
           </div>
           <select
             value={action}
-            onChange={(e) => setAction(e.target.value)}
+            onChange={(e) => {
+              setAction(e.target.value);
+              setSayfa(0);
+            }}
             className="field !w-auto"
           >
             <option value="">Tüm işlemler</option>
@@ -146,7 +191,10 @@ export function KayitlarClient() {
           </select>
           <select
             value={table}
-            onChange={(e) => setTable(e.target.value)}
+            onChange={(e) => {
+              setTable(e.target.value);
+              setSayfa(0);
+            }}
             className="field !w-auto"
           >
             <option value="">Tüm modüller</option>
@@ -154,7 +202,9 @@ export function KayitlarClient() {
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
-          <span className="ml-auto text-xs text-ink-3">{filtered.length} kayıt</span>
+          <span className="ml-auto text-xs text-ink-3">
+            {toplam.toLocaleString("tr-TR")} kayıt
+          </span>
         </div>
 
         {loading ? (
@@ -233,6 +283,38 @@ export function KayitlarClient() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Sayfalama */}
+        {toplam > SAYFA && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
+            <span className="tabular text-[12.5px] text-ink-3">
+              {(sayfa * SAYFA + 1).toLocaleString("tr-TR")}–
+              {Math.min(toplam, (sayfa + 1) * SAYFA).toLocaleString("tr-TR")} /{" "}
+              {toplam.toLocaleString("tr-TR")}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={sayfa === 0 || loading}
+                onClick={() => setSayfa((s) => Math.max(0, s - 1))}
+              >
+                Önceki
+              </Button>
+              <span className="tabular px-2 text-[12.5px] font-semibold text-ink-2">
+                {sayfa + 1} / {sayfaSayisi}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={sayfa + 1 >= sayfaSayisi || loading}
+                onClick={() => setSayfa((s) => s + 1)}
+              >
+                Sonraki
+              </Button>
+            </div>
           </div>
         )}
       </Card>

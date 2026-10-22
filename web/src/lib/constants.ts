@@ -124,6 +124,13 @@ export const ROLE_LABELS: Record<string, string> = {
  * finans gibi kritik verilere erişim vermez; yetkileri düz üye ile aynıdır,
  * "Birim Kaptanı" yalnızca unvandır.
  */
+/**
+ * Üye Yönetimi (rol ve birim atama) yalnızca bu rollerde. Kaptan
+ * yardımcısı ve danışmanlar diğer her şeyde tam yetkili, bunda değil.
+ * DB'de aynı kural: profiles_guard_privilege (yetki-duzeltmeleri-3.sql)
+ */
+export const ROL_ATAYABILEN = ["admin", "sistem"] as const;
+
 export const LEADERSHIP_ROLES = [
   "admin",
   "vice",
