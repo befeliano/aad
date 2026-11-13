@@ -95,6 +95,28 @@ export const S = {
     menu: ["Menü", "Menu"] as M,
   },
 
+  install: {
+    button: ["Uygulamayı yükle", "Install app"] as M,
+    shortButton: ["Yükle", "Install"] as M,
+    title: ["Uygulamayı ana ekrana ekle", "Add the app to your home screen"] as M,
+    ios: [
+      "Safari'de Paylaş simgesine dokunun, ardından “Ana Ekrana Ekle” seçeneğini seçin.",
+      "In Safari, tap the Share icon, then choose “Add to Home Screen”.",
+    ] as M,
+    android: [
+      "Tarayıcı menüsünü (⋮) açın ve “Uygulamayı yükle” veya “Ana ekrana ekle” seçeneğine dokunun.",
+      "Open the browser menu (⋮), then tap “Install app” or “Add to Home screen”.",
+    ] as M,
+    other: [
+      "Tarayıcı menüsünü açın ve “Yükle” veya “Ana ekrana ekle” seçeneğini seçin.",
+      "Open the browser menu and choose “Install” or “Add to Home screen”.",
+    ] as M,
+    promptFailed: [
+      "Yükleme penceresi açılamadı. Tarayıcı menüsünden yüklemeyi deneyebilirsiniz.",
+      "The install prompt could not be opened. You can try installing from the browser menu.",
+    ] as M,
+  },
+
   hero: {
     kurulus: ["EST.", "EST."] as M,
     universite: [

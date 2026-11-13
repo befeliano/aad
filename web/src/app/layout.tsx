@@ -32,7 +32,13 @@ export const metadata: Metadata = {
     "Savaşan İHA",
     "Eskişehir Teknik Üniversitesi",
   ],
-  icons: { icon: "/logo.jpg", apple: "/logo.jpg" },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Anatolia Aero Design — ESTÜ İHA Takımı",
     description:
