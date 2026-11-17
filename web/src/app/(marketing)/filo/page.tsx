@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { FiloBaslik } from "@/components/marketing/FiloBaslik";
 import { FiloListesi } from "@/components/marketing/FiloListesi";
 import { FLEET } from "@/lib/constants";
-import { fleetImage } from "@/lib/public-assets";
+import { fleetImage, versionedPublicUrl } from "@/lib/public-assets";
 
 export const metadata: Metadata = {
   title: "Filo",
@@ -10,10 +11,11 @@ export const metadata: Metadata = {
     "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, TULPAR, HARPY ve FOTON.",
 };
 
-export default function FiloPage() {
-  /* Görseller dosya sisteminden: sunucuda okunup listeye prop olarak geçilir */
+export default async function FiloPage() {
+  /* Statik önbellek görsel adresini dondurmasın; ana sayfayla aynı dosya */
+  await connection();
   const images = Object.fromEntries(
-    FLEET.map((ac) => [ac.slug, fleetImage(ac.slug)])
+    FLEET.map((ac) => [ac.slug, versionedPublicUrl(fleetImage(ac.slug))])
   );
 
   return (

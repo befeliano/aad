@@ -103,7 +103,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     desc: "Built for the TÜBİTAK International UAV Competition, Merlin can carry 2.5 times its own weight. It breaks down to fit a small case, and going from case to flight-ready takes 1 minute 46 seconds.",
     specs: aircraftSpecs({
       year: "2025",
-      tailConfiguration: "Standard",
+      tailConfiguration: "Conventional",
       landingGear: "None",
       motorPosition: "Nose-mounted",
     }),
@@ -130,15 +130,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   jaeger: {
     role: "SAE Aero Design",
     desc: "The cargo aircraft we flew at SAE Aero Design East 2017; it comes apart into modules.",
-    specs: [
-      { label: "Fuselage", value: "" },
-      { label: "Wing", value: "" },
-      { label: "Tail", value: "" },
-      { label: "Wing Position", value: "" },
-      { label: "Tail Configuration", value: "" },
-      { label: "Landing Gear", value: "" },
-      { label: "Motor Position", value: "" },
-    ],
+    specs: aircraftSpecs({
+      tailConfiguration: "Standard",
+      landingGear: "None",
+      motorPosition: "Nose-mounted",
+    }),
     features: [
       {
         t: "Purpose",
@@ -173,9 +169,14 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     desc: "Our entry in the fixed-wing category of the TÜBİTAK International UAV Competition.",
     specs: aircraftSpecs({
       year: "2025",
-      tailConfiguration: "Standard",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "High Wing",
+      tailConfiguration: "Conventional",
       landingGear: "Present",
       motorPosition: "Nose-mounted",
+      takeoffWeight: "1.7 kg",
     }),
     features: [
       {
@@ -198,6 +199,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       tailConfiguration: "T-tail",
       landingGear: "None",
       motorPosition: "Nose-mounted",
+      takeoffWeight: "6.5 kg",
     }),
     features: [
       {
@@ -210,7 +212,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   bumblebee: {
     specs: aircraftSpecs({
       year: "2015",
-      tailConfiguration: "Standard",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "High Wing",
+      tailConfiguration: "Conventional",
       landingGear: "Present",
       motorPosition: "Nose-mounted",
     }),
@@ -218,7 +224,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   atlas: {
     specs: aircraftSpecs({
       year: "2016",
-      tailConfiguration: "Standard",
+      fuselage: "3D Printed",
+      wing: "3D-printed rib + covering",
+      tail: "3D-printed rib + covering",
+      wingPosition: "High Wing",
+      tailConfiguration: "Conventional",
       landingGear: "None",
       motorPosition: "Nose-mounted",
     }),
@@ -226,6 +236,10 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   tardis: {
     specs: aircraftSpecs({
       year: "2016",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "High Wing",
       tailConfiguration: "Pi-tail",
       landingGear: "Present",
       motorPosition: "Rear-mounted",
@@ -234,7 +248,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   balerin: {
     specs: aircraftSpecs({
       year: "2018",
-      tailConfiguration: "Standard",
+      fuselage: "EPS Foam",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "Mid Wing",
+      tailConfiguration: "Conventional",
       landingGear: "None",
       motorPosition: "Nose-mounted",
     }),
@@ -242,6 +260,10 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   tulpar: {
     specs: aircraftSpecs({
       year: "2018",
+      fuselage: "EPS Foam",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "High Wing",
       tailConfiguration: "Inverted U-tail",
       landingGear: "None",
       motorPosition: "Nose-mounted",
@@ -250,7 +272,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   harpy: {
     specs: aircraftSpecs({
       year: "2018",
-      tailConfiguration: "Standard",
+      fuselage: "Composite",
+      wing: "Composite over EPS foam",
+      tail: "Composite over EPS foam",
+      wingPosition: "High Wing",
+      tailConfiguration: "Conventional",
       landingGear: "Present",
       motorPosition: "Nose-mounted",
     }),
@@ -258,7 +284,11 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   foton: {
     specs: aircraftSpecs({
       year: "2019",
-      tailConfiguration: "Standard",
+      fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "High Wing",
+      tailConfiguration: "Conventional",
       landingGear: "None",
       motorPosition: "Nose-mounted",
     }),

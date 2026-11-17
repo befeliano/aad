@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useFleet } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
@@ -26,6 +25,10 @@ export function FiloListesi({
         {fleet.map((ac, i) => {
           const img = images[ac.slug] ?? null;
           const alt = `${ac.name} ${t(S.filo.ihaAlt)}`;
+          const specs = (ac.specs ?? []).filter((spec) => spec.value.trim());
+          const features = (ac.features ?? []).filter(
+            (feature) => feature.t.trim() && feature.d.trim()
+          );
           return (
             <Reveal key={ac.name} delay={Math.min(i, 3) * 70}>
               <article
@@ -36,12 +39,15 @@ export function FiloListesi({
                   {/* Görsel */}
                   <div className="relative aspect-[16/10] overflow-hidden border-b border-line bg-bg-2 lg:border-b-0 lg:border-r">
                     {img ? (
-                      <Image
+                      // next/image bu dosyayı genişliğe göre önbelleğe alıyordu;
+                      // Foton ana sayfadaki güncel kareden farklı görünüyordu.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={img}
                         src={img}
                         alt={alt}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 620px"
-                        className="object-cover"
+                        decoding="async"
+                        className="absolute inset-0 size-full object-cover"
                       />
                     ) : ac.sprite ? (
                       <AircraftSprite
@@ -82,7 +88,7 @@ export function FiloListesi({
                         {ac.desc}
                       </p>
                     )}
-                    {ac.specs && (
+                    {specs.length > 0 && (
                       <div className="mt-5">
                         <table className="w-full border-collapse text-left text-[12.5px]">
                           <thead>
@@ -93,7 +99,7 @@ export function FiloListesi({
                             </tr>
                           </thead>
                           <tbody>
-                            {ac.specs.map((spec) => (
+                            {specs.map((spec) => (
                               <tr
                                 key={spec.label}
                                 className="border-b border-line/60 last:border-0"
@@ -115,10 +121,10 @@ export function FiloListesi({
                 </div>
 
                 {/* Alt bölüm: hava aracına özgü bilgiler */}
-                {ac.features && (
+                {features.length > 0 && (
                   <div className="border-t border-line bg-bg-2/30 p-6 sm:p-8">
                     <ul className="flex flex-wrap items-start justify-center gap-x-10 gap-y-6 text-center">
-                      {ac.features.map((feature) => (
+                      {features.map((feature) => (
                         <li key={feature.t}>
                           <span className="text-[13.5px] font-bold text-ink">
                             {feature.t}

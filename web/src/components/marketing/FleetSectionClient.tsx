@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useFleet } from "@/lib/content";
 import { S, useT } from "@/lib/i18n";
 import { AircraftSprite } from "./AircraftSprite";
-import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
 /**
@@ -35,8 +33,7 @@ export function FleetSectionClient({
       />
 
       {/* Filoyu tanımlayan metin */}
-      <Reveal>
-        <div className="mt-10 max-w-3xl rounded-2xl border border-line bg-bg-1 p-7 sm:p-8">
+      <div className="mt-10 max-w-3xl rounded-2xl border border-line bg-bg-1 p-7 sm:p-8">
           <p className="text-[15px] leading-relaxed text-ink-2">
             {t(S.filo.tanim1)}
           </p>
@@ -53,72 +50,70 @@ export function FleetSectionClient({
               className="transition-transform group-hover:translate-x-0.5"
             />
           </Link>
-        </div>
-      </Reveal>
+      </div>
 
-      {/* Kısa künyeler — kutu yok, yalnızca metin */}
+      {/* Kısa künyeler */}
       <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {fleet.map((ac, i) => {
+        {fleet.map((ac) => {
           const img = images[ac.slug] ?? null;
           const alt = `${ac.name} ${t(S.filo.ihaAlt)}`;
           return (
-            <Reveal key={ac.name} delay={Math.min(i, 3) * 70}>
-              <Link
-                href="/filo"
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-bg-1 transition-all hover:border-line-2 hover:shadow-[var(--shadow)]"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-bg-2">
-                  {img ? (
-                    <Image
-                      src={img}
-                      alt={alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 400px"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : ac.sprite ? (
-                    <AircraftSprite
-                      box={ac.sprite}
-                      alt={alt}
-                      className="size-full transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "radial-gradient(circle at 62% 32%, var(--accent-soft), transparent 62%)",
-                      }}
-                    />
-                  )}
-                  {ac.codename && (
-                    <span
-                      className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
-                        img || ac.sprite
-                          ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
-                          : ""
-                      }`}
-                    >
-                      {ac.codename}
-                    </span>
-                  )}
-                </div>
+            <Link
+              key={ac.slug}
+              href="/filo"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-bg-1 transition-all hover:border-line-2 hover:shadow-[var(--shadow)]"
+            >
+              {/* Fotoğraf animasyon katmanının dışında.
+                  Kaydırma efekti (opacity + transform) next/image
+                  katmanına eski kareyi yapıştırıyordu. */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-bg-2">
+                {img ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={img}
+                    src={img}
+                    alt={alt}
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover"
+                  />
+                ) : ac.sprite ? (
+                  <AircraftSprite box={ac.sprite} alt={alt} className="size-full" />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "radial-gradient(circle at 62% 32%, var(--accent-soft), transparent 62%)",
+                    }}
+                  />
+                )}
+                {ac.codename && (
+                  <span
+                    className={`eyebrow absolute left-4 top-3.5 !text-[10px] ${
+                      img || ac.sprite
+                        ? "rounded-full bg-black/55 px-2.5 py-1 !text-white backdrop-blur-sm"
+                        : ""
+                    }`}
+                  >
+                    {ac.codename}
+                  </span>
+                )}
+              </div>
 
-                <div className="flex flex-1 flex-col p-6">
-                  {ac.role && (
-                    <div className="eyebrow !text-[9.5px]">{ac.role}</div>
-                  )}
-                  <h3 className="display-tight mt-2 text-2xl text-ink sm:text-3xl">
-                    {ac.name}
-                  </h3>
-                  {ac.desc && (
-                    <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
-                      {ac.desc}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            </Reveal>
+              <div className="flex flex-1 flex-col p-6">
+                {ac.role && (
+                  <div className="eyebrow !text-[9.5px]">{ac.role}</div>
+                )}
+                <h3 className="display-tight mt-2 text-2xl text-ink sm:text-3xl">
+                  {ac.name}
+                </h3>
+                {ac.desc && (
+                  <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
+                    {ac.desc}
+                  </p>
+                )}
+              </div>
+            </Link>
           );
         })}
       </div>

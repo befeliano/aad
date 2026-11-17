@@ -19,19 +19,29 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(
+    let io: IntersectionObserver | null = null;
+    const show = () => {
+      setShown(true);
+      io?.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
+    const onScroll = () => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom > 48 && r.top < window.innerHeight - 24) show();
+    };
+    io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setShown(true);
-            io.unobserve(e.target);
-          }
-        });
+        if (entries.some((e) => e.isIntersecting)) show();
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+      { threshold: 0.08, rootMargin: "0px 0px -8% 0px" }
     );
     io.observe(el);
-    return () => io.disconnect();
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      io?.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   return (

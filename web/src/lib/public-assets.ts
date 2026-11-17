@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 
 /**
@@ -77,6 +77,21 @@ export function heroMedia(): { type: "video" | "image"; src?: string; srcLight?:
 /** Uçak görseli — public/images/fleet/<slug>.<ext> */
 export function fleetImage(slug: string): string | null {
   return firstAsset(`images/fleet/${slug}`, IMAGE_EXTS);
+}
+
+/**
+ * Aynı dosya yolu `/_next/image` önbelleğinde genişliğe göre saklanıyor.
+ * Dosya değişince adres aynı kaldığı için ana sayfa eski kareyi tutabiliyor.
+ * Sorgu, tarayıcı adresini değiştirir; sunucu dosyanın güncel halini verir.
+ */
+export function versionedPublicUrl(src: string | null): string | null {
+  if (!src || !src.startsWith("/") || src.includes("..")) return src;
+  const abs = path.join(process.cwd(), "public", src.slice(1).split("?")[0]);
+  try {
+    return `${src.split("?")[0]}?v=${Math.round(statSync(abs).mtimeMs)}`;
+  } catch {
+    return src;
+  }
 }
 
 /** Ekip fotoğrafı — public/images/team/takim.<ext> */
