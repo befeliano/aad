@@ -34,7 +34,7 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] transition-all duration-500 ${
         scrolled
           ? "border-b border-line bg-bg/75 backdrop-blur-xl"
           : "border-b border-transparent"
@@ -86,8 +86,8 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-line bg-bg/95 backdrop-blur-xl lg:hidden">
-          <nav className="flex flex-col gap-1 px-5 py-4">
+        <div className="max-h-[min(70dvh,calc(100dvh-4rem-env(safe-area-inset-top)))] overflow-y-auto border-t border-line bg-bg/95 backdrop-blur-xl lg:hidden">
+          <nav className="flex flex-col gap-1 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {NAV.map((n) => (
               <Link
                 key={n.href}

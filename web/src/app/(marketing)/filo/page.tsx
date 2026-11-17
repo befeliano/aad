@@ -7,7 +7,7 @@ import { fleetImage } from "@/lib/public-assets";
 export const metadata: Metadata = {
   title: "Filo",
   description:
-    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, SMARTQUAD, TULPAR, HARPY ve FOTON.",
+    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, TULPAR, HARPY ve FOTON.",
 };
 
 export default function FiloPage() {
@@ -17,7 +17,7 @@ export default function FiloPage() {
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-5 pb-24 pt-28 sm:px-8 sm:pt-32">
+    <section className="mx-auto max-w-7xl px-5 pb-24 pt-[calc(7rem+env(safe-area-inset-top))] sm:px-8 sm:pt-[calc(8rem+env(safe-area-inset-top))]">
       <FiloBaslik />
 
       <div className="mt-14">

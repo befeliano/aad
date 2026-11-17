@@ -34,10 +34,10 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png" },
     ],
-    apple: "/icons/apple-touch-icon.png",
+    apple: "/icons/apple-touch-icon.png?v=2",
   },
   openGraph: {
     title: "Anatolia Aero Design — ESTÜ İHA Takımı",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
       "Yarışmalarda derece sahibi öğrenci insansız hava aracı takımı. Sponsorluk ve iş birlikleri için bizimle iletişime geçebilirsiniz.",
     type: "website",
     locale: "tr_TR",
-    images: ["/logo.jpg"],
+    images: ["/logo.png"],
   },
 };
 
@@ -56,6 +56,7 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 /* Tema ve dil flash'ını (FOUC) önler — React hydration'dan önce çalışır.

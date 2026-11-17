@@ -13,8 +13,8 @@ export function GirisKabuk() {
   const t = useT();
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-16">
-      <div className="absolute right-5 top-5 z-10 flex items-center gap-2">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-[max(4.5rem,env(safe-area-inset-top))] pb-10">
+      <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] z-10 flex items-center gap-2">
         <LangToggle />
         <ThemeToggle />
       </div>
@@ -33,7 +33,7 @@ export function GirisKabuk() {
           </Link>
         </div>
 
-        <div className="rounded-2xl border border-line bg-bg-1/80 p-8 backdrop-blur-xl">
+        <div className="rounded-2xl border border-line bg-bg-1/80 p-5 backdrop-blur-xl sm:p-8">
           <div className="eyebrow mb-2">{t(S.giris.eyebrow)}</div>
           <h1 className="display-tight text-3xl text-ink">
             {t(S.giris.baslik)}

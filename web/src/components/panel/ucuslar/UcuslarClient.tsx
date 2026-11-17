@@ -753,7 +753,7 @@ export function UcuslarClient({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex w-full flex-wrap items-center gap-1.5 sm:w-auto">
                     {canManage &&
                       !isPast &&
                       !completed[f.id] &&

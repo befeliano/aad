@@ -94,7 +94,7 @@ export function SponsorlukIcerik() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-line pt-28">
+      <section className="relative overflow-hidden border-b border-line pt-[calc(7rem+env(safe-area-inset-top))]">
         <div
           className="absolute inset-0"
           style={{
@@ -102,10 +102,10 @@ export function SponsorlukIcerik() {
               "radial-gradient(ellipse 100% 80% at 50% -10%, var(--hero-glow), transparent 62%)",
           }}
         />
-        <div className="relative mx-auto max-w-4xl px-5 py-20 text-center sm:px-8">
+        <div className="relative mx-auto max-w-4xl px-5 py-12 text-center sm:px-8 sm:py-20">
           <Reveal>
             <div className="eyebrow mb-5">{t(S.sponsor.eyebrow)}</div>
-            <h1 className="display-tight text-5xl text-ink sm:text-7xl">
+            <h1 className="display-tight text-balance text-[clamp(1.85rem,8.5vw,3rem)] text-ink sm:text-7xl">
               {t(S.sponsor.baslik1)}
               <br />
               <span className="text-accent">{t(S.sponsor.baslik2)}</span>
@@ -140,12 +140,19 @@ export function SponsorlukIcerik() {
       {/* Rakamlar */}
       <section className="border-b border-line bg-bg-1">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden bg-line sm:grid-cols-5">
-          {reach.map((r) => (
-            <div key={r.label} className="bg-bg-1 px-5 py-10 text-center">
+          {reach.map((r, i) => (
+            <div
+              key={r.label}
+              className={`bg-bg-1 px-4 py-8 text-center sm:px-5 sm:py-10 ${
+                i === reach.length - 1 ? "col-span-2 sm:col-span-1" : ""
+              }`}
+            >
               <div className="display tabular text-4xl text-accent sm:text-6xl">
                 {r.num}
               </div>
-              <div className="eyebrow mt-2 !text-[9.5px]">{r.label}</div>
+              <div className="eyebrow mt-2 !text-[9px] !tracking-normal sm:!text-[9.5px] sm:!tracking-[0.14em]">
+                {r.label}
+              </div>
             </div>
           ))}
         </div>

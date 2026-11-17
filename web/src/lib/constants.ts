@@ -651,15 +651,6 @@ export const FLEET: Aircraft[] = [
     }),
   },
   {
-    name: "SMARTQUAD",
-    slug: "smartquad",
-    codename: "2018",
-    role: "",
-    desc: "",
-    year: "2018",
-    specs: aircraftSpecs({ year: "2018" }),
-  },
-  {
     name: "TULPAR",
     slug: "tulpar",
     codename: "2018",

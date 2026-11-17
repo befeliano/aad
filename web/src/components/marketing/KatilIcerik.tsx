@@ -25,10 +25,10 @@ export function KatilIcerik() {
   return (
     <>
       {/* Başlık */}
-      <section className="mx-auto max-w-7xl px-5 pb-16 pt-28 sm:px-8 sm:pt-32">
+      <section className="mx-auto max-w-7xl px-5 pb-16 pt-[calc(7rem+env(safe-area-inset-top))] sm:px-8 sm:pt-[calc(8rem+env(safe-area-inset-top))]">
         <div className="max-w-3xl">
           <div className="eyebrow mb-4">{t(S.katil.eyebrow)}</div>
-          <h1 className="display-tight text-4xl text-ink sm:text-6xl">
+          <h1 className="display-tight text-balance text-[clamp(1.85rem,8.5vw,2.25rem)] text-ink sm:text-6xl">
             {t(S.katil.baslik1)}
             <br />
             <span className="text-accent">{t(S.katil.baslik2)}</span>

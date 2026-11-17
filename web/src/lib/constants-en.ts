@@ -239,7 +239,6 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       motorPosition: "Nose-mounted",
     }),
   },
-  smartquad: { specs: aircraftSpecs({ year: "2018" }) },
   tulpar: {
     specs: aircraftSpecs({
       year: "2018",

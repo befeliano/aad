@@ -462,7 +462,7 @@ export function GorevlerClient({
           Yükleniyor…
         </div>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-4">
+        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
           {STATUSES.map((s) => {
             const items = byStatus(s);
             return (
@@ -480,7 +480,7 @@ export function GorevlerClient({
                   if (id) moveTo(id, s);
                   setDragId(null);
                 }}
-                className={`flex min-h-[220px] flex-col rounded-2xl border bg-bg-1 transition-colors ${
+                className={`flex w-[min(82vw,320px)] shrink-0 snap-start min-h-[220px] flex-col rounded-2xl border bg-bg-1 transition-colors md:w-auto md:shrink ${
                   dragOverCol === s ? "border-accent bg-accent-soft" : "border-line"
                 }`}
               >

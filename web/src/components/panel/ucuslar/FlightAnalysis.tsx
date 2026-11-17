@@ -413,7 +413,7 @@ export function FlightAnalysis() {
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         {/* Harita + kontroller */}
         <div className="flex flex-col gap-4">
-          <div className="relative h-[440px] overflow-hidden rounded-2xl border border-line sm:h-[540px]">
+          <div className="relative h-[min(62svh,420px)] min-h-[260px] overflow-hidden rounded-2xl border border-line sm:h-[540px]">
             {view === "3d" ? (
               <FlightMap3D
                 session={session}
@@ -476,16 +476,16 @@ export function FlightAnalysis() {
 
             {/* Güdüm modu rozeti */}
             {guidance && (
-              <div className="pointer-events-none absolute left-3 top-3 z-[500] flex items-center gap-2.5 rounded-xl border border-line bg-bg/85 px-3.5 py-2.5 backdrop-blur-md">
+              <div className="pointer-events-none absolute left-3 top-3 z-[500] flex max-w-[calc(100%-7.5rem)] items-center gap-2.5 rounded-xl border border-line bg-bg/85 px-3 py-2 backdrop-blur-md sm:px-3.5 sm:py-2.5">
                 <span
-                  className="size-2.5 rounded-full"
+                  className="size-2.5 shrink-0 rounded-full"
                   style={{ background: modeInfo(guidance.mode).color }}
                 />
-                <div>
-                  <div className="text-[13px] font-bold leading-tight text-ink">
+                <div className="min-w-0">
+                  <div className="truncate text-[13px] font-bold leading-tight text-ink">
                     {modeInfo(guidance.mode).label}
                   </div>
-                  <div className="text-[11px] leading-tight text-ink-3">
+                  <div className="truncate text-[11px] leading-tight text-ink-3">
                     {guidance.info || modeInfo(guidance.mode).desc}
                   </div>
                 </div>

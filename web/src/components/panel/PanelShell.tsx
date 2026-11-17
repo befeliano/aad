@@ -59,13 +59,13 @@ export function PanelShell({
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center border-b border-line px-5">
+        <div className="flex h-[calc(4rem+env(safe-area-inset-top))] items-center border-b border-line px-5 pt-[env(safe-area-inset-top)]">
           <Link href="/" aria-label="Ana sayfa">
             <Logo size={28} />
           </Link>
         </div>
 
-        <nav className="flex h-[calc(100vh-4rem)] flex-col gap-6 overflow-y-auto px-3 py-5">
+        <nav className="flex h-[calc(100dvh-4rem-env(safe-area-inset-top))] flex-col gap-6 overflow-y-auto px-3 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {nav.map((group) => (
             <div key={group.title}>
               <div className="eyebrow px-2.5 pb-2">{group.title}</div>
@@ -81,7 +81,7 @@ export function PanelShell({
                       <Link
                         href={it.href}
                         onClick={() => setOpen(false)}
-                        className={`flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
+                        className={`flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium transition-colors ${
                           active
                             ? "bg-accent-soft text-accent"
                             : "text-ink-2 hover:bg-bg-2 hover:text-ink"
@@ -109,22 +109,23 @@ export function PanelShell({
 
       {/* Main */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-line bg-bg/80 px-3 backdrop-blur-xl sm:gap-3 sm:px-5">
+        <header className="sticky top-0 z-20 border-b border-line bg-bg/80 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+        <div className="flex h-16 items-center justify-between gap-1 px-2 sm:gap-3 sm:px-5">
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex size-9 items-center justify-center rounded-lg text-ink lg:hidden"
+            className="flex size-10 items-center justify-center rounded-lg text-ink lg:hidden"
             aria-label="Menü"
           >
             <Icons.Menu size={20} />
           </button>
 
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2.5">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1 sm:gap-2.5">
             <BildirimZili userId={user.id} role={user.role} dept={user.dept} />
             <ThemeToggle />
-            <div className="flex min-w-0 items-center gap-2 rounded-full border border-line bg-bg-1 py-1.5 pl-3 pr-1.5 sm:gap-2.5">
+            <div className="flex min-w-0 items-center gap-1 rounded-full border border-line bg-bg-1 py-1.5 pl-2 pr-1 sm:gap-2.5 sm:pl-3 sm:pr-1.5">
               <span className="size-2 shrink-0 rounded-full bg-ok" />
-              <span className="max-w-[90px] truncate text-sm font-medium text-ink sm:max-w-[200px]">
+              <span className="max-w-[52px] truncate text-xs font-medium text-ink sm:max-w-[200px] sm:text-sm">
                 {user.name}
               </span>
               <span className="eyebrow hidden !text-[9.5px] sm:inline">
@@ -141,9 +142,10 @@ export function PanelShell({
               </button>
             </div>
           </div>
+        </div>
         </header>
 
-        <main className="min-w-0 flex-1 p-4 sm:p-8">
+        <main className="min-w-0 flex-1 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-8">
           <ToastProvider>{children}</ToastProvider>
         </main>
       </div>

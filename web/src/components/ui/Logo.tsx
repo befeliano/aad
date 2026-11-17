@@ -17,7 +17,7 @@ export function Logo({
         style={{ width: size, height: size }}
       >
         <Image
-          src="/logo.jpg"
+          src="/logo.png"
           alt="Anatolia Aero Design logosu"
           width={size}
           height={size}

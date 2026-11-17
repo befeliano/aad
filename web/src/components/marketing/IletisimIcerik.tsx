@@ -13,7 +13,7 @@ export function IletisimIcerik() {
   const leads = useTeamLeads();
 
   return (
-    <section className="relative pt-28">
+    <section className="relative pt-[calc(7rem+env(safe-area-inset-top))]">
       <div
         className="absolute inset-0 top-0 h-72"
         style={{
@@ -24,7 +24,7 @@ export function IletisimIcerik() {
       <div className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8">
         <Reveal>
           <div className="eyebrow mb-4">{t(S.iletisim.eyebrow)}</div>
-          <h1 className="display-tight text-5xl text-ink sm:text-7xl">
+          <h1 className="display-tight text-balance text-[clamp(1.85rem,8.5vw,3rem)] text-ink sm:text-7xl">
             {t(S.iletisim.baslik)}
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-2">
@@ -51,7 +51,7 @@ export function IletisimIcerik() {
                 <div className="eyebrow mb-2">{t(S.iletisim.eposta)}</div>
                 <a
                   href={`mailto:${TEAM.email}`}
-                  className="text-lg text-ink transition-colors hover:text-accent"
+                  className="break-all text-lg text-ink transition-colors hover:text-accent"
                 >
                   {TEAM.email}
                 </a>

@@ -520,7 +520,7 @@ export function TakvimClient({
         <Card className="overflow-hidden p-0">
           <div className="grid grid-cols-7 border-b border-line">
             {GUN_KISA.map((g) => (
-              <div key={g} className="px-2 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider text-ink-3">
+              <div key={g} className="px-0.5 py-2 text-center text-[10px] font-semibold uppercase tracking-normal text-ink-3 sm:px-2 sm:py-2.5 sm:text-[11px] sm:tracking-wider">
                 {g}
               </div>
             ))}
@@ -572,7 +572,7 @@ export function TakvimClient({
                     </span>
                   )}
                   {e && !e.title && !e.starts_at && (
-                    <span className="mt-1 block text-[11px] text-ink-3">
+                    <span className="mt-1 block truncate text-[11px] text-ink-3">
                       {TUR[e.kind].etiket}
                     </span>
                   )}

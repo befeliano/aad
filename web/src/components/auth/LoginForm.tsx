@@ -62,7 +62,7 @@ export function LoginForm() {
           name="email"
           required
           autoComplete="email"
-          className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+          className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-base text-ink outline-none transition-colors focus:border-accent"
         />
       </label>
 
@@ -73,7 +73,7 @@ export function LoginForm() {
           name="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent"
+          className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-base text-ink outline-none transition-colors focus:border-accent"
         />
       </label>
 

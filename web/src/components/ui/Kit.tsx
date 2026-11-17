@@ -135,7 +135,7 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[90] flex items-end justify-center px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:items-center sm:p-4">
       <div
         className="absolute inset-0 bg-black/55 backdrop-blur-sm"
         onClick={onClose}
@@ -144,12 +144,12 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative max-h-[88vh] w-full overflow-y-auto rounded-2xl border border-line bg-bg-1 shadow-[var(--shadow-lg)] ${
+        className={`relative max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] w-full overflow-y-auto rounded-2xl border border-line bg-bg-1 shadow-[var(--shadow-lg)] ${
           wide ? "max-w-3xl" : "max-w-lg"
         }`}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-bg-1 px-6 py-4">
-          <h2 className="text-base font-bold text-ink">{title}</h2>
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-bg-1 px-4 py-3.5 sm:px-6 sm:py-4">
+          <h2 className="min-w-0 text-base font-bold break-words text-ink">{title}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -159,7 +159,7 @@ export function Modal({
             <X size={17} />
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export default function GaleriPage() {
   const local = galleryPhotos();
 
   return (
-    <section className="relative pt-28">
+    <section className="relative pt-[calc(7rem+env(safe-area-inset-top))]">
       <div
         className="absolute inset-x-0 top-0 h-72"
         style={{

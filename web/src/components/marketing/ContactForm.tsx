@@ -80,7 +80,7 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-line bg-bg-1 p-7 sm:p-9"
+      className="rounded-2xl border border-line bg-bg-1 p-5 sm:p-9"
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label={t(S.form.adSoyad)} name="name" required />
@@ -97,7 +97,7 @@ export function ContactForm() {
             rows={5}
             required
             maxLength={5000}
-            className="w-full resize-y rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+            className="w-full resize-y rounded-xl border border-line bg-bg px-4 py-3 text-base text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
             placeholder={t(S.form.placeholder)}
           />
         </label>
@@ -152,7 +152,7 @@ function Field({
         name={name}
         required={required}
         maxLength={200}
-        className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
+        className="w-full rounded-xl border border-line bg-bg px-4 py-3 text-base text-ink outline-none transition-colors placeholder:text-ink-3 focus:border-accent"
       />
     </label>
   );

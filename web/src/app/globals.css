@@ -270,6 +270,7 @@ body {
 /* Form alanları — panel genelinde tutarlı */
 .field {
   width: 100%;
+  max-width: 100%;
   border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--bg);
@@ -278,6 +279,15 @@ body {
   color: var(--ink);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
+}
+/* iOS, 16px'ten küçük alana odaklanınca sayfayı yakınlaştırır */
+@media (max-width: 639px) {
+  .field,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 .field:focus {
   border-color: var(--accent);

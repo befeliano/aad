@@ -43,10 +43,8 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
 
   return (
     // 210vh yerine 130vh veya 140vh: Kaydırma yolunu neredeyse yarı yarıya kısaltır
-    <section ref={ref} className="relative h-[130vh]">
-      {/* Mobilde dikey akış: kadraj → butonlar → boşluk → istatistikler.
-          sm ve üstünde butonlar/istatistikler tekrar kadrajın üzerine biner. */}
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center gap-5 overflow-hidden pt-16 sm:gap-0">
+    <section ref={ref} className="relative h-[130svh] sm:h-[130vh]">
+      <div className="sticky top-0 grid h-svh grid-rows-[auto_auto] content-center items-center gap-2 overflow-hidden px-3 pt-[calc(4rem+env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:block sm:h-screen sm:px-0 sm:pt-16">
         {/* Zemin */}
         <div className="absolute inset-0 bg-bg">
           <div
@@ -58,14 +56,11 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
           />
         </div>
 
-        {/* Medya sahnesi */}
-        <motion.div
-          style={{ scale: stageScale, willChange: "transform" }}
-          /* Mobilde sabit 50vh — altına buton ve istatistikler sığsın.
-             sm üstünde 52.9vw (= 94vw'nin 16:9 karşılığı) ile 80vh'nin küçüğü:
-             geniş ekranda navbar payından sonra kalan alanı doldurur. */
-          className="relative h-[50vh] w-[94vw] shrink-0 overflow-hidden rounded-2xl border border-line-2 bg-bg-2 shadow-[var(--shadow)] sm:h-[min(80vh,52.9vw)]"
-        >
+        <div className="relative flex min-h-0 items-center justify-center sm:absolute sm:inset-0">
+          <motion.div
+            style={{ scale: stageScale, willChange: "transform" }}
+            className="relative h-[min(42svh,360px)] w-[94vw] shrink-0 overflow-hidden rounded-2xl border border-line-2 bg-bg-2 shadow-[var(--shadow)] sm:h-[min(80vh,52.9vw)]"
+          >
           {media ? (
             media.type === "video" && media.src ? (
               <video
@@ -154,69 +149,81 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               <HudCorners />
             </>
           )}
-        </motion.div>
+          </motion.div>
 
-        {/* Başlık katmanı */}
+          <motion.div
+            style={{ y: titleY, opacity: titleOpacity }}
+            className="pointer-events-none absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 flex-col items-center px-3 text-center sm:top-[26vh] sm:translate-y-0 sm:px-5"
+          >
+            <div className="mb-3 flex max-w-full items-center rounded-full border border-line-2 bg-bg/70 px-3 py-1.5 backdrop-blur-md sm:mb-5 sm:px-4">
+              <TurkishFlag className="mr-2 h-3 w-[18px] shrink-0 rounded-[2px]" />
+              <span className="eyebrow min-w-0 !text-[9px] !leading-tight !tracking-normal sm:!text-[10.5px] sm:!tracking-[0.14em]">
+                {t(S.hero.kurulus)} {TEAM.founded} · {t(S.hero.universite)}
+              </span>
+            </div>
+
+            <div className="mb-6 hidden max-w-full flex-wrap items-center justify-center gap-2 sm:flex">
+              {[S.hero.rozet1, S.hero.rozet2, S.hero.rozet3].map((k) => {
+                const b = t(k);
+                return (
+                  <span
+                    key={b}
+                    className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-accent/40 bg-black/45 px-2.5 py-1 text-center text-[10px] font-semibold leading-tight text-white backdrop-blur-md sm:px-3.5 sm:py-1.5 sm:text-[12.5px]"
+                  >
+                    <Trophy size={12} className="shrink-0 text-accent-2" />
+                    {b}
+                  </span>
+                );
+              })}
+            </div>
+            <h1
+              className={`display-tight ${media ? "text-white" : "text-ink"}`}
+              style={{
+                fontSize: "clamp(1.9rem, 7.6vw, 6.2rem)",
+                textShadow: media
+                  ? "0 2px 28px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.6)"
+                  : undefined,
+              }}
+            >
+              {t(S.hero.baslik1)}
+              <br />
+              <span
+                style={{
+                  color: media ? "#ff5560" : "var(--accent)",
+                  textShadow: media
+                    ? "0 2px 28px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.7)"
+                    : undefined,
+                }}
+              >
+                {t(S.hero.baslik2)}
+              </span>
+            </h1>
+          </motion.div>
+        </div>
+
+        {/* Alt katman */}
         <motion.div
-          style={{ y: titleY, opacity: titleOpacity }}
-          className="pointer-events-none absolute inset-x-0 top-[26vh] z-10 flex flex-col items-center px-5 text-center"
+          style={{ y: footY, opacity: footOpacity }}
+          className="relative z-10 flex w-full min-w-0 flex-col items-center gap-2 px-1 sm:absolute sm:inset-x-0 sm:bottom-8 sm:gap-5 sm:px-5"
         >
-          <div className="mb-5 flex items-center rounded-full border border-line-2 bg-bg/70 px-4 py-1.5 backdrop-blur-md">
-            <TurkishFlag className="mr-2 h-3 w-[18px] shrink-0 rounded-[2px]" />
-            <span className="eyebrow !text-[10.5px]">
-              {t(S.hero.kurulus)} {TEAM.founded} · {t(S.hero.universite)}
-            </span>
-          </div>
-
-          {/* Yarışma sonuçları */}
-          <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+          <div className="flex w-full min-w-0 max-w-2xl gap-1.5 overflow-x-auto px-1 [scrollbar-width:none] sm:hidden [&::-webkit-scrollbar]:hidden">
             {[S.hero.rozet1, S.hero.rozet2, S.hero.rozet3].map((k) => {
               const b = t(k);
               return (
                 <span
                   key={b}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-black/45 px-3.5 py-1.5 text-[11.5px] font-semibold text-white backdrop-blur-md sm:text-[12.5px]"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-accent/40 bg-black/45 px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap text-white backdrop-blur-md"
                 >
-                  <Trophy size={12} className="text-accent-2" />
+                  <Trophy size={11} className="shrink-0 text-accent-2" />
                   {b}
                 </span>
               );
             })}
           </div>
-          <h1
-            className={`display-tight ${media ? "text-white" : "text-ink"}`}
-            style={{
-              // Tailwind arbitrary değerinde virgül sorun çıkarıyordu — inline
-              fontSize: "clamp(2.2rem, 7.6vw, 6.2rem)",
-              textShadow: media
-                ? "0 2px 28px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.6)"
-                : undefined,
-            }}
-          >
-            {t(S.hero.baslik1)}
-            <br />
-            <span
-              style={{
-                color: media ? "#ff5560" : "var(--accent)",
-                textShadow: media
-                  ? "0 2px 28px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.7)"
-                  : undefined,
-              }}
-            >
-              {t(S.hero.baslik2)}
-            </span>
-          </h1>
-        </motion.div>
-
-        {/* Alt katman */}
-        <motion.div
-          style={{ y: footY, opacity: footOpacity }}
-          className="relative z-10 flex w-full flex-col items-center gap-6 px-5 sm:absolute sm:inset-x-0 sm:bottom-8 sm:gap-5"
-        >
-          <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2.5">
+          <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
             <Link
               href="/sponsorluk"
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center gap-2 rounded-full bg-accent px-3.5 py-2 text-xs font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03] sm:px-5 sm:py-2.5 sm:text-[13px]"
             >
               {t(S.hero.sponsorOl)}
               <ArrowRight
@@ -226,7 +233,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             </Link>
             <Link
               href="/#filo"
-              className="rounded-full border border-line-2 bg-bg/70 px-5 py-2.5 text-[13px] font-semibold text-ink backdrop-blur-md transition-colors hover:border-ink-3"
+              className="rounded-full border border-line-2 bg-bg/70 px-3.5 py-2 text-xs font-semibold text-ink backdrop-blur-md transition-colors hover:border-ink-3 sm:px-5 sm:py-2.5 sm:text-[13px]"
             >
               {t(S.hero.filoyuKesfet)}
             </Link>
@@ -234,7 +241,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
               href={BASVURU_FORMU}
               target="_blank"
               rel="noopener"
-              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-xs font-semibold text-white shadow-[var(--shadow)] transition-transform hover:scale-[1.03] sm:px-5 sm:py-2.5 sm:text-[13px]"
             >
               {t(S.hero.takimaKatil)}
               <ArrowUpRight
@@ -244,7 +251,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             </a>
           </div>
 
-          <div className="grid w-full max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-5">
+          <div className="grid w-full max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-5">
             <Stat num={TAKIM_ISTATISTIK.birincilik} label={t(S.hero.birincilik)} />
             <Stat num={TAKIM_ISTATISTIK.derece} label={t(S.hero.derece)} />
             <Stat num={TAKIM_ISTATISTIK.uye} label={t(S.hero.uye)} />
@@ -252,7 +259,7 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
             <Stat num={TAKIM_ISTATISTIK.kurulus} label={t(S.hero.kurulusYili)} />
           </div>
 
-          <div className="flex items-center gap-2 text-ink-3">
+          <div className="hidden items-center gap-2 text-ink-3 sm:flex">
             <ArrowDown size={13} className="animate-bounce" />
             <span className="eyebrow !text-[10px]">{t(S.hero.kaydir)}</span>
           </div>
@@ -264,9 +271,11 @@ export function HeroScroll({ media }: { media?: HeroMedia | null }) {
 
 function Stat({ num, label }: { num: string; label: string }) {
   return (
-    <div className="bg-bg/80 px-2.5 py-3 text-center backdrop-blur-md">
-      <div className="display tabular text-lg text-ink sm:text-xl">{num}</div>
-      <div className="eyebrow mt-1 !text-[8.5px]">{label}</div>
+    <div className="bg-bg/80 px-1.5 py-2 text-center backdrop-blur-md sm:px-2.5 sm:py-3">
+      <div className="display tabular text-base text-ink sm:text-xl">{num}</div>
+      <div className="eyebrow mt-1 !text-[8px] !tracking-normal sm:!text-[8.5px] sm:!tracking-[0.14em]">
+        {label}
+      </div>
     </div>
   );
 }

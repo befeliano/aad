@@ -9,7 +9,7 @@ export function FiloBaslik() {
   return (
     <header className="max-w-3xl">
       <div className="eyebrow mb-4">{t(S.filo.baslik)}</div>
-      <h1 className="display-tight text-4xl text-ink sm:text-6xl">
+      <h1 className="display-tight text-balance text-[clamp(1.85rem,8.5vw,2.25rem)] text-ink sm:text-6xl">
         {t(S.filo.sayfaBaslik1)}
         <br />
         <span className="text-accent">{t(S.filo.sayfaBaslik2)}</span>

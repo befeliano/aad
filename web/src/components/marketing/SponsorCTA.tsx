@@ -21,7 +21,7 @@ export function SponsorCTA() {
       <div className="relative mx-auto max-w-3xl px-5 py-28 text-center sm:px-8">
         <Reveal>
           <div className="eyebrow mb-5">{t(S.cta.kicker)}</div>
-          <h2 className="display-tight text-4xl text-ink sm:text-6xl">
+          <h2 className="display-tight text-balance text-[clamp(1.85rem,8.5vw,2.25rem)] text-ink sm:text-6xl">
             {t(S.cta.baslik1)}
             <br />
             <span className="text-accent">{t(S.cta.baslik2)}</span>

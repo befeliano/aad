@@ -235,13 +235,13 @@ export function GaleriClient({
 
       {lightbox && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4"
           onClick={() => setLightbox(null)}
         >
           <button
             type="button"
             onClick={() => setLightbox(null)}
-            className="absolute right-5 top-5 flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+            className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
             aria-label={t(S.galeri.kapat)}
           >
             <X size={20} />

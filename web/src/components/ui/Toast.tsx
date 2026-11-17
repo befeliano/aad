@@ -39,7 +39,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastCtx.Provider value={{ toast }}>
       {children}
-      <div className="pointer-events-none fixed bottom-5 right-5 z-[100] flex w-[min(370px,calc(100vw-2.5rem))] flex-col gap-2">
+      <div className="pointer-events-none fixed right-3 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-[100] flex w-[min(370px,calc(100vw-1.5rem))] flex-col gap-2 sm:right-5">
         {items.map((t) => {
           const Icon =
             t.kind === "success"

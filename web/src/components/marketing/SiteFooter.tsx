@@ -19,7 +19,7 @@ export function SiteFooter({ yil }: { yil: number }) {
 
   return (
     <footer className="relative border-t border-line bg-bg-1">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+      <div className="mx-auto max-w-7xl px-5 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-16 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1.2fr]">
           <div>
             <Logo size={36} />
@@ -69,7 +69,7 @@ export function SiteFooter({ yil }: { yil: number }) {
               </li>
               <li className="flex gap-2.5">
                 <Mail size={16} className="mt-0.5 shrink-0 text-ink-3" />
-                <a href={`mailto:${TEAM.email}`} className="hover:text-ink">
+                <a href={`mailto:${TEAM.email}`} className="break-all hover:text-ink">
                   {TEAM.email}
                 </a>
               </li>
