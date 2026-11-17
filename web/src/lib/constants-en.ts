@@ -129,8 +129,10 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
 
   jaeger: {
     role: "SAE Aero Design",
-    desc: "The cargo aircraft we flew at SAE Aero Design East 2017; it comes apart into modules.",
+    desc: "The modular cargo aircraft that brought the team the world championship at SAE Aero Design East 2017.",
+    codename: "2017",
     specs: aircraftSpecs({
+      year: "2017",
       tailConfiguration: "Standard",
       landingGear: "None",
       motorPosition: "Nose-mounted",
@@ -210,6 +212,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
   },
 
   bumblebee: {
+    desc: "Developed in 2015, Bumblebee is an aircraft with a composite fuselage and an EPS-foam wing. That year the team placed second overall at Future Flight Design.",
     specs: aircraftSpecs({
       year: "2015",
       fuselage: "Composite",
@@ -222,6 +225,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   atlas: {
+    desc: "Developed in 2016, Atlas has a 3D-printed fuselage and a wing and tail made of 3D-printed ribs with a covering.",
     specs: aircraftSpecs({
       year: "2016",
       fuselage: "3D Printed",
@@ -234,6 +238,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   tardis: {
+    desc: "Developed in 2016, Tardis is a composite-fuselage aircraft with a rear-mounted motor and a pi-tail. It is fitted with landing gear.",
     specs: aircraftSpecs({
       year: "2016",
       fuselage: "Composite",
@@ -246,6 +251,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   balerin: {
+    desc: "Developed in 2018, Balerin is a mid-wing aircraft whose fuselage, wing and tail are built from EPS foam.",
     specs: aircraftSpecs({
       year: "2018",
       fuselage: "EPS Foam",
@@ -258,6 +264,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   tulpar: {
+    desc: "Developed in 2018, Tulpar is an EPS-foam aircraft designed with an inverted U-tail.",
     specs: aircraftSpecs({
       year: "2018",
       fuselage: "EPS Foam",
@@ -270,6 +277,8 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   harpy: {
+    role: "TEKNOFEST TÜBİTAK International UAV",
+    desc: "Harpy brought the team first place at the 2018 TEKNOFEST TÜBİTAK International UAV Competition. It has a composite fuselage and a wing and tail of composite over EPS foam.",
     specs: aircraftSpecs({
       year: "2018",
       fuselage: "Composite",
@@ -282,6 +291,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     }),
   },
   foton: {
+    desc: "Developed in 2019, Foton is a high-wing aircraft with a composite fuselage and an EPS-foam wing and tail.",
     specs: aircraftSpecs({
       year: "2019",
       fuselage: "Composite",

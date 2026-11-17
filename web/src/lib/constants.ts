@@ -571,7 +571,7 @@ export const FLEET: Aircraft[] = [
     slug: "foton",
     codename: "2019",
     role: "",
-    desc: "",
+    desc: "2019 yılında geliştirdiğimiz Foton, kompozit gövdeli ve EPS köpük kanatlı, üstten kanat düzenine sahip bir hava aracıdır.",
     year: "2019",
     specs: aircraftSpecs({
       year: "2019",
@@ -589,7 +589,7 @@ export const FLEET: Aircraft[] = [
     slug: "balerin",
     codename: "2018",
     role: "",
-    desc: "",
+    desc: "2018 yılında geliştirdiğimiz Balerin, gövdesi, kanadı ve kuyruğu EPS köpükten üretilmiş ortadan kanatlı bir hava aracıdır.",
     year: "2018",
     specs: aircraftSpecs({
       year: "2018",
@@ -607,7 +607,7 @@ export const FLEET: Aircraft[] = [
     slug: "tulpar",
     codename: "2018",
     role: "",
-    desc: "",
+    desc: "2018 yılında geliştirdiğimiz Tulpar, EPS köpük yapı üzerine ters U kuyrukla tasarlanmış bir hava aracıdır.",
     year: "2018",
     specs: aircraftSpecs({
       year: "2018",
@@ -624,8 +624,8 @@ export const FLEET: Aircraft[] = [
     name: "HARPY",
     slug: "harpy",
     codename: "2018",
-    role: "",
-    desc: "",
+    role: "TEKNOFEST TÜBİTAK Uluslararası İHA",
+    desc: "2018 TEKNOFEST TÜBİTAK Uluslararası İHA Yarışması'nda ekibimize birincilik getiren Harpy, kompozit gövdeli; kanadı ve kuyruğu EPS köpük üzerine kompozitle kaplanmış bir hava aracıdır.",
     year: "2018",
     specs: aircraftSpecs({
       year: "2018",
@@ -641,12 +641,12 @@ export const FLEET: Aircraft[] = [
   {
     name: "JAEGER",
     slug: "jaeger",
-    codename: "2011",
+    codename: "2017",
     role: "SAE Aero Design",
-    desc: "2017 SAE Aero Design East'te uçurduğumuz, parçalarına ayrılabilen yük uçağı.",
-    year: "2011",
+    desc: "2017 SAE Aero Design East'te ekibimize dünya birinciliği getiren, parçalarına ayrılabilen yük uçağımız.",
+    year: "2017",
     specs: aircraftSpecs({
-      year: "2011",
+      year: "2017",
       tailConfiguration: "Standart",
       landingGear: "Yok",
       motorPosition: "Önden",
@@ -683,7 +683,7 @@ export const FLEET: Aircraft[] = [
     slug: "atlas",
     codename: "2016",
     role: "",
-    desc: "",
+    desc: "2016 yılında geliştirdiğimiz Atlas, gövdesi üç boyutlu baskıyla, kanadı ve kuyruğu üç boyutlu baskı rib ile kaplamadan üretilmiş bir hava aracıdır.",
     year: "2016",
     specs: aircraftSpecs({
       year: "2016",
@@ -701,7 +701,7 @@ export const FLEET: Aircraft[] = [
     slug: "tardis",
     codename: "2016",
     role: "",
-    desc: "",
+    desc: "2016 yılında geliştirdiğimiz Tardis, kompozit gövdeli ve arkadan motorlu bir hava aracıdır. Kuyruk düzeni Pi-tail'dir; iniş takımı bulunur.",
     year: "2016",
     specs: aircraftSpecs({
       year: "2016",
@@ -719,7 +719,7 @@ export const FLEET: Aircraft[] = [
     slug: "bumblebee",
     codename: "2015",
     role: "",
-    desc: "",
+    desc: "2015 yılında geliştirdiğimiz Bumblebee, kompozit gövdeli ve EPS köpük kanatlı bir hava aracıdır. Takım, aynı yıl Future Flight Design yarışmasında genel sıralamada ikinci olmuştur.",
     year: "2015",
     specs: aircraftSpecs({
       year: "2015",
