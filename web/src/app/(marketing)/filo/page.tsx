@@ -8,7 +8,7 @@ import { fleetImage, versionedPublicUrl } from "@/lib/public-assets";
 export const metadata: Metadata = {
   title: "Filo",
   description:
-    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, TULPAR, HARPY ve FOTON.",
+    "Anatolia Aero Design'ın 2011'den bugüne geliştirdiği hava araçları: ANZU, DABAN, GÖLGE MK5, MERLIN, JAEGER, DORJE MK3, HYDRA MK3, BUMBLEBEE, ATLAS, TARDİS, BALERİN, TULPAR, HARPY ve FOTON.",
 };
 
 export default async function FiloPage() {

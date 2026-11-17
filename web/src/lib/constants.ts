@@ -428,6 +428,25 @@ function aircraftSpecs(
 
 export const FLEET: Aircraft[] = [
   {
+    name: "ANZU",
+    slug: "anzu",
+    codename: "Geliştirme",
+    role: "Savaşan İHA",
+    desc: "Elden atılmaya uygun bir Savaşan İHA olarak tasarlanan Anzu, geliştirme aşamasındadır. Kompozit gövdeli, film kaplı rib kanat ve kuyruğa sahiptir; haç kuyrukludur ve motoru arkadadır.",
+    year: "Geliştirme",
+    specs: aircraftSpecs({
+      year: "Geliştirme",
+      fuselage: "Kompozit",
+      wing: "Film Kaplı Ribli",
+      tail: "Film Kaplı Ribli",
+      wingPosition: "Üstten",
+      tailConfiguration: "Haç Kuyruk",
+      landingGear: "Yok",
+      motorPosition: "Arkadan",
+      takeoffWeight: "5.625 kg",
+    }),
+  },
+  {
     name: "DABAN",
     slug: "daban",
     codename: "Geliştirme",
@@ -439,7 +458,7 @@ export const FLEET: Aircraft[] = [
       fuselage: "Kompozit",
       wing: "Kompozit",
       tail: "Kompozit",
-      wingPosition: "Ortadan",
+      wingPosition: "Üstten",
       tailConfiguration: "Standart",
       landingGear: "Var",
       motorPosition: "Önden Çift Motor",
@@ -457,11 +476,12 @@ export const FLEET: Aircraft[] = [
       year: "2026",
       fuselage: "Kompozit",
       tailConfiguration: "Ters V Kuyruk",
-      wing: "Kompozit",
-      tail: "Kompozit",
+      wing: "EPS Köpük",
+      tail: "EPS Köpük",
       landingGear: "Var",
       wingPosition: "Ortadan",
       motorPosition: "Arkadan",
+      takeoffWeight: "5 kg",
     }),
     features: [
       {
@@ -491,10 +511,14 @@ export const FLEET: Aircraft[] = [
     year: "2025",
     specs: aircraftSpecs({
       year: "2025",
+      fuselage: "3D LW Filament",
+      wing: "Film Kaplı Ribli",
+      tail: "Film Kaplı Ribli",
       tailConfiguration: "Konvansiyonel",
       landingGear: "Yok",
       wingPosition: "Ortadan",
       motorPosition: "Önden",
+      takeoffWeight: "4 kg",
     }),
     features: [
       {
@@ -647,6 +671,10 @@ export const FLEET: Aircraft[] = [
     year: "2017",
     specs: aircraftSpecs({
       year: "2017",
+      fuselage: "Film Kaplı Ribli",
+      wing: "Film Kaplı Ribli",
+      tail: "Film Kaplı Ribli",
+      wingPosition: "Üstten",
       tailConfiguration: "Standart",
       landingGear: "Yok",
       motorPosition: "Önden",

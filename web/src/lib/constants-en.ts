@@ -52,6 +52,22 @@ function aircraftSpecs(
 
 /** slug → İngilizce künye */
 export const FLEET_EN: Record<string, FleetOverlay> = {
+  anzu: {
+    codename: "In Development",
+    role: "Combat UAV",
+    desc: "Anzu is designed as a hand-launched combat UAV and is still in development. It has a composite fuselage, a film-covered rib wing and tail, a cruciform tail and a rear-mounted motor.",
+    specs: aircraftSpecs({
+      year: "In development",
+      fuselage: "Composite",
+      wing: "Film-covered rib",
+      tail: "Film-covered rib",
+      wingPosition: "High Wing",
+      tailConfiguration: "Cruciform tail",
+      landingGear: "None",
+      motorPosition: "Rear-mounted",
+      takeoffWeight: "5.625 kg",
+    }),
+  },
   daban: {
     codename: "In Development",
     role: "Planned Aircraft",
@@ -61,6 +77,7 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
       fuselage: "Composite",
       wing: "Composite",
       tail: "Composite",
+      wingPosition: "High Wing",
       tailConfiguration: "Standard",
       landingGear: "Present",
       motorPosition: "Nose-mounted twin motors",
@@ -74,9 +91,13 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     specs: aircraftSpecs({
       year: "2026",
       fuselage: "Composite",
+      wing: "EPS Foam",
+      tail: "EPS Foam",
+      wingPosition: "Mid Wing",
       tailConfiguration: "Inverted V-tail",
       landingGear: "Present",
       motorPosition: "Rear-mounted",
+      takeoffWeight: "5 kg",
     }),
     features: [
       {
@@ -103,9 +124,14 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     desc: "Built for the TÜBİTAK International UAV Competition, Merlin can carry 2.5 times its own weight. It breaks down to fit a small case, and going from case to flight-ready takes 1 minute 46 seconds.",
     specs: aircraftSpecs({
       year: "2025",
+      fuselage: "3D LW filament",
+      wing: "Film-covered rib",
+      tail: "Film-covered rib",
+      wingPosition: "Mid Wing",
       tailConfiguration: "Conventional",
       landingGear: "None",
       motorPosition: "Nose-mounted",
+      takeoffWeight: "4 kg",
     }),
     features: [
       {
@@ -133,6 +159,10 @@ export const FLEET_EN: Record<string, FleetOverlay> = {
     codename: "2017",
     specs: aircraftSpecs({
       year: "2017",
+      fuselage: "Film-covered rib",
+      wing: "Film-covered rib",
+      tail: "Film-covered rib",
+      wingPosition: "High Wing",
       tailConfiguration: "Standard",
       landingGear: "None",
       motorPosition: "Nose-mounted",
